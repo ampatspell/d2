@@ -57,9 +57,7 @@ export class Tools {
         await this.index();
       } else if (tool === 'deploy') {
         if(current) {
-          await current.deploy((message) => {
-            p.log.info(message);
-          });
+          await current.deploy((message) => p.log.info(message));
         }
       }
     }
