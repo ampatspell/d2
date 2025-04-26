@@ -50,7 +50,7 @@ export class Tools {
     });
 
     if (p.isCancel(tool)) {
-      p.outro(`see ya`);
+      p.outro(`bye`);
     } else {
       if (tool === 'use') {
         await apps.index();
@@ -58,6 +58,7 @@ export class Tools {
       } else if (tool === 'deploy') {
         if(current) {
           await current.deploy((message) => p.log.info(message));
+          p.outro('done');
         }
       }
     }

@@ -33,26 +33,22 @@ const firebase_dot_env = (app: App) => dedent`
 type Phase = 'frontend' | 'backend';
 
 const firebase_json = (app: App, phase: Phase | undefined) => {
-  const backend = `
-        {
-          "source": "../backend",
-          "target": "backend",
-          "ignore": ["**/.*", "**/node_modules/**"],
-          "frameworksBackend": {
-            "region": "${app.region}"
-          }
-        }
-  `;
-  const frontend = `
-        {
-          "source": "../../apps/${app.id}",
-          "target": "frontend",
-          "ignore": ["**/.*", "**/node_modules/**"],
-          "frameworksBackend": {
-            "region": "${app.region}"
-          }
-        }
-  `;
+  const backend = `{
+      "source": "../backend",
+      "target": "backend",
+      "ignore": ["**/.*", "**/node_modules/**"],
+      "frameworksBackend": {
+        "region": "${app.region}"
+      }
+    }`;
+  const frontend = `{
+      "source": "../../apps/${app.id}",
+      "target": "frontend",
+      "ignore": ["**/.*", "**/node_modules/**"],
+      "frameworksBackend": {
+        "region": "${app.region}"
+      }
+    }`;
 
   let sites: string[] = [];
   if(phase === 'backend') {
@@ -63,7 +59,7 @@ const firebase_json = (app: App, phase: Phase | undefined) => {
     sites = [backend, frontend];
   }
 
-  const hosting = sites.join(',\n');
+  const hosting = sites.join(',\n    ');
 
   return dedent`
     {
