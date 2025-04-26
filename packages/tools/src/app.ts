@@ -61,13 +61,12 @@ const firebase_json = (app: App) => dedent`
 
 const backend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
+  PUBLIC_FIREBASE_REGION=${app.region}
+  PUBLIC_APP_NAME=${app.name}
 
 `;
 
-const frontend_env = (app: App) => dedent`
-  PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
-
-`;
+const frontend_env = (app: App) => backend_env(app);
 
 export type AppConfig = {
   name?: string;

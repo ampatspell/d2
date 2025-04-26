@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { setGlobal } from "@ampatspell/d2/set-global";
-
-  setGlobal({ hello: 'foof' });
+  import { PUBLIC_FIREBASE, PUBLIC_APP_NAME, PUBLIC_FIREBASE_REGION } from "$env/static/public";
+  let config = JSON.parse(PUBLIC_FIREBASE);
 </script>
 
-<div class="page">@ampatspell/d2-demo</div>
+<div class="page">@ampatspell/d2-demo for "{PUBLIC_APP_NAME}" {config.projectId} / {PUBLIC_FIREBASE_REGION}</div>
