@@ -32,6 +32,7 @@ const firebase_dot_env = (app: App) => dedent`
 
 const firebase_json = (app: App) => dedent`
   {
+    "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
     "firestore": {
       "rules": "rules/firestore.rules",
       "indexes": "rules/firestore.indexes.json"
