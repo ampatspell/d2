@@ -1,0 +1,19 @@
+rules_version = '2';
+
+service firebase.storage {
+
+  function isAuthenticated() {
+    return request.auth != null;
+  }
+
+  function isCurrentUserAdmin() {
+    return isAuthenticated() && request.auth.token.role == 'admin';
+  }
+
+  // match /b/{bucket}/o {
+  //   match /{allPaths=**} {
+  //     allow read: if true;
+  //     allow write: if isCurrentUserAdmin();
+  //   }
+  // }
+}

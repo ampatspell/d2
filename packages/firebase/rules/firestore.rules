@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+
+  function isAuthenticated() {
+    return request.auth != null;
+  }
+
+  function isCurrentUserAdmin() {
+    return isAuthenticated() && request.auth.token.role == 'admin';
+  }
+
+  // match /databases/{database}/documents {
+  //   match /{document=**} {
+  //     allow read: if true;
+  //     allow write: if isCurrentUserAdmin();
+  //   }
+  // }
+}

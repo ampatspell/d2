@@ -1,0 +1,1 @@
+@ampatspell/d2

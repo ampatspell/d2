@@ -1,0 +1,13 @@
+{
+  "name": "workspace",
+  "private": true,
+  "scripts": {
+  },
+  "workspaces": [
+    "./packages/d2",
+    "./packages/backend",
+    "./packages/firebase",
+    "./packages/firebase/functions",
+    "./apps/*"
+  ]
+}
