@@ -1,5 +1,6 @@
 import * as p from '@clack/prompts';
 import { Apps } from './apps';
+import { isTruthy } from './utils';
 
 export type ApplicationOptions = {
   root: string;
@@ -22,23 +23,30 @@ export class Tools {
     console.clear();
     p.intro(`d2`);
 
-    const apps = this.apps;
+    const { apps } = this;
     await apps.load();
 
-    p.log.info([`root: ${this.root}`, `app: ${apps.app.id} @ ${apps.app.projectId}`].join('\n'));
+    {
+      const rows = [`root: ${this.root}`];
+      const current = apps.current;
+      if(current) {
+        rows.push(`app: ${apps.current.id} @ ${apps.current.projectId}`);
+      }
+      p.log.info(rows.join('\n'));
+    }
 
     const tool = await p.select({
-      message: 'select a tool',
+      message: 'tools',
       options: [
         {
           value: 'use',
           label: 'select an app',
         },
-        {
+        apps.current && {
           value: 'deploy',
           label: 'deploy current app',
         },
-      ],
+      ].filter(isTruthy),
     });
 
     if (p.isCancel(tool)) {

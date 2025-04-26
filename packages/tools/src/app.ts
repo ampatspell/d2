@@ -1,10 +1,65 @@
 import { join } from 'node:path';
 import type { Apps } from './apps';
-import { readJSON } from './utils';
+import { readJSON, writeString } from './utils';
+import dedent from 'dedent-js';
+
+const firebase_rc = (app: App) => dedent`
+  {
+    "projects": {
+      "default": "${app.projectId}"
+    }
+  }
+`;
+
+const dot_env = (app: App) => dedent`
+  ADMIN_EMAIL=${app.admin}
+  REGION=${app.region}
+`;
+
+const firebase_json = (app: App) => dedent`
+  {
+    "firestore": {
+      "rules": "rules/firestore.rules",
+      "indexes": "rules/firestore.indexes.json"
+    },
+    "functions": [
+      {
+        "source": "functions",
+        "codebase": "d2",
+        "ignore": ["node_modules", "firebase-debug.log", "firebase-debug.*.log", "test"],
+        "predeploy": [
+          "npm --prefix \"$RESOURCE_DIR\" run build"
+        ]
+      }
+    ],
+    "hosting": [
+      {
+        "source": "../app",
+        "target": "app",
+        "ignore": ["**/.*", "**/node_modules/**"],
+        "frameworksBackend": {
+          "region": "${app.region}"
+        }
+      },
+      {
+        "source": "../backend",
+        "target": "backend",
+        "ignore": ["**/.*", "**/node_modules/**"],
+        "frameworksBackend": {
+          "region": "${app.region}"
+        }
+      },
+    ],
+    "storage": {
+      "rules": "rules/storage.rules"
+    }
+  }
+`;
 
 export type AppConfig = {
   name?: string;
   admin: string;
+  region: string;
   firebase: {
     projectId: string;
   };
@@ -22,22 +77,35 @@ export class App {
   }
 
   get root() {
-    return join(this._apps.root, this.id);
+    return join(this._apps.appsRoot, this.id);
   }
 
   get isCurrent() {
-    return this._apps.app === this;
+    return this._apps.current === this;
   }
 
   get name() {
     return this.config.name ?? this.id;
   }
 
+  get admin() {
+    return this.config.admin;
+  }
+
   get projectId() {
     return this.config.firebase.projectId;
   }
 
+  get region() {
+    return this.config.region;
+  }
+
   async load() {
     this.config = (await readJSON(join(this.root, 'd2.json'))) as AppConfig;
+  }
+
+  async write() {
+    const firebase = this._apps.firebaseRoot;
+    await writeString(join(firebase, '.firebaserc'), firebase_rc(this));
   }
 }

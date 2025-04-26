@@ -1,6 +1,7 @@
 {
   "name": "d2 demo",
   "admin": "ampatspell@gmail.com",
+  "region": "europe-west1",
   "firebase": {
     "apiKey": "AIzaSyDwCGLTmvKCiCxIO9msehKyULJ_rilnEvw",
     "authDomain": "quatsch-38adf.firebaseapp.com",

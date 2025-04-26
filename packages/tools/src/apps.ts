@@ -3,44 +3,68 @@ import { join } from 'node:path';
 import type { Tools } from './tools';
 import { glob } from 'node:fs/promises';
 import { App } from './app';
+import { readJSON } from './utils';
+
+type FirebaseRc = {
+  projects: {
+    default: string;
+  }
+};
 
 export class Apps {
-  private readonly _app: Tools;
+  private readonly _tools: Tools;
 
   all!: App[];
+  currentProjectId?: string;
 
   constructor(app: Tools) {
-    this._app = app;
+    this._tools = app;
   }
 
-  get root() {
-    return join(this._app.root, 'apps');
+  get appsRoot() {
+    return join(this._tools.root, 'apps');
   }
+
+  get firebaseRoot() {
+      return join(this._tools.root, 'packages/firebase');
+    }
 
   async load() {
-    const apps: App[] = [];
-    for await (const entry of glob(`${this.root}/*`, { withFileTypes: true })) {
-      if (entry.isDirectory()) {
-        apps.push(new App(this, entry.name));
+    const all = async () => {
+      const apps: App[] = [];
+      for await (const entry of glob(`${this.appsRoot}/*`, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          apps.push(new App(this, entry.name));
+        }
       }
+      await Promise.all(apps.map((app) => app.load()));
+      return apps;
     }
-    await Promise.all(apps.map((app) => app.load()));
-    this.all = apps;
+
+    const firebase = async () => {
+      const json = await readJSON(join(this.firebaseRoot, '.firebaserc'), true) as FirebaseRc | undefined;
+      return json?.projects.default;
+    }
+
+    this.all = await all();
+    this.currentProjectId = await firebase();
   }
 
-  get app() {
-    return this.all[0];
+  get current() {
+    const projectId = this.currentProjectId;
+    if(projectId) {
+      return this.all.find(app => app.projectId === projectId);
+    }
   }
 
   async select(app: App) {
-    await this.load();
-    console.log(app);
+    await app.write();
   }
 
   async index() {
     const app = await p.select<App>({
       message: `select an app`,
-      initialValue: this.app,
+      initialValue: this.current,
       options: this.all.map((value) => ({ value, label: value.id, hint: value.isCurrent ? 'current' : undefined })),
     });
 
