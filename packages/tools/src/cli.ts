@@ -1,6 +1,6 @@
-import { join } from "node:path";
-import { dirnameForFileURL, silence } from "./utils";
-import { Tools } from "./tools";
+import { join } from 'node:path';
+import { dirnameForFileURL, silence } from './utils';
+import { Tools } from './tools';
 
 silence();
 

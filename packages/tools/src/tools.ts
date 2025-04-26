@@ -25,9 +25,9 @@ export class Tools {
     const apps = this.apps;
     await apps.load();
 
-    p.log.info([`root: ${this.root}`, `app: ${apps.app.name}`].join('\n'));
+    p.log.info([`root: ${this.root}`, `app: ${apps.app.id} @ ${apps.app.projectId}`].join('\n'));
 
-    let tool = await p.select({
+    const tool = await p.select({
       message: 'select a tool',
       options: [
         {
@@ -38,16 +38,16 @@ export class Tools {
           value: 'deploy',
           label: 'deploy current app',
         },
-      ]
+      ],
     });
 
-    if(p.isCancel(tool)) {
+    if (p.isCancel(tool)) {
       p.outro(`see ya`);
     } else {
-      if(tool === 'use') {
+      if (tool === 'use') {
         await apps.index();
         await this.index();
-      } else if(tool === 'deploy') {
+      } else if (tool === 'deploy') {
         p.outro('deploy…');
       }
     }
