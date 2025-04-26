@@ -167,12 +167,19 @@ export class App {
     ]);
   }
 
-  async deploy() {
+  async deploy(log: (message: string) => void) {
     const root = this._apps.firebaseRoot;
+
+    log('prepare for deploy…');
 
     await this.write('backend');
     await exec(`firebase use default`, root);
+
+    log('deploying backend, functions and security rules…');
+
     await exec('firebase deploy', root);
+
+    log('deploying frontend…');
 
     await this.write('frontend');
     await exec('firebase deploy --only hosting', root);
