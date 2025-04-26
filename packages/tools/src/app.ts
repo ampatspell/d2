@@ -9,11 +9,13 @@ const firebase_rc = (app: App) => dedent`
       "default": "${app.projectId}"
     }
   }
+
 `;
 
-const dot_env = (app: App) => dedent`
+const firebase_dot_env = (app: App) => dedent`
   ADMIN_EMAIL=${app.admin}
   REGION=${app.region}
+
 `;
 
 const firebase_json = (app: App) => dedent`
@@ -28,7 +30,7 @@ const firebase_json = (app: App) => dedent`
         "codebase": "d2",
         "ignore": ["node_modules", "firebase-debug.log", "firebase-debug.*.log", "test"],
         "predeploy": [
-          "npm --prefix \"$RESOURCE_DIR\" run build"
+          "npm --prefix \\"$RESOURCE_DIR\\" run build"
         ]
       }
     ],
@@ -54,6 +56,7 @@ const firebase_json = (app: App) => dedent`
       "rules": "rules/storage.rules"
     }
   }
+
 `;
 
 export type AppConfig = {
@@ -106,6 +109,10 @@ export class App {
 
   async write() {
     const firebase = this._apps.firebaseRoot;
-    await writeString(join(firebase, '.firebaserc'), firebase_rc(this));
+    await Promise.all([
+      writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
+      writeString(join(firebase, 'firebase.json'), firebase_json(this)),
+      writeString(join(firebase, 'functions', `.env.${this.projectId}`), firebase_dot_env(this)),
+    ]);
   }
 }
