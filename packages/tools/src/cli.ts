@@ -1,13 +1,9 @@
 import { join } from "node:path";
 import { dirnameForFileURL, silence } from "./utils";
-import { Application } from "./app";
+import { Tools } from "./tools";
 
 silence();
 
 const root = join(dirnameForFileURL(import.meta.url), '..', '..', '..');
 
-const app = new Application({
-  root,
-});
-
-app.run();
+new Tools({ root }).run();
