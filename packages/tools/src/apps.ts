@@ -26,8 +26,12 @@ export class Apps {
   }
 
   get firebaseRoot() {
-      return join(this._tools.root, 'packages/firebase');
-    }
+    return join(this._tools.root, 'packages/firebase');
+  }
+
+  get backendRoot() {
+    return join(this._tools.root, 'packages/backend');
+  }
 
   async load() {
     const all = async () => {
