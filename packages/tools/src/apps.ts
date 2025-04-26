@@ -54,11 +54,12 @@ export class Apps {
     this.currentProjectId = await firebase();
   }
 
-  get current() {
+  get current(): App | undefined {
     const projectId = this.currentProjectId;
     if(projectId) {
       return this.all.find(app => app.projectId === projectId);
     }
+    return undefined;
   }
 
   async select(app: App) {

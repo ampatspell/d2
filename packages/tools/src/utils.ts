@@ -9,9 +9,9 @@ export function isTruthy<T>(value?: T | undefined | null | false): value is T {
   return !!value;
 }
 
-export const exec = (command: string) => {
+export const exec = (command: string, cwd: string | undefined) => {
   return new Promise((resolve, reject) => {
-    const shell = child.spawn(command, [], { stdio: 'inherit', shell: true });
+    const shell = child.spawn(command, [], { stdio: 'inherit', shell: true, cwd });
     shell.on('error', (error) => {
       console.log(error);
     });

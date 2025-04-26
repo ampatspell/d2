@@ -1,12 +1,24 @@
 import { join } from 'node:path';
 import type { Apps } from './apps';
-import { readJSON, writeString } from './utils';
+import { exec, readJSON, writeString } from './utils';
 import dedent from 'dedent-js';
 
 const firebase_rc = (app: App) => dedent`
   {
     "projects": {
       "default": "${app.projectId}"
+    },
+    "targets": {
+      "${app.projectId}": {
+        "hosting": {
+          "frontend": [
+            "${app.projectId}"
+          ],
+          "backend": [
+            "${app.projectId}-backend"
+          ]
+        }
+      }
     }
   }
 
@@ -36,8 +48,8 @@ const firebase_json = (app: App) => dedent`
     ],
     "hosting": [
       {
-        "source": "../app",
-        "target": "app",
+        "source": "../../apps/${app.id}",
+        "target": "frontend",
         "ignore": ["**/.*", "**/node_modules/**"],
         "frameworksBackend": {
           "region": "${app.region}"
@@ -50,7 +62,7 @@ const firebase_json = (app: App) => dedent`
         "frameworksBackend": {
           "region": "${app.region}"
         }
-      },
+      }
     ],
     "storage": {
       "rules": "rules/storage.rules"
@@ -88,7 +100,7 @@ export class App {
     this.id = id;
   }
 
-  get root() {
+  get frontendRoot() {
     return join(this._apps.appsRoot, this.id);
   }
 
@@ -117,13 +129,13 @@ export class App {
   }
 
   async load() {
-    this.config = (await readJSON(join(this.root, 'd2.json'))) as AppConfig;
+    this.config = (await readJSON(join(this.frontendRoot, 'd2.json'))) as AppConfig;
   }
 
   async write() {
     const firebase = this._apps.firebaseRoot;
     const backend = this._apps.backendRoot;
-    const frontend = this.root;
+    const frontend = this.frontendRoot;
     await Promise.all([
       writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
       writeString(join(firebase, 'firebase.json'), firebase_json(this)),
@@ -131,5 +143,11 @@ export class App {
       writeString(join(backend, '.env'), backend_env(this)),
       writeString(join(frontend, '.env'), frontend_env(this)),
     ]);
+  }
+
+  async deploy() {
+    await this.write();
+    await exec(`firebase use default`, this._apps.firebaseRoot);
+    await exec('npm run deploy', this._apps.firebaseRoot);
   }
 }

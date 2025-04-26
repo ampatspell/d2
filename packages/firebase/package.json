@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "functions:build": "(cd functions && npm run build)",
-    "firebase:deploy:all": "firebase deploy",
-    "deploy:all": "npm run functions:build && npm run firebase:deploy:all"
+    "firebase:deploy": "firebase deploy",
+    "deploy": "npm run functions:build && npm run firebase:deploy"
   }
 }

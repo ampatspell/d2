@@ -25,12 +25,12 @@ export class Tools {
 
     const { apps } = this;
     await apps.load();
+    const current = apps.current;
 
     {
       const rows = [`root: ${this.root}`];
-      const current = apps.current;
       if(current) {
-        rows.push(`app: ${apps.current.id} @ ${apps.current.projectId}`);
+        rows.push(`app: ${current.id} @ ${current.projectId}`);
       }
       p.log.info(rows.join('\n'));
     }
@@ -42,7 +42,7 @@ export class Tools {
           value: 'use',
           label: 'select an app',
         },
-        apps.current && {
+        current && {
           value: 'deploy',
           label: 'deploy current app',
         },
@@ -56,7 +56,9 @@ export class Tools {
         await apps.index();
         await this.index();
       } else if (tool === 'deploy') {
-        p.outro('deploy…');
+        if(current) {
+          await current.deploy();
+        }
       }
     }
   }
