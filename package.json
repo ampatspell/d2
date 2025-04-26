@@ -7,7 +7,6 @@
   "workspaces": [
     "./packages/d2",
     "./packages/backend",
-    "./packages/firebase",
     "./packages/firebase/functions",
     "./packages/tools",
     "./apps/*"
