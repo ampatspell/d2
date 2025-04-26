@@ -169,10 +169,14 @@ export class App {
 
   async deploy() {
     const root = this._apps.firebaseRoot;
+
     await this.write('backend');
     await exec(`firebase use default`, root);
     await exec('firebase deploy', root);
+
     await this.write('frontend');
     await exec('firebase deploy --only hosting', root);
+
+    await this.write();
   }
 }
