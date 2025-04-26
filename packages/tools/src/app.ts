@@ -30,47 +30,68 @@ const firebase_dot_env = (app: App) => dedent`
 
 `;
 
-const firebase_json = (app: App) => dedent`
-  {
-    "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
-    "firestore": {
-      "rules": "rules/firestore.rules",
-      "indexes": "rules/firestore.indexes.json"
-    },
-    "functions": [
-      {
-        "source": "functions",
-        "codebase": "d2",
-        "ignore": ["node_modules", "firebase-debug.log", "firebase-debug.*.log", "test"],
-        "predeploy": [
-          "npm --prefix \\"$RESOURCE_DIR\\" run build"
-        ]
-      }
-    ],
-    "hosting": [
-      {
-        "source": "../../apps/${app.id}",
-        "target": "frontend",
-        "ignore": ["**/.*", "**/node_modules/**"],
-        "frameworksBackend": {
-          "region": "${app.region}"
+type Phase = 'frontend' | 'backend';
+
+const firebase_json = (app: App, phase: Phase | undefined) => {
+  const backend = `
+        {
+          "source": "../backend",
+          "target": "backend",
+          "ignore": ["**/.*", "**/node_modules/**"],
+          "frameworksBackend": {
+            "region": "${app.region}"
+          }
         }
-      },
-      {
-        "source": "../backend",
-        "target": "backend",
-        "ignore": ["**/.*", "**/node_modules/**"],
-        "frameworksBackend": {
-          "region": "${app.region}"
+  `;
+  const frontend = `
+        {
+          "source": "../../apps/${app.id}",
+          "target": "frontend",
+          "ignore": ["**/.*", "**/node_modules/**"],
+          "frameworksBackend": {
+            "region": "${app.region}"
+          }
         }
-      }
-    ],
-    "storage": {
-      "rules": "rules/storage.rules"
-    }
+  `;
+
+  let sites: string[] = [];
+  if(phase === 'backend') {
+    sites = [backend];
+  } else if(phase === 'frontend') {
+    sites = [frontend];
+  } else {
+    sites = [backend, frontend];
   }
 
-`;
+  const hosting = sites.join(',\n');
+
+  return dedent`
+    {
+      "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
+      "firestore": {
+        "rules": "rules/firestore.rules",
+        "indexes": "rules/firestore.indexes.json"
+      },
+      "functions": [
+        {
+          "source": "functions",
+          "codebase": "d2",
+          "ignore": ["node_modules", "firebase-debug.log", "firebase-debug.*.log", "test"],
+          "predeploy": [
+            "npm --prefix \\"$RESOURCE_DIR\\" run build"
+          ]
+        }
+      ],
+      "hosting": [
+        ${hosting}
+      ],
+      "storage": {
+        "rules": "rules/storage.rules"
+      }
+    }
+
+  `;
+};
 
 const backend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
@@ -133,13 +154,13 @@ export class App {
     this.config = (await readJSON(join(this.frontendRoot, 'd2.json'))) as AppConfig;
   }
 
-  async write() {
+  async write(phase?: Phase) {
     const firebase = this._apps.firebaseRoot;
     const backend = this._apps.backendRoot;
     const frontend = this.frontendRoot;
     await Promise.all([
       writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
-      writeString(join(firebase, 'firebase.json'), firebase_json(this)),
+      writeString(join(firebase, 'firebase.json'), firebase_json(this, phase)),
       writeString(join(firebase, 'functions', `.env.${this.projectId}`), firebase_dot_env(this)),
       writeString(join(backend, '.env'), backend_env(this)),
       writeString(join(frontend, '.env'), frontend_env(this)),
@@ -147,8 +168,11 @@ export class App {
   }
 
   async deploy() {
-    await this.write();
-    await exec(`firebase use default`, this._apps.firebaseRoot);
-    await exec('npm run deploy', this._apps.firebaseRoot);
+    const root = this._apps.firebaseRoot;
+    await this.write('backend');
+    await exec(`firebase use default`, root);
+    await exec('firebase deploy', root);
+    await this.write('frontend');
+    await exec('firebase deploy --only hosting', root);
   }
 }
