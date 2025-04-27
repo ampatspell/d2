@@ -1,7 +1,8 @@
 import child from 'node:child_process';
 import { mkdir, writeFile as _writeFile, readFile as _readFile } from 'fs/promises';
-import { dirname } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
 
 export const dirnameForFileURL = (url: string) => dirname(fileURLToPath(url));
 
@@ -9,7 +10,7 @@ export function isTruthy<T>(value?: T | undefined | null | false): value is T {
   return !!value;
 }
 
-export const exec = (command: string, cwd: string | undefined) => {
+export const exec = (command: string, cwd?: string) => {
   return new Promise((resolve, reject) => {
     const shell = child.spawn(command, [], { stdio: 'inherit', shell: true, cwd });
     shell.on('error', (error) => {
@@ -24,6 +25,26 @@ export const exec = (command: string, cwd: string | undefined) => {
     });
   });
 };
+
+export const symlink = async (opts: { source: string; target: string; }) => {
+  const target = resolve(opts.target);
+  const source = relative(dirname(target), resolve(opts.source));
+
+  if(!existsSync(target)) {
+    await mkdirp(dirname(target));
+    await exec(`ln -s "${source}" "${target}"`);
+  }
+}
+
+export const symlinks = async (opts: { source: string; target: string; paths: string[] }) => {
+  const { source, target, paths } = opts;
+  await Promise.all(paths.map(async path => {
+    await symlink({
+      source: join(source, path),
+      target: join(target, path),
+    });
+  }));
+}
 
 export const mkdirp = async (path: string) => {
   await mkdir(path, { recursive: true });

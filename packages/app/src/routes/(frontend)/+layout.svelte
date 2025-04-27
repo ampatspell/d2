@@ -1,19 +1,22 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import Layout from '$d2/components/layout.svelte';
+  import type { Snippet } from 'svelte';
 
   let { children }: { children: Snippet } = $props();
+
+  let fonts = [
+    'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'
+  ];
 </script>
 
-<svelte:head>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</svelte:head>
-
-<div class="layout">
-  {@render children()}
-</div>
+<Layout {fonts}>
+  <div class="frontend">
+    {@render children()}
+  </div>
+</Layout>
 
 <style lang="scss">
-  .layout {
+  .frontend {
     flex: 1;
     display: flex;
     flex-direction: column;
