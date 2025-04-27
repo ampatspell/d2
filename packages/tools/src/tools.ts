@@ -43,8 +43,12 @@ export class Tools {
           label: 'select an app',
         },
         current && {
+          value: 'symlink',
+          label: `symlink "${current.id}"`,
+        },
+        current && {
           value: 'deploy',
-          label: 'deploy current app',
+          label: `deploy "${current.id}"`,
         },
       ].filter(isTruthy),
     });
@@ -55,6 +59,11 @@ export class Tools {
       if (tool === 'use') {
         await apps.index();
         await this.index();
+      } else if (tool === 'symlink') {
+        if(current) {
+          await current.symlink();
+          p.outro('done');
+        }
       } else if (tool === 'deploy') {
         if(current) {
           await current.deploy();

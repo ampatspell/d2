@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import type { Apps } from './apps';
-import { exec, readJSON, writeString } from './utils';
+import { exec, readJSON, symlinks, writeString } from './utils';
 import dedent from 'dedent-js';
 
 const firebase_rc = (app: App) => dedent`
@@ -121,6 +121,19 @@ export class App {
       writeString(join(app, '.env'), frontend_env(this)),
       writeString(join(frontend, '.env'), frontend_env(this)),
     ]);
+  }
+
+  async symlink() {
+    await this.write();
+    const source = this._apps.appRoot;
+    const target = this.frontendRoot;
+    await symlinks({ paths: [
+      'vite.config.ts',
+      'tsconfig.json',
+      'svelte.config.js',
+      'eslint.config.js',
+      '.prettierrc'
+    ], source, target });
   }
 
   async deploy() {

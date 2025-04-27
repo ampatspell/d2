@@ -1,8 +1,8 @@
 import child from 'node:child_process';
-import { mkdir, writeFile as _writeFile, readFile as _readFile } from 'fs/promises';
+import { mkdir, writeFile as _writeFile, readFile as _readFile, unlink } from 'fs/promises';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 
 export const dirnameForFileURL = (url: string) => dirname(fileURLToPath(url));
 
@@ -30,10 +30,13 @@ export const symlink = async (opts: { source: string; target: string; }) => {
   const target = resolve(opts.target);
   const source = relative(dirname(target), resolve(opts.source));
 
-  if(!existsSync(target)) {
-    await mkdirp(dirname(target));
-    await exec(`ln -s "${source}" "${target}"`);
+  const stat = statSync(target);
+  if(!stat.isSymbolicLink()) {
+    await unlink(target);
   }
+
+  await mkdirp(dirname(target));
+  await exec(`ln -s "${source}" "${target}"`);
 }
 
 export const symlinks = async (opts: { source: string; target: string; paths: string[] }) => {
