@@ -1,24 +1,12 @@
 import { join } from 'node:path';
 import type { Apps } from './apps';
-import { exec, readJSON, writeString } from './utils';
+import { exec, exists, readJSON, symlinks, writeString } from './utils';
 import dedent from 'dedent-js';
 
 const firebase_rc = (app: App) => dedent`
   {
     "projects": {
       "default": "${app.projectId}"
-    },
-    "targets": {
-      "${app.projectId}": {
-        "hosting": {
-          "frontend": [
-            "${app.projectId}"
-          ],
-          "backend": [
-            "${app.projectId}-backend"
-          ]
-        }
-      }
     }
   }
 
@@ -30,37 +18,7 @@ const firebase_dot_env = (app: App) => dedent`
 
 `;
 
-type Phase = 'frontend' | 'backend';
-
-const firebase_json = (app: App, phase: Phase | undefined) => {
-  const backend = `{
-      "source": "../backend",
-      "target": "backend",
-      "ignore": ["**/.*", "**/node_modules/**"],
-      "frameworksBackend": {
-        "region": "${app.region}"
-      }
-    }`;
-  const frontend = `{
-      "source": "../../apps/${app.id}",
-      "target": "frontend",
-      "ignore": ["**/.*", "**/node_modules/**"],
-      "frameworksBackend": {
-        "region": "${app.region}"
-      }
-    }`;
-
-  let sites: string[] = [];
-  if(phase === 'backend') {
-    sites = [backend];
-  } else if(phase === 'frontend') {
-    sites = [frontend];
-  } else {
-    sites = [backend, frontend];
-  }
-
-  const hosting = sites.join(',\n    ');
-
+const firebase_json = (app: App) => {
   return dedent`
     {
       "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
@@ -78,9 +36,13 @@ const firebase_json = (app: App, phase: Phase | undefined) => {
           ]
         }
       ],
-      "hosting": [
-        ${hosting}
-      ],
+      "hosting": {
+        "source": "../../apps/${app.id}",
+        "ignore": ["**/.*", "**/node_modules/**"],
+        "frameworksBackend": {
+          "region": "${app.region}"
+        }
+      },
       "storage": {
         "rules": "rules/storage.rules"
       }
@@ -89,17 +51,74 @@ const firebase_json = (app: App, phase: Phase | undefined) => {
   `;
 };
 
-const backend_env = (app: App) => dedent`
+const frontend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
   PUBLIC_FIREBASE_REGION=${app.region}
-  PUBLIC_APP_NAME=${app.name}
+  PUBLIC_APP_NAME=${app.id}
 
 `;
 
-const frontend_env = (app: App) => backend_env(app);
+const frontend_layout = () => dedent`
+  <script lang="ts">
+    import Layout from '$d2/components/layout.svelte';
+    import type { Snippet } from 'svelte';
+
+    let { children }: { children: Snippet } = $props();
+
+    let fonts = [
+      'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'
+    ];
+  </script>
+
+  <Layout {fonts}>
+    <div class="frontend">
+      {@render children()}
+    </div>
+  </Layout>
+
+  <style lang="scss">
+    .frontend {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: default;
+    }
+  </style>
+`;
+
+const frontend_page = () => dedent`
+  <script lang="ts">
+    import { PUBLIC_FIREBASE, PUBLIC_APP_NAME } from "$env/static/public";
+    let config = JSON.parse(PUBLIC_FIREBASE);
+  </script>
+
+  <div class="page">
+    <div class="row">
+      {PUBLIC_APP_NAME} / {config.projectId}
+    </div>
+    <div class="row">
+      <a href="/backend">backend</a>
+    </div>
+  </div>
+
+  <style lang="scss">
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+    }
+  </style>
+
+`;
 
 export type AppConfig = {
-  name?: string;
   admin: string;
   region: string;
   firebase: {
@@ -126,10 +145,6 @@ export class App {
     return this._apps.current === this;
   }
 
-  get name() {
-    return this.config.name ?? this.id;
-  }
-
   get admin() {
     return this.config.admin;
   }
@@ -150,36 +165,48 @@ export class App {
     this.config = (await readJSON(join(this.frontendRoot, 'd2.json'))) as AppConfig;
   }
 
-  async write(phase?: Phase) {
+  async write() {
     const firebase = this._apps.firebaseRoot;
-    const backend = this._apps.backendRoot;
+    const app = this._apps.appRoot;
     const frontend = this.frontendRoot;
     await Promise.all([
       writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
-      writeString(join(firebase, 'firebase.json'), firebase_json(this, phase)),
+      writeString(join(firebase, 'firebase.json'), firebase_json(this)),
       writeString(join(firebase, 'functions', `.env.${this.projectId}`), firebase_dot_env(this)),
-      writeString(join(backend, '.env'), backend_env(this)),
+      writeString(join(app, '.env'), frontend_env(this)),
       writeString(join(frontend, '.env'), frontend_env(this)),
     ]);
   }
 
-  async deploy(log: (message: string) => void) {
-    const root = this._apps.firebaseRoot;
-
-    log('prepare for deploy…');
-
-    await this.write('backend');
-    await exec(`firebase use default`, root);
-
-    log('deploying backend, functions and security rules…');
-
-    await exec('firebase deploy', root);
-
-    log('deploying frontend…');
-
-    await this.write('frontend');
-    await exec('firebase deploy --only hosting', root);
-
+  async symlink(log: { warning: (message: string) => void }) {
     await this.write();
+    const source = this._apps.appRoot;
+    const target = this.frontendRoot;
+    await symlinks({ paths: [
+      'vite.config.ts',
+      'tsconfig.json',
+      'svelte.config.js',
+      'eslint.config.js',
+      '.prettierrc',
+      'src/d2',
+      'src/routes/(backend)',
+    ], source, target });
+
+    if(!exists({ path: 'src/routes/(frontend)', target })) {
+      await Promise.all([
+        writeString(join(target, 'src/routes/(frontend)/+layout.svelte'), frontend_layout()),
+        writeString(join(target, 'src/routes/(frontend)/+page.svelte'), frontend_page()),
+      ]);
+    }
+    if(exists({ path: 'src/routes/+page.svelte', target })) {
+      log.warning('please move src/routes/+page.svelte to src/routes/(frontend)');
+    }
+  }
+
+  async deploy() {
+    const root = this._apps.firebaseRoot;
+    await this.write();
+    await exec(`firebase use default`, root);
+    await exec('firebase deploy', root);
   }
 }

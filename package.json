@@ -5,8 +5,7 @@
     "cli": "(cd packages/tools && npm run cli)"
   },
   "workspaces": [
-    "./packages/d2",
-    "./packages/backend",
+    "./packages/app",
     "./packages/firebase/functions",
     "./packages/tools",
     "./apps/*"
