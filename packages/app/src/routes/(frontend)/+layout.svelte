@@ -4,9 +4,7 @@
 
   let { children }: { children: Snippet } = $props();
 
-  let fonts = [
-    'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'
-  ];
+  let fonts = ['https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'];
 </script>
 
 <Layout {fonts}>

@@ -1,0 +1,85 @@
+import { type FirebaseOptions, getApps, initializeApp } from 'firebase/app';
+import { type Auth, browserLocalPersistence, initializeAuth } from 'firebase/auth';
+import { type FirebaseStorage, getStorage } from 'firebase/storage';
+import { type Functions, getFunctions } from 'firebase/functions';
+import {
+  type DocumentReference,
+  type Firestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
+import { browser } from '$app/environment';
+import { serialized } from '../utils/object';
+import { BaseModel } from '../model/model.svelte';
+
+export { type FirebaseOptions };
+
+export class Firebase extends BaseModel {
+  private options!: FirebaseOptions;
+  readonly projectId = $derived.by(() => this.options.projectId);
+
+  private _firestore?: Firestore;
+  private _auth?: Auth;
+  private _storage?: FirebaseStorage;
+  private _functions?: Functions;
+
+  initialize(options: FirebaseOptions) {
+    this.options = options;
+  }
+
+  get app() {
+    let [app] = getApps();
+    if (!app) {
+      app = initializeApp(this.options);
+    }
+    return app;
+  }
+
+  get firestore() {
+    if (!this._firestore) {
+      this._firestore = initializeFirestore(this.app, {
+        localCache: browser ? persistentLocalCache({ tabManager: persistentMultipleTabManager() }) : undefined,
+      });
+    }
+    return this._firestore;
+  }
+
+  get auth() {
+    if (!this._auth) {
+      this._auth = initializeAuth(this.app, { persistence: browserLocalPersistence });
+    }
+    return this._auth;
+  }
+
+  get storage() {
+    if (!this._storage) {
+      this._storage = getStorage(this.app);
+    }
+    return this._storage;
+  }
+
+  get functions() {
+    if (!this._functions) {
+      this._functions = getFunctions(this.app);
+    }
+    return this._functions;
+  }
+
+  get dashboardUrl() {
+    return `https://console.firebase.google.com/u/0/project/${this.projectId}`;
+  }
+
+  openDashboard() {
+    window.open(this.dashboardUrl);
+  }
+
+  openDocumentReference(ref: DocumentReference) {
+    const path = encodeURIComponent(ref.path);
+    window.open(`${this.dashboardUrl}/firestore/data/${path}`);
+  }
+
+  serialized = $derived(serialized(this, ['projectId']));
+}
+
+export const firebase = new Firebase();

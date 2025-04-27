@@ -1,12 +1,9 @@
 <script lang="ts">
-  import Dark from "$d2/components/dark/dark.svelte";
-
+  import Dark from '$d2/components/dark/dark.svelte';
 </script>
 
 <Dark>
-  <div class="page">
-    Backend
-  </div>
+  <div class="page">Backend</div>
 </Dark>
 
 <style lang="scss">
