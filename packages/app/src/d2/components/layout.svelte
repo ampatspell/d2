@@ -1,4 +1,5 @@
 <script lang="ts">
+  // import Stats from './dark/stats.svelte';
   import './layout.scss';
   import type { Snippet } from 'svelte';
 
@@ -17,3 +18,5 @@
 </svelte:head>
 
 {@render children()}
+
+<!-- <Stats /> -->
