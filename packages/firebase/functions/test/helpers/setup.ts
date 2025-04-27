@@ -3,6 +3,7 @@ import Application from '../../src/app';
 import functionsTest from 'firebase-functions-test';
 import config from './config.json';
 import { FeaturesList } from 'firebase-functions-test/lib/features';
+import { Param } from 'firebase-functions/lib/params/types';
 
 // https://github.com/firebase/firebase-admin-node/issues/2658
 const test = functionsTest(config.firebase, config.serviceAccountKeyPath);
@@ -28,13 +29,20 @@ type Setup = {
   test: FeaturesList;
 };
 
+const param = <T extends string>(value: T) => {
+  return {
+    value: () => value,
+  } as unknown as Param<T>;
+}
+
 export const setup = (caller: Mocha.Suite) => {
   caller.beforeEach(() => {
     const app = new Application({
       instance,
       logger,
       config: {
-        adminEmail: () => 'ampatspell@gmail.com',
+        adminEmail: param('ampatspell@gmail.com'),
+        region: param('europe-west1'),
       },
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

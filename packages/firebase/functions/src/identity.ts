@@ -52,7 +52,8 @@ export class IdentityService {
   }
 
   isAdmin(user: UserRecord) {
-    return this.getRole(user) === ADMIN || user.email === this.app.config.adminEmail();
+    const admin = this.app.config.adminEmail.value();
+    return this.getRole(user) === ADMIN || user.email === admin;
   }
 
   async isAdminByUid(uid: string) {

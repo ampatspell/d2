@@ -9,6 +9,8 @@ import {
 import { config } from './config';
 import { isUserRole } from '../shared/documents';
 
+functions.setGlobalOptions({ region: config.region });
+
 const instance = initializeApp();
 const app = new Application({ instance, logger, config: config });
 
