@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import type { Apps } from './apps';
-import { exec, readJSON, symlinks, writeString } from './utils';
+import { exec, exists, readJSON, symlinks, writeString } from './utils';
 import dedent from 'dedent-js';
 
 const firebase_rc = (app: App) => dedent`
@@ -55,6 +55,66 @@ const frontend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
   PUBLIC_FIREBASE_REGION=${app.region}
   PUBLIC_APP_NAME=${app.name}
+
+`;
+
+const frontend_layout = () => dedent`
+  <script lang="ts">
+    import Layout from '$d2/components/layout.svelte';
+    import type { Snippet } from 'svelte';
+
+    let { children }: { children: Snippet } = $props();
+
+    let fonts = [
+      'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'
+    ];
+  </script>
+
+  <Layout {fonts}>
+    <div class="frontend">
+      {@render children()}
+    </div>
+  </Layout>
+
+  <style lang="scss">
+    .frontend {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: default;
+    }
+  </style>
+`;
+
+const frontend_page = () => dedent`
+  <script lang="ts">
+    import { PUBLIC_FIREBASE, PUBLIC_APP_NAME } from "$env/static/public";
+    let config = JSON.parse(PUBLIC_FIREBASE);
+  </script>
+
+  <div class="page">
+    <div class="row">
+      {PUBLIC_APP_NAME} / {config.projectId}
+    </div>
+    <div class="row">
+      <a href="/backend">backend</a>
+    </div>
+  </div>
+
+  <style lang="scss">
+    .page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+      padding: 50px;
+    }
+  </style>
 
 `;
 
@@ -123,7 +183,7 @@ export class App {
     ]);
   }
 
-  async symlink() {
+  async symlink(log: { warning: (message: string) => void }) {
     await this.write();
     const source = this._apps.appRoot;
     const target = this.frontendRoot;
@@ -132,8 +192,20 @@ export class App {
       'tsconfig.json',
       'svelte.config.js',
       'eslint.config.js',
-      '.prettierrc'
+      '.prettierrc',
+      'src/d2',
+      'src/routes/(backend)',
     ], source, target });
+
+    if(!exists({ path: 'src/routes/(frontend)', target })) {
+      await Promise.all([
+        writeString(join(target, 'src/routes/(frontend)/+layout.svelte'), frontend_layout()),
+        writeString(join(target, 'src/routes/(frontend)/+page.svelte'), frontend_page()),
+      ]);
+    }
+    if(exists({ path: 'src/routes/+page.svelte', target })) {
+      log.warning('please move src/routes/+page.svelte to src/routes/(frontend)');
+    }
   }
 
   async deploy() {

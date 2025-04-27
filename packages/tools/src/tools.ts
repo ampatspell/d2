@@ -61,7 +61,9 @@ export class Tools {
         await this.index();
       } else if (tool === 'symlink') {
         if(current) {
-          await current.symlink();
+          await current.symlink({
+            warning: (message: string) => p.log.warning(message),
+          });
           p.outro('done');
         }
       } else if (tool === 'deploy') {
