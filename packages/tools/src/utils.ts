@@ -28,40 +28,42 @@ export const exec = (command: string, cwd?: string) => {
 export const statOptional = (path: string) => {
   try {
     return statSync(path);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch(err: any) {
-    if(err.code === 'ENOENT') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    if (err.code === 'ENOENT') {
       return undefined;
     }
     throw err;
   }
-}
+};
 
-export const exists = (opts: { target: string, path: string }) => {
+export const exists = (opts: { target: string; path: string }) => {
   const stat = statOptional(join(opts.target, opts.path));
   return !!stat;
-}
+};
 
-export const symlink = async (opts: { source: string; target: string; }) => {
+export const symlink = async (opts: { source: string; target: string }) => {
   const target = resolve(opts.target);
   const source = relative(dirname(target), resolve(opts.source));
   const stat = statOptional(target);
-  if(stat && !stat.isSymbolicLink()) {
+  if (stat && !stat.isSymbolicLink()) {
     await unlink(target);
   }
   await mkdirp(dirname(target));
   await exec(`ln -s "${source}" "${target}"`);
-}
+};
 
 export const symlinks = async (opts: { source: string; target: string; paths: string[] }) => {
   const { source, target, paths } = opts;
-  await Promise.all(paths.map(async path => {
-    await symlink({
-      source: join(source, path),
-      target: join(target, path),
-    });
-  }));
-}
+  await Promise.all(
+    paths.map(async (path) => {
+      await symlink({
+        source: join(source, path),
+        target: join(target, path),
+      });
+    }),
+  );
+};
 
 export const mkdirp = async (path: string) => {
   await mkdir(path, { recursive: true });
@@ -75,9 +77,9 @@ export const writeString = async (path: string, data: string) => {
 export const readString = async (path: string, optional = false) => {
   try {
     return await _readFile(path, 'utf-8');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch(err: any) {
-    if(optional && err?.code === 'ENOENT') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    if (optional && err?.code === 'ENOENT') {
       return undefined;
     }
     throw err;
@@ -86,7 +88,7 @@ export const readString = async (path: string, optional = false) => {
 
 export const readJSON = async (path: string, optional = false) => {
   const string = await readString(path, optional);
-  if(string) {
+  if (string) {
     return JSON.parse(string);
   }
 };

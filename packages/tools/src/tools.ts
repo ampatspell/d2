@@ -29,7 +29,7 @@ export class Tools {
 
     {
       const rows = [`root: ${this.root}`];
-      if(current) {
+      if (current) {
         rows.push(`app: ${current.id} @ ${current.projectId}`);
       }
       p.log.info(rows.join('\n'));
@@ -60,14 +60,14 @@ export class Tools {
         await apps.index();
         await this.index();
       } else if (tool === 'symlink') {
-        if(current) {
+        if (current) {
           await current.symlink({
             warning: (message: string) => p.log.warning(message),
           });
           p.outro('done');
         }
       } else if (tool === 'deploy') {
-        if(current) {
+        if (current) {
           await current.deploy();
           p.outro('done');
         }

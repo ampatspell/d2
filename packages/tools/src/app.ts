@@ -118,6 +118,29 @@ const frontend_page = () => dedent`
 
 `;
 
+const svelte_config = () => dedent`
+  import adapter from '@sveltejs/adapter-node';
+  import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+  /** @type {import('@sveltejs/kit').Config} */
+  const config = {
+    vitePlugin: {
+      inspector: true,
+    },
+    preprocess: vitePreprocess(),
+    kit: {
+      adapter: adapter(),
+      alias: {
+        '$lib/*': 'src/lib/*',
+        '$d2/*': 'src/d2/*',
+        '$d2-shared/*': '../../firebase/functions/shared/*',
+      },
+    },
+  };
+
+  export default config;
+`;
+
 export type AppConfig = {
   admin: string;
   region: string;
@@ -169,6 +192,7 @@ export class App {
     const firebase = this._apps.firebaseRoot;
     const app = this._apps.appRoot;
     const frontend = this.frontendRoot;
+
     await Promise.all([
       writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
       writeString(join(firebase, 'firebase.json'), firebase_json(this)),
@@ -180,33 +204,39 @@ export class App {
 
   async symlink(log: { warning: (message: string) => void }) {
     await this.write();
+
     const source = this._apps.appRoot;
     const target = this.frontendRoot;
-    await symlinks({ paths: [
-      'vite.config.ts',
-      'tsconfig.json',
-      'svelte.config.js',
-      'eslint.config.js',
-      '.prettierrc',
-      'src/d2',
-      'src/routes/(backend)',
-    ], source, target });
+    await symlinks({
+      paths: [
+        'vite.config.ts',
+        'tsconfig.json',
+        'eslint.config.js',
+        '.prettierrc',
+        'src/d2',
+        'src/routes/(backend)',
+      ],
+      source,
+      target,
+    });
 
-    if(!exists({ path: 'src/routes/(frontend)', target })) {
+    await writeString(join(target, 'svelte.config.js'), svelte_config());
+
+    if (!exists({ path: 'src/routes/(frontend)', target })) {
       await Promise.all([
         writeString(join(target, 'src/routes/(frontend)/+layout.svelte'), frontend_layout()),
         writeString(join(target, 'src/routes/(frontend)/+page.svelte'), frontend_page()),
       ]);
     }
-    if(exists({ path: 'src/routes/+page.svelte', target })) {
+    if (exists({ path: 'src/routes/+page.svelte', target })) {
       log.warning('please move src/routes/+page.svelte to src/routes/(frontend)');
     }
   }
 
   async deploy() {
-    const root = this._apps.firebaseRoot;
     await this.write();
-    await exec(`firebase use default`, root);
-    await exec('firebase deploy', root);
+
+    const root = this._apps.firebaseRoot;
+    await exec('firebase deploy --project=default', root);
   }
 }

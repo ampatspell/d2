@@ -13,8 +13,6 @@
   let route = (node: NodeDocumentModel<never>) => `/backend/nodes/${node.id}`;
 
   $effect(() => subscribe(nodes));
-
-  setGlobal({ nodes });
 </script>
 
 <Nodes {id} {nodes} {route}>

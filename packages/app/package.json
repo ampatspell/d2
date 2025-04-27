@@ -13,6 +13,13 @@
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint ."
   },
+  "dependencies": {
+    "@firebase/auth": "^1.8.1",
+    "@firebase/firestore": "^4.7.5",
+    "@firebase/functions": "^0.11.10",
+    "@firebase/storage": "^0.13.4",
+    "firebase": "^11.0.2"
+  },
   "devDependencies": {
     "@eslint/compat": "^1.2.5",
     "@eslint/js": "^9.18.0",
@@ -30,13 +37,7 @@
     "svelte-check": "^4.0.0",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.20.0",
-    "vite": "^6.2.6",
-    "@firebase/auth": "^1.8.1",
-    "@firebase/firestore": "^4.7.5",
-    "@firebase/functions": "^0.11.10",
-    "@firebase/storage": "^0.13.4",
-    "firebase": "^11.0.2",
-    "sortablejs": "^1.15.6"
+    "vite": "^6.2.6"
   },
   "engines": {
     "node": "22"

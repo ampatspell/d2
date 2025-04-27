@@ -12,6 +12,7 @@ import {
 import { browser } from '$app/environment';
 import { serialized } from '../utils/object';
 import { BaseModel } from '../model/base.svelte';
+import { PUBLIC_FIREBASE, PUBLIC_FIREBASE_REGION } from '$env/static/public';
 
 export { type FirebaseOptions };
 
@@ -26,7 +27,8 @@ export class Firebase extends BaseModel {
   readonly projectId = $derived(this.options.projectId);
   readonly region = $derived(this._region);
 
-  initialize(options: FirebaseOptions, region?: string) {
+  constructor(options: FirebaseOptions, region?: string) {
+    super();
     this.options = options;
     this._region = region;
   }
@@ -85,4 +87,7 @@ export class Firebase extends BaseModel {
   serialized = $derived(serialized(this, ['projectId', 'region']));
 }
 
-export const firebase = new Firebase();
+const config = JSON.parse(PUBLIC_FIREBASE);
+const region = PUBLIC_FIREBASE_REGION;
+
+export const firebase = new Firebase(config, region);

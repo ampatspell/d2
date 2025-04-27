@@ -8,7 +8,7 @@ import { readJSON } from './utils';
 type FirebaseRc = {
   projects: {
     default: string;
-  }
+  };
 };
 
 export class Apps {
@@ -43,12 +43,12 @@ export class Apps {
       }
       await Promise.all(apps.map((app) => app.load()));
       return apps;
-    }
+    };
 
     const firebase = async () => {
-      const json = await readJSON(join(this.firebaseRoot, '.firebaserc'), true) as FirebaseRc | undefined;
+      const json = (await readJSON(join(this.firebaseRoot, '.firebaserc'), true)) as FirebaseRc | undefined;
       return json?.projects.default;
-    }
+    };
 
     this.all = await all();
     this.currentProjectId = await firebase();
@@ -56,8 +56,8 @@ export class Apps {
 
   get current(): App | undefined {
     const projectId = this.currentProjectId;
-    if(projectId) {
-      return this.all.find(app => app.projectId === projectId);
+    if (projectId) {
+      return this.all.find((app) => app.projectId === projectId);
     }
     return undefined;
   }

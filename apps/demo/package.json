@@ -13,6 +13,13 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint ."
 	},
+	"dependencies": {
+		"@firebase/auth": "^1.8.1",
+    "@firebase/firestore": "^4.7.5",
+    "@firebase/functions": "^0.11.10",
+    "@firebase/storage": "^0.13.4",
+    "firebase": "^11.0.2"
+	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
