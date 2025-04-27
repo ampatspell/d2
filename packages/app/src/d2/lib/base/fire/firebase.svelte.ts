@@ -11,21 +11,24 @@ import {
 } from 'firebase/firestore';
 import { browser } from '$app/environment';
 import { serialized } from '../utils/object';
-import { BaseModel } from '../model/model.svelte';
+import { BaseModel } from '../model/base.svelte';
 
 export { type FirebaseOptions };
 
 export class Firebase extends BaseModel {
   private options!: FirebaseOptions;
-  readonly projectId = $derived.by(() => this.options.projectId);
-
+  private _region?: string;
   private _firestore?: Firestore;
   private _auth?: Auth;
   private _storage?: FirebaseStorage;
   private _functions?: Functions;
 
-  initialize(options: FirebaseOptions) {
+  readonly projectId = $derived(this.options.projectId);
+  readonly region = $derived(this._region);
+
+  initialize(options: FirebaseOptions, region?: string) {
     this.options = options;
+    this._region = region;
   }
 
   get app() {
@@ -61,7 +64,7 @@ export class Firebase extends BaseModel {
 
   get functions() {
     if (!this._functions) {
-      this._functions = getFunctions(this.app);
+      this._functions = getFunctions(this.app, this.region);
     }
     return this._functions;
   }
@@ -79,7 +82,7 @@ export class Firebase extends BaseModel {
     window.open(`${this.dashboardUrl}/firestore/data/${path}`);
   }
 
-  serialized = $derived(serialized(this, ['projectId']));
+  serialized = $derived(serialized(this, ['projectId', 'region']));
 }
 
 export const firebase = new Firebase();

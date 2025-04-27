@@ -1,8 +1,9 @@
 import { untrack } from 'svelte';
 import type { FirebaseModel, FirebaseModelOptions } from './model.svelte.js';
 import { removeObject } from '../utils/array.js';
+import { BaseModel } from '../model/base.svelte.js';
 
-export class Stats {
+export class FireStats extends BaseModel {
   listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
 
   _registerListening(model: FirebaseModel<FirebaseModelOptions>) {
@@ -25,4 +26,4 @@ export class Stats {
   });
 }
 
-export const stats = new Stats();
+export const stats = new FireStats();

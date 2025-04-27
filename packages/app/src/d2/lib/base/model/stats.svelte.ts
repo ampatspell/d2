@@ -1,8 +1,9 @@
 import { untrack } from 'svelte';
 import type { HasSubscriber } from './subscriber.svelte';
 import { removeObject } from '../utils/array';
+import { BaseModel } from './base.svelte';
 
-export class Stats {
+export class ModelStats extends BaseModel {
   subscribed = $state<HasSubscriber[]>([]);
 
   _registerSubscribed(model: HasSubscriber) {
@@ -24,4 +25,4 @@ export class Stats {
   });
 }
 
-export const stats = new Stats();
+export const stats = new ModelStats();

@@ -1,20 +1,6 @@
-import { description } from '../utils/object';
 import { options, type OptionsInput } from '../utils/options';
+import { BaseModel } from './base.svelte';
 import { type HasSubscriber, Subscriber } from './subscriber.svelte';
-
-export type HasDescriptionAndSerialized = {
-  description?: string;
-  serialized?: unknown;
-};
-
-export class BaseModel implements HasDescriptionAndSerialized {
-  declare readonly serialized?: Record<string, unknown>;
-  readonly description = $derived.by(() => description(this, this.serialized));
-
-  toString() {
-    return this.description;
-  }
-}
 
 export class Model<O> extends BaseModel {
   protected readonly options: O;
