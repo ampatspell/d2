@@ -4,6 +4,7 @@
   import LucideActivity from '$d2/icons/lucide--activity.svelte';
   import LucideFlame from '$d2/icons/lucide--flame.svelte';
   import LucideSettings from '$d2/icons/lucide--settings.svelte';
+  import LucideFile from '$d2/icons/lucide--file.svelte';
 
   let { route }: { route: string } = $props();
 
@@ -26,6 +27,11 @@
       icon: LucideActivity,
       route: '/backend',
       current: equals,
+    },
+    {
+      icon: LucideFile,
+      route: '/backend/nodes',
+      current: startsWith,
     },
   ];
 

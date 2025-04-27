@@ -14,7 +14,7 @@
   <Dark>
     <Overflow overflow="y">
       <Table>
-        {#each listening as model}
+        {#each listening as model (model)}
           <Cell>
             <Row>
               <Content>

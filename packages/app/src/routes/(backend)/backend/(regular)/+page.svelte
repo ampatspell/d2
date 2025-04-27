@@ -1,9 +1,11 @@
 <script lang="ts">
+  import Dashboard from '$d2/components/backend/routes/dashboard/dashboard.svelte';
+  import Page from '$d2/components/dark/section/page/page.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
-  import Section from '$d2/components/dark/section/section.svelte';
-  import LucideActivity from '$d2/icons/lucide--activity.svelte';
 </script>
 
-<Section title="Backend" icon={LucideActivity}>
-  <Placeholder />
-</Section>
+<Dashboard>
+  <Page title="Dashboard">
+    <Placeholder />
+  </Page>
+</Dashboard>
