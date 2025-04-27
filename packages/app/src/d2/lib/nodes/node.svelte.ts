@@ -20,12 +20,16 @@ export class NodeDocumentModel<Type extends NodeType> extends Subscribable<NodeD
     await this.doc.save();
   }
 
+  async load() {
+    await this.doc.load();
+  }
+
   readonly isLoaded = $derived(isLoaded([this.doc]));
   readonly dependencies = [this.doc];
   readonly serialized = $derived(serialized(this, ['id']));
 
   static buildNew<Type extends NodeType>({ data }: { data: NodeData<Type> }) {
-    return new NodeDocumentModel({
+    return new this({
       doc: new Document<NodeData<Type>>({
         ref: fs.doc(nodesCollection),
         data,
@@ -38,4 +42,9 @@ export class NodeDocumentModel<Type extends NodeType> extends Subscribable<NodeD
       ref: fs.doc(nodesCollection, id),
     });
   }
+
+  static forId(id: string) {
+    return new this({ doc: this.documentForId(id) });
+  }
+
 }

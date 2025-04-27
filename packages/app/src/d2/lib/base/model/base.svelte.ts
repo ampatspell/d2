@@ -7,7 +7,7 @@ export type HasDescriptionAndSerialized = {
 
 export class BaseModel implements HasDescriptionAndSerialized {
   declare readonly serialized?: Record<string, unknown>;
-  readonly description = $derived.by(() => description(this, this.serialized));
+  readonly description = $derived(description(this, this.serialized));
 
   toString() {
     return this.description;

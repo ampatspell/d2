@@ -1,5 +1,5 @@
-import { scope } from './scope.js';
-import type { Size } from './types.js';
+import { scope } from './scope';
+import type { Size } from './types';
 
 export function round(value: number, decimalPlaces: number = 2) {
   const factor = Math.pow(10, decimalPlaces);

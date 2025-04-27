@@ -1,8 +1,8 @@
 import type { SnapshotMetadata } from '@firebase/firestore';
-import { LoadPromises } from './load-promise.svelte.js';
-import { Subscribable } from '../model/model.svelte.js';
-import type { OptionsInput } from '../utils/options.js';
-import type { VoidCallback } from '../utils/types.js';
+import { LoadPromises } from './load-promise.svelte';
+import { Subscribable } from '../model/model.svelte';
+import type { OptionsInput } from '../utils/options';
+import type { VoidCallback } from '../utils/types';
 
 export type FirebaseModelOptions = {
   isPassive?: boolean;

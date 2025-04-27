@@ -2,6 +2,7 @@ import { untrack } from 'svelte';
 import type { HasSubscriber } from './subscriber.svelte';
 import { removeObject } from '../utils/array';
 import { BaseModel } from './base.svelte';
+import { description } from '../utils/object';
 
 export class ModelStats extends BaseModel {
   subscribed = $state<HasSubscriber[]>([]);
@@ -23,6 +24,8 @@ export class ModelStats extends BaseModel {
       subscribed: subscribed.map((item) => item.toString()),
     };
   });
+
+  readonly description = $derived(description(this, { subscribed: this.subscribed.length }));
 }
 
 export const stats = new ModelStats();

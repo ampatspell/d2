@@ -1,7 +1,8 @@
 import { untrack } from 'svelte';
-import type { FirebaseModel, FirebaseModelOptions } from './model.svelte.js';
-import { removeObject } from '../utils/array.js';
-import { BaseModel } from '../model/base.svelte.js';
+import type { FirebaseModel, FirebaseModelOptions } from './model.svelte';
+import { removeObject } from '../utils/array';
+import { BaseModel } from '../model/base.svelte';
+import { description } from '../utils/object';
 
 export class FireStats extends BaseModel {
   listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
@@ -24,6 +25,8 @@ export class FireStats extends BaseModel {
       listening: map(listening),
     };
   });
+
+  readonly description = $derived(description(this, { listening: this.listening.length }));
 }
 
 export const stats = new FireStats();

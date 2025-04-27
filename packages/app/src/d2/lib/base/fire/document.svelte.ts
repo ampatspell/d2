@@ -11,12 +11,12 @@ import {
   setDoc,
 } from '@firebase/firestore';
 import { untrack } from 'svelte';
-import { FirebaseModel, type FirebaseModelOptions } from './model.svelte.js';
-import { Debounce } from './debounce.svelte.js';
-import { stats } from './stats.svelte.js';
-import type { OptionsInput } from '../utils/options.js';
-import type { VoidCallback } from '../utils/types.js';
-import { serialized } from '../utils/object.js';
+import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
+import { Debounce } from './debounce.svelte';
+import { stats } from './stats.svelte';
+import type { OptionsInput } from '../utils/options';
+import type { VoidCallback } from '../utils/types';
+import { serialized } from '../utils/object';
 
 export type UpdateCallback<D extends DocumentData> = (data: D) => void;
 
