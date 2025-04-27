@@ -1,4 +1,4 @@
-import { description } from "../utils/object";
+import { description } from '../utils/object';
 
 export type HasDescriptionAndSerialized = {
   description?: string;
