@@ -1,5 +1,5 @@
 {
-  "name": "@ampatspell/d2-functions",
+  "name": "@d2/functions",
   "version": "0.0.1",
   "private": true,
   "scripts": {

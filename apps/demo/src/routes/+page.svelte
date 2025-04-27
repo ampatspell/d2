@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { PUBLIC_FIREBASE, PUBLIC_APP_NAME, PUBLIC_FIREBASE_REGION } from "$env/static/public";
-  let config = JSON.parse(PUBLIC_FIREBASE);
+  import { PUBLIC_APP_NAME, PUBLIC_FIREBASE } from "$env/static/public";
+
+  const config = JSON.parse(PUBLIC_FIREBASE) as any;
+  const name = PUBLIC_APP_NAME
 </script>
 
-<div class="page">@ampatspell/d2-demo for "{PUBLIC_APP_NAME}" {config.projectId} / {PUBLIC_FIREBASE_REGION}</div>
+{name} / {config.projectId}

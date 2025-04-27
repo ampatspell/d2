@@ -1,5 +1,5 @@
 {
-  "name": "@ampatspell/d2-firebase",
+  "name": "@d2/firebase",
   "private": true,
   "scripts": {
     "functions:build": "(cd functions && npm run build)",

@@ -7,18 +7,6 @@ const firebase_rc = (app: App) => dedent`
   {
     "projects": {
       "default": "${app.projectId}"
-    },
-    "targets": {
-      "${app.projectId}": {
-        "hosting": {
-          "frontend": [
-            "${app.projectId}"
-          ],
-          "backend": [
-            "${app.projectId}-backend"
-          ]
-        }
-      }
     }
   }
 
@@ -30,37 +18,7 @@ const firebase_dot_env = (app: App) => dedent`
 
 `;
 
-type Phase = 'frontend' | 'backend';
-
-const firebase_json = (app: App, phase: Phase | undefined) => {
-  const backend = `{
-      "source": "../backend",
-      "target": "backend",
-      "ignore": ["**/.*", "**/node_modules/**"],
-      "frameworksBackend": {
-        "region": "${app.region}"
-      }
-    }`;
-  const frontend = `{
-      "source": "../../apps/${app.id}",
-      "target": "frontend",
-      "ignore": ["**/.*", "**/node_modules/**"],
-      "frameworksBackend": {
-        "region": "${app.region}"
-      }
-    }`;
-
-  let sites: string[] = [];
-  if(phase === 'backend') {
-    sites = [backend];
-  } else if(phase === 'frontend') {
-    sites = [frontend];
-  } else {
-    sites = [backend, frontend];
-  }
-
-  const hosting = sites.join(',\n    ');
-
+const firebase_json = (app: App) => {
   return dedent`
     {
       "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
@@ -78,9 +36,13 @@ const firebase_json = (app: App, phase: Phase | undefined) => {
           ]
         }
       ],
-      "hosting": [
-        ${hosting}
-      ],
+      "hosting": {
+        "source": "../../apps/${app.id}",
+        "ignore": ["**/.*", "**/node_modules/**"],
+        "frameworksBackend": {
+          "region": "${app.region}"
+        }
+      },
       "storage": {
         "rules": "rules/storage.rules"
       }
@@ -89,14 +51,12 @@ const firebase_json = (app: App, phase: Phase | undefined) => {
   `;
 };
 
-const backend_env = (app: App) => dedent`
+const frontend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
   PUBLIC_FIREBASE_REGION=${app.region}
   PUBLIC_APP_NAME=${app.name}
 
 `;
-
-const frontend_env = (app: App) => backend_env(app);
 
 export type AppConfig = {
   name?: string;
@@ -150,36 +110,23 @@ export class App {
     this.config = (await readJSON(join(this.frontendRoot, 'd2.json'))) as AppConfig;
   }
 
-  async write(phase?: Phase) {
+  async write() {
     const firebase = this._apps.firebaseRoot;
-    const backend = this._apps.backendRoot;
+    const app = this._apps.appRoot;
     const frontend = this.frontendRoot;
     await Promise.all([
       writeString(join(firebase, '.firebaserc'), firebase_rc(this)),
-      writeString(join(firebase, 'firebase.json'), firebase_json(this, phase)),
+      writeString(join(firebase, 'firebase.json'), firebase_json(this)),
       writeString(join(firebase, 'functions', `.env.${this.projectId}`), firebase_dot_env(this)),
-      writeString(join(backend, '.env'), backend_env(this)),
+      writeString(join(app, '.env'), frontend_env(this)),
       writeString(join(frontend, '.env'), frontend_env(this)),
     ]);
   }
 
-  async deploy(log: (message: string) => void) {
+  async deploy() {
     const root = this._apps.firebaseRoot;
-
-    log('prepare for deploy…');
-
-    await this.write('backend');
-    await exec(`firebase use default`, root);
-
-    log('deploying backend, functions and security rules…');
-
-    await exec('firebase deploy', root);
-
-    log('deploying frontend…');
-
-    await this.write('frontend');
-    await exec('firebase deploy --only hosting', root);
-
     await this.write();
+    await exec(`firebase use default`, root);
+    await exec('firebase deploy', root);
   }
 }

@@ -29,8 +29,8 @@ export class Apps {
     return join(this._tools.root, 'packages/firebase');
   }
 
-  get backendRoot() {
-    return join(this._tools.root, 'packages/backend');
+  get appRoot() {
+    return join(this._tools.root, 'packages/app');
   }
 
   async load() {
