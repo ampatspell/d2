@@ -4,6 +4,7 @@
   import type { LayoutData } from './$types';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+    import { setGlobal } from '$d2/lib/base/utils/set-global';
 
   let { data, children }: { data: LayoutData, children: Snippet } = $props();
 
@@ -12,6 +13,8 @@
   let route = (node: NodeDocumentModel<never>) => `/backend/nodes/${node.id}`;
 
   $effect(() => subscribe(nodes));
+
+  setGlobal({ nodes });
 </script>
 
 <Nodes {id} {nodes} {route}>

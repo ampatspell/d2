@@ -12,12 +12,12 @@ import { NodeDocumentModel } from './node.svelte';
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
 export type NodesModelOptions = {
-  parent: string | undefined;
+  query: fs.Query;
 };
 
 export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly _query = new QueryAll<NodeData<never>>({
-    ref: getter(() => fs.query(nodesCollection, fs.where('parent', '==', this.options.parent ?? null))),
+    ref: getter(() => this.options.query),
   });
 
   readonly _nodes = new MapModels({
@@ -25,17 +25,19 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     target: (doc) => new NodeDocumentModel({ doc }),
   });
 
+  readonly all = $derived(this._nodes.content);
+
   async load() {
     await this._query.load();
     await this._nodes.load();
   }
 
-  async create<Type extends NodeType>(kind: Type, properties: NodeTypes[Type]) {
+  async create<Type extends NodeType>(parent: string | undefined, kind: Type, properties: NodeTypes[Type]) {
     const model = NodeDocumentModel.buildNew({
       data: {
         kind,
         properties,
-        parent: this.options.parent ?? null,
+        parent: parent ?? null,
         createdAt: new Date(),
       },
     });
@@ -47,13 +49,9 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly dependencies = [this._query, this._nodes];
   readonly serialized = $derived(serialized(this, []));
 
-  static byParent(parent: string | undefined) {
-    return new this({ parent });
-  }
-
   static root() {
-    return new NodesModel({
-      parent: undefined,
+    return new this({
+      query: nodesCollection,
     });
   }
 }

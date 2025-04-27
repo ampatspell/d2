@@ -19,7 +19,7 @@ export const serialized = <T>(object: T, keys: (keyof T)[]) => {
   keys.forEach((key) => {
     const value = object[key];
     if (value !== undefined) {
-      hash[key] = object[key];
+      hash[key] = value;
     }
   });
   return hash;
@@ -28,7 +28,13 @@ export const serialized = <T>(object: T, keys: (keyof T)[]) => {
 export const serializedToString = (serialized?: Record<PropertyKey, unknown>) => {
   if (serialized) {
     return Object.keys(serialized)
-      .map((key) => `${key}=${serialized[key]}`)
+      .map((key) => {
+        let value = serialized[key];
+        if(Array.isArray(value)) {
+          value = `[${value.map(item => String(item)).join(', ')}]`;
+        }
+        return `${key}=${value}`;
+      })
       .join(', ');
   }
 };
