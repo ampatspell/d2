@@ -54,7 +54,7 @@ const firebase_json = (app: App) => {
 const frontend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
   PUBLIC_FIREBASE_REGION=${app.region}
-  PUBLIC_APP_NAME=${app.name}
+  PUBLIC_APP_NAME=${app.id}
 
 `;
 
@@ -119,7 +119,6 @@ const frontend_page = () => dedent`
 `;
 
 export type AppConfig = {
-  name?: string;
   admin: string;
   region: string;
   firebase: {
@@ -144,10 +143,6 @@ export class App {
 
   get isCurrent() {
     return this._apps.current === this;
-  }
-
-  get name() {
-    return this.config.name ?? this.id;
   }
 
   get admin() {
