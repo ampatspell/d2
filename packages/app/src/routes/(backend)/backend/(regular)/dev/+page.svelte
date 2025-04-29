@@ -1,9 +1,11 @@
 <script lang="ts">
-  import Tree from "./tree/tree.svelte";
+  import { getter, options } from "$d2/lib/base/utils/options";
+  import Tree, { type TreeModelDelegate } from "./tree/tree.svelte";
 
   class Model {
     name = $state<string>()!;
     items = $state<Model[]>()!;
+    isOpen = $state(false);
 
     constructor(name: string, items?: Model[]) {
       this.name = name;
@@ -35,8 +37,18 @@
     index.add(images);
   }
 
-  let items = [frontend, index];
-  let children = (model: Model) => model.items;
+  let models = [frontend, index];
+  let selected = $state<Model>();
+
+  let delegateFor = (model: Model) => options<TreeModelDelegate<Model>>({
+    children: getter(() => model.items),
+    isOpen: getter(() => model.isOpen),
+    setOpen: (open: boolean) => model.isOpen = open,
+    isSelected: getter(() => selected === model),
+    select: () => selected = model,
+  });
+
+  let deselect = () => selected = undefined;
 </script>
 
 {#snippet item(item: Model)}
@@ -45,7 +57,7 @@
 
 <div class="dev">
   <div class="tree">
-    <Tree models={items} {item} {children} />
+    <Tree {models} {delegateFor} {deselect} {item} />
   </div>
 </div>
 
@@ -56,9 +68,11 @@
     display: flex;
     flex-direction: column;
     > .tree {
-      border: 1px solid #eee;
+      border: 1px solid var(--dark-border-color-1);
       flex: 1;
-      width: 200px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
     }
   }
 </style>

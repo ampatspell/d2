@@ -1,41 +1,76 @@
+<script lang="ts" module>
+  export type TreeModelDelegate<T> = {
+    children: T[];
+    isOpen: boolean;
+    setOpen: (open: boolean) => void;
+    isSelected: boolean;
+    select: VoidCallback;
+  };
+</script>
+
 <script lang="ts" generics="T">
-    import { classes } from '$d2/lib/base/utils/classes';
+  import Icon from '$d2/components/dark/icon.svelte';
+  import LucideChevronDown from '$d2/icons/lucide--chevron-down.svelte';
+  import LucideFile from '$d2/icons/lucide--file.svelte';
+  import type { VoidCallback } from '$d2/lib/base/utils/types';
   import type { Snippet } from 'svelte';
 
   let {
     models,
+    delegateFor,
     item,
-    children,
+    deselect: _deselect,
   }: {
     models: T[];
+    delegateFor: (model: T) => TreeModelDelegate<T>;
+    deselect: VoidCallback;
     item: Snippet<[T]>;
-    children: (model: T) => T[];
   } = $props();
 
-  class Group {
-    element = $state<HTMLDivElement>();
-    over = $state(false);
-
-    onMouseOver(e: Event) {
-      e.stopPropagation();
-      this.over = true;
+  let select = (delegate: TreeModelDelegate<T>) => () => {
+    if(delegate.isSelected) {
+      delegate.setOpen(!delegate.isOpen);
+    } else {
+      delegate.select();
     }
-    onMouseOut(e: Event) {
-      e.stopPropagation();
-      this.over = false;
+  }
+
+  let setOpen = (delegate: TreeModelDelegate<T>) => (e: Event) => {
+    e.stopPropagation();
+    if(!delegate.isOpen) {
+      delegate.select();
+    }
+    delegate.setOpen(!delegate.isOpen);
+  }
+
+  let tree = $state<HTMLDivElement>();
+  let deselect = (e: Event) => {
+    if(e.target === tree) {
+      _deselect();
     }
   }
 </script>
 
-{#snippet group(model: T, level: number)}
-{@const group = new Group()}
-  <!-- svelte-ignore a11y_mouse_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="group" class:over={group.over} bind:this={group.element} onmouseover={(e) => group.onMouseOver(e)} onmouseout={(e) => group.onMouseOut(e)}>
-    <div class="item" style:--offset="{level * 10}px">
-      {@render item(model)}
+{#snippet group(current: T, level: number)}
+  {@const delegate = delegateFor(current)}
+  <div class="group">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="item" class:selected={delegate.isSelected} style:--offset="{level * 20}px" onclick={select(delegate)}>
+      <div class="toggle" class:closed={delegate.children.length && !delegate.isOpen}>
+        {#if delegate.children.length}
+          <Icon icon={LucideChevronDown} onClick={setOpen(delegate)} size="small" />
+        {:else}
+          <Icon icon={LucideFile} size="small" />
+        {/if}
+      </div>
+      <div class="content">
+        {@render item(current)}
+      </div>
     </div>
-    {@render array(children(model), level + 1)}
+    {#if delegate.isOpen}
+      {@render array(delegate.children, level + 1)}
+    {/if}
   </div>
 {/snippet}
 
@@ -45,23 +80,43 @@
   {/each}
 {/snippet}
 
-<div class="tree">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="tree" bind:this={tree} onclick={deselect}>
   {@render array(models, 0)}
 </div>
 
 <style lang="scss">
   .tree {
+    flex: 1;
     display: flex;
     flex-direction: column;
     user-select: none;
   }
   .group {
-    &.over {
-      background: #eee;
-    }
     > .item {
-      padding: 5px 10px 5px calc(10px + var(--offset));
+      padding: 5px 10px 5px calc(5px + var(--offset));
       border-bottom: 1px solid #eee;
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      > .toggle {
+        width: 12px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        transition: rotate 0.15s ease-in-out;
+        &.closed {
+          rotate: -90deg;
+        }
+      }
+      > .content {
+        flex: 1;
+      }
+      &.selected {
+        background: var(--dark-selected-background-color-1);
+      }
     }
   }
 </style>
