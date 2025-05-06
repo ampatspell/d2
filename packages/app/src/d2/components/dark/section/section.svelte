@@ -91,12 +91,12 @@
     }
     &.type-regular {
       > .sidebar {
-        width: 200px;
+        width: 320px;
       }
     }
     &.type-nested {
       > .sidebar {
-        width: 250px;
+        width: 200px;
       }
     }
   }
