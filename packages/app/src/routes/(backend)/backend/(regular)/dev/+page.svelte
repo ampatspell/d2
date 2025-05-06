@@ -1,6 +1,7 @@
 <script lang="ts">
+    import type { TreeModelDelegate } from "$d2/components/dark/tree.svelte";
+    import Tree from "$d2/components/dark/tree.svelte";
   import { getter, options } from "$d2/lib/base/utils/options";
-  import Tree, { type TreeModelDelegate } from "./tree/tree.svelte";
 
   class Model {
     name = $state<string>()!;

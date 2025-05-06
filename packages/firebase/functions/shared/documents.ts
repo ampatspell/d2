@@ -20,7 +20,7 @@ export type NodeTypes = {
 
 export type NodeType = keyof NodeTypes;
 
-export type NodeData<T extends NodeType> = {
+export type NodeData<T extends NodeType = NodeType> = {
   kind: T;
   properties: NodeTypes[T];
   parent: string | null;

@@ -12,7 +12,7 @@
   import Icon from '$d2/components/dark/icon.svelte';
   import LucideChevronDown from '$d2/icons/lucide--chevron-down.svelte';
   import LucideFile from '$d2/icons/lucide--file.svelte';
-  import type { VoidCallback } from '$d2/lib/base/utils/types';
+  import type { Point, VoidCallback } from '$d2/lib/base/utils/types';
   import type { Snippet } from 'svelte';
 
   let {
@@ -49,11 +49,51 @@
       _deselect();
     }
   }
+
+  type Drag = {
+    model: T;
+    isVisible: boolean;
+    position: Point;
+  };
+
+  let drag = $state<Drag>();
+
+  let onMouseDown = (model: T, delegate: TreeModelDelegate<T>) => (e: MouseEvent) => {
+    drag = {
+      model,
+      isVisible: false,
+      position: {
+        x: e.clientX,
+        y: e.clientY,
+      }
+    };
+    drag = undefined; //
+  }
+
+  let onMouseMove = (e: MouseEvent) => {
+    if(drag) {
+      if(!drag.isVisible) {
+        let diff = (a: number, b: number) => Math.abs(a - b) > 5;
+        if(diff(drag.position.x, e.clientX) || diff(drag.position.y, e.clientY)) {
+          drag.isVisible = true;
+        }
+      }
+    }
+  }
+
+  let onMouseUp = (e: Event) => {
+    if(drag) {
+      drag = undefined;
+    }
+  }
 </script>
+
+<svelte:window onmousemove={onMouseMove} onmouseup={onMouseUp} />
 
 {#snippet group(current: T, level: number)}
   {@const delegate = delegateFor(current)}
-  <div class="group">
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="group" onmousedown={onMouseDown(current, delegate)}>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="item" class:selected={delegate.isSelected} style:--offset="{level * 20}px" onclick={select(delegate)}>
@@ -84,6 +124,11 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="tree" bind:this={tree} onclick={deselect}>
   {@render array(models, 0)}
+  {#if drag?.isVisible}
+    <div class="dragging">
+      {@render group(drag.model, 0)}
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -92,6 +137,13 @@
     display: flex;
     flex-direction: column;
     user-select: none;
+    > .dragging {
+      position: absolute;
+      top: 100px;
+      left: 100px;
+      background: #fff;
+      box-shadow: 0 1px 3px var(--dark-border-color-1);
+    }
   }
   .group {
     > .item {

@@ -1,5 +1,5 @@
 import { tick, untrack } from 'svelte';
-import { stats } from './stats.svelte';
+import { modelStats } from './stats.svelte';
 import type { VoidCallback } from '../utils/types';
 
 export type HasSubscriber = {
@@ -26,7 +26,7 @@ export class Subscriber {
   _subscribe() {
     const children = this._dependencies.map((child) => child.subscriber.subscribe());
     const model = this._model.subscribe();
-    const stat = stats._registerSubscribed(this._model);
+    const stat = modelStats._registerSubscribed(this._model);
     return () => {
       model?.();
       children.forEach((child) => child());

@@ -4,6 +4,7 @@ import {
   type DocumentReference,
   type DocumentSnapshot,
   deleteDoc,
+  deleteField,
   getDoc,
   getDocFromCache,
   getDocFromServer,
@@ -12,23 +13,10 @@ import {
 } from '@firebase/firestore';
 import { untrack } from 'svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
-import { Debounce } from './debounce.svelte';
-import { stats } from './stats.svelte';
+import { fireStats } from './stats.svelte';
 import type { OptionsInput } from '../utils/options';
 import type { VoidCallback } from '../utils/types';
 import { serialized } from '../utils/object';
-
-export type UpdateCallback<D extends DocumentData> = (data: D) => void;
-
-export const update = <D extends DocumentData>(doc: Document<D> | undefined, cb: UpdateCallback<D>) => {
-  if (doc) {
-    const data = doc.data;
-    if (data) {
-      cb(data);
-      doc.scheduleSave();
-    }
-  }
-};
 
 const createToken = () => {
   if (browser) {
@@ -72,17 +60,18 @@ export type DocumentOptions<T> = {
   isNew?: boolean;
 } & FirebaseModelOptions;
 
-// TODO: save merges. needs FieldProperty unset instead of setting nullTarget to null
-export const toData = (input: unknown, nullTarget: unknown): unknown => {
+export const toData = (input: unknown): unknown => {
   if (Array.isArray(input)) {
-    return input.map((entry) => toData(entry, nullTarget));
-  } else if (input === null || input === undefined) {
-    return nullTarget;
+    return input.map((entry) => toData(entry));
+  } else if (input === null) {
+    return null;
+  } else if(input === undefined) {
+    return deleteField();
   } else if (typeof input === 'object') {
     const out: Record<string, unknown> = {};
     for (const key in input) {
       const value = (input as DocumentData)[key] as DocumentData;
-      out[key] = toData(value, nullTarget);
+      out[key] = toData(value);
     }
     return out;
   } else {
@@ -92,11 +81,6 @@ export const toData = (input: unknown, nullTarget: unknown): unknown => {
 
 export class Document<T extends DocumentData = DocumentData> extends FirebaseModel<DocumentOptions<T>> {
   readonly token: string | null;
-
-  private _debounce = new Debounce({
-    delay: 300,
-    commit: () => this.save(),
-  });
 
   constructor(options: OptionsInput<DocumentOptions<T>>) {
     super(options);
@@ -137,7 +121,7 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
               this._onError(error);
             },
           );
-          const listening = stats._registerListening(this);
+          const listening = fireStats._registerListening(this);
           cancel = () => {
             snapshot();
             listening();
@@ -145,8 +129,6 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
         }
 
         return () => {
-          // TODO: this.debounce.force() needs last ref
-          this._debounce.cancel();
           cancel?.();
         };
       });
@@ -157,7 +139,7 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const exists = snapshot.exists();
     const next = snapshot.data({ serverTimestamps: 'estimate' }) as T | undefined;
     if (next && next[TOKEN] !== this.token) {
-      this.data = toData(next, undefined) as T;
+      this.data = toData(next) as T;
     }
     this.exists = exists;
     this._onDidLoad(snapshot.metadata);
@@ -185,9 +167,8 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
   async save(): Promise<void> {
     const ref = this.ref;
     if (ref) {
-      const data = Object.assign({}, toData($state.snapshot(this.data), null), { [TOKEN]: this.token });
+      const data = Object.assign({}, toData($state.snapshot(this.data)), { [TOKEN]: this.token });
       // TODO: queue
-      // TODO: proper merge
       this.isSaving = true;
       try {
         await setDoc(ref, data, { merge: true });
@@ -202,8 +183,6 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
   async delete(): Promise<void> {
     const ref = this.ref;
     if (ref) {
-      this._debounce.cancel();
-      // TODO: queue
       try {
         this.isDeleting = true;
         await deleteDoc(ref);
@@ -215,11 +194,6 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
         this.isDeleting = false;
       }
     }
-  }
-
-  scheduleSave() {
-    // TODO: do a queue
-    this._debounce.schedule();
   }
 
   serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error', 'isSubscribed']));

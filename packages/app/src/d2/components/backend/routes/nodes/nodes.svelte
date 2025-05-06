@@ -13,7 +13,7 @@
   }: {
     id: string | undefined;
     nodes: NodesModel;
-    route: (node: NodeDocumentModel<never>) => string;
+    route: (node: NodeDocumentModel) => string;
     children: Snippet;
   } = $props();
 </script>

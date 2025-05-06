@@ -29,4 +29,4 @@ export class FireStats extends BaseModel {
   readonly description = $derived(description(this, { listening: this.listening.length }));
 }
 
-export const stats = new FireStats();
+export const fireStats = new FireStats();

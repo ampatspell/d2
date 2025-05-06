@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { stats } from '$d2/lib/base/fire/stats.svelte';
+  import { fireStats } from '$d2/lib/base/fire/stats.svelte';
+  // import { modelStats } from '$d2/lib/base/model/stats.svelte';
   import Dark from './dark.svelte';
   import Overflow from './overflow.svelte';
   import Cell from './table/cell.svelte';
@@ -7,7 +8,8 @@
   import Row from './table/row.svelte';
   import Table from './table/table.svelte';
 
-  let listening = $derived(stats.listening);
+  let listening = $derived(fireStats.listening);
+  // let subscribed = $derived(modelStats.subscribed);
 </script>
 
 <div class="stats">

@@ -4,10 +4,10 @@ import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { serialized } from '../base/utils/object';
-import { QueryAll } from '../base/fire/query.svelte';
+import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
-import { MapModels } from '../base/model/models.svelte';
-import { NodeDocumentModel } from './node.svelte';
+import { mapModels } from '../base/model/models.svelte';
+import { createNodeDocumentModel, NodeDocumentModel } from './node.svelte';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
@@ -16,16 +16,21 @@ export type NodesModelOptions = {
 };
 
 export class NodesModel extends Subscribable<NodesModelOptions> {
-  readonly _query = new QueryAll<NodeData<never>>({
+  readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.query),
   });
 
-  readonly _nodes = new MapModels({
+  readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => new NodeDocumentModel({ doc }),
+    target: (doc) => createNodeDocumentModel(doc),
+    key: (doc) => doc.data?.kind,
   });
 
   readonly all = $derived(this._nodes.content);
+
+  byParentId(id: string | undefined) {
+    return this.all.filter(node => node.parentId === id);
+  }
 
   async load() {
     await this._query.load();
@@ -49,7 +54,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly dependencies = [this._query, this._nodes];
   readonly serialized = $derived(serialized(this, []));
 
-  static root() {
+  static all() {
     return new this({
       query: nodesCollection,
     });

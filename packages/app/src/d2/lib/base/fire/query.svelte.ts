@@ -13,7 +13,7 @@ import {
 import { untrack } from 'svelte';
 
 import { Document, type DocumentLoadSource } from './document.svelte';
-import { stats } from './stats.svelte';
+import { fireStats } from './stats.svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
 import type { VoidCallback } from '../utils/types';
 import { insertObjectAt, removeObjectAt } from '../utils/array';
@@ -94,7 +94,7 @@ export class QueryBase<
               this._onError(error);
             },
           );
-          const listening = stats._registerListening(this);
+          const listening = fireStats._registerListening(this);
           cancel = () => {
             snapshot();
             listening();
@@ -198,3 +198,6 @@ export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase
     serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'isSubscribed', 'exists']),
   );
 }
+
+export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) => new QueryAll<T>(...args);
+export const queryFirst = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryFirst<T>>) => new QueryFirst<T>(...args);

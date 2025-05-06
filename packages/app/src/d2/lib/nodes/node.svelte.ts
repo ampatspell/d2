@@ -10,11 +10,13 @@ export type NodeDocumentModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
 };
 
-export class NodeDocumentModel<Type extends NodeType> extends Subscribable<NodeDocumentModelOptions<Type>> {
+export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscribable<NodeDocumentModelOptions<Type>> {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
   readonly exists = $derived(this.doc.exists);
-  readonly data = $derived(this.doc.data);
+  readonly data = $derived(this.doc.data!);
+  readonly kind = $derived(this.data.kind);
+  readonly parentId = $derived(this.data.parent);
 
   async save() {
     await this.doc.save();
@@ -46,5 +48,18 @@ export class NodeDocumentModel<Type extends NodeType> extends Subscribable<NodeD
   static forId(id: string) {
     return new this({ doc: this.documentForId(id) });
   }
+}
 
+class MissingNodeDocumentModel extends NodeDocumentModel<'missing'> {}
+class FileNodeDocumentModel extends NodeDocumentModel<'file'> {}
+
+export const createNodeDocumentModel = (doc: Document<NodeData>) => {
+  const kind = doc.data?.kind;
+  const cast = <Type extends NodeType>() => doc as Document<NodeData<Type>>;
+  if(kind === 'missing') {
+    return new MissingNodeDocumentModel({ doc: cast() });
+  } else if(kind === 'file') {
+    return new FileNodeDocumentModel({ doc: cast() });
+  }
+  return new NodeDocumentModel({ doc });
 }

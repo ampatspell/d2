@@ -5,11 +5,13 @@ const ITERATIONS = 10;
 
 export type BaseMapOptions<Source, Target> = {
   target: (source: Source) => Target | undefined;
+  key?: (source: Source) => unknown;
 };
 
 type CacheValue<Target> = {
   target: Target;
   iteration: number;
+  key: unknown;
 };
 
 const maybeSubscribeContent = (object: unknown) => {
@@ -26,11 +28,11 @@ const maybeSubscribeContentArray = (objects: unknown[]) => {
 };
 
 export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends Subscribable<O> {
-  _target = $derived(this.options.target);
-  _cache: Map<Source, CacheValue<Target>> = new Map();
-  _iteration = 0;
+  private readonly _target = $derived(this.options.target);
+  private readonly _cache: Map<Source, CacheValue<Target>> = new Map();
+  private _iteration = 0;
 
-  _compact() {
+  private _compact() {
     const cache = this._cache;
     const iteration = this._iteration - ITERATIONS;
     const entries = this._cache.entries();
@@ -41,21 +43,36 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
     }
   }
 
-  _model(source: Source) {
+  private _model(source: Source) {
     return this._target(source);
   }
 
-  _findOrCreate(source: Source) {
+  private _keyFor(source: Source) {
+    const key = this.options.key;
+    if(key) {
+      return key(source);
+    }
+  }
+
+  private _keyEquals(source: Source, value: CacheValue<Target>) {
+    return this._keyFor(source) === value.key;
+  }
+
+  private _findOrCreate(source: Source) {
     const cache = this._cache;
     const iteration = this._iteration;
     if (cache.has(source)) {
       const value = cache.get(source)!;
-      value.iteration = iteration;
-      return value.target;
+      if(this._keyEquals(source, value)) {
+        value.iteration = iteration;
+        return value.target;
+      }
     }
     const target = this._model(source);
+    const key = this._keyFor(source);
     if (target) {
       cache.set(source, {
+        key,
         target,
         iteration,
       });
@@ -63,7 +80,7 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
     return target;
   }
 
-  _withCache<R>(fn: (findOrCreate: (source: Source) => Target | undefined) => R): R {
+  protected _withCache<R>(fn: (findOrCreate: (source: Source) => Target | undefined) => R): R {
     this._iteration++;
     const result = fn((source: Source) => this._findOrCreate(source));
     this._compact();
@@ -98,8 +115,8 @@ export type MapModelsOptions<Source, Target> = {
 } & BaseMapOptions<Source, Target>;
 
 export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModelsOptions<Source, Target>> {
-  _source = $derived(this.options.source);
-  _content = $state<Target[]>([]);
+  private readonly _source = $derived(this.options.source);
+  private _content = $state<Target[]>([]);
 
   readonly content = $derived(this._content);
   protected readonly waitForContent = $derived(this.content);
@@ -143,8 +160,8 @@ export type MapModelOptions<Source, Target> = {
 } & BaseMapOptions<Source, Target>;
 
 export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOptions<Source, Target>> {
-  _source = $derived(this.options.source);
-  _content = $state<Target>();
+  private readonly _source = $derived(this.options.source);
+  private _content = $state<Target>();
 
   readonly content = $derived(this._content);
   protected readonly waitForContent = $derived([this.content]);
@@ -175,3 +192,6 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     }
   }
 }
+
+export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) => new MapModels<Source, Target>(...args);
+export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) => new MapModel<Source, Target>(...args);

@@ -28,4 +28,4 @@ export class ModelStats extends BaseModel {
   readonly description = $derived(description(this, { subscribed: this.subscribed.length }));
 }
 
-export const stats = new ModelStats();
+export const modelStats = new ModelStats();
