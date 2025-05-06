@@ -4,8 +4,10 @@
 
   let { data }: { data: PageData } = $props();
 
-  let node = $derived(data.node);
-  $effect(() => subscribe(node));
+  let loader = $derived(data.node);
+  $effect(() => subscribe(loader));
+
+  let node = $derived(loader.node);
 </script>
 
 {node}

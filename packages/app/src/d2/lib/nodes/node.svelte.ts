@@ -5,6 +5,14 @@ import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { Subscribable } from '../base/model/model.svelte';
 import { serialized } from '../base/utils/object';
 import { nodesCollection } from './nodes.svelte';
+import { mapModel } from '../base/model/models.svelte';
+import { getter } from '../base/utils/options';
+
+const nodeDocumentForId = (id: string) => {
+  return new Document<NodeData<never>>({
+    ref: fs.doc(nodesCollection, id),
+  });
+};
 
 export type NodeDocumentModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
@@ -38,17 +46,39 @@ export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscri
       }),
     });
   }
+}
 
-  static documentForId(id: string) {
-    return new Document<NodeData<never>>({
-      ref: fs.doc(nodesCollection, id),
-    });
+export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeData<never>> }> {
+  readonly doc = $derived(this.options.doc);
+  readonly id = $derived(this.doc.id);
+  readonly kind = $derived(this.doc.data?.kind);
+
+  private readonly _loaded = $derived.by(() => {
+    const doc = this.doc;
+    if (doc.isLoaded) {
+      return doc;
+    }
+  });
+
+  readonly _node = mapModel({
+    source: getter(() => this._loaded),
+    target: (doc) => createNodeDocumentModel(doc),
+    key: (doc) => doc.data?.kind,
+  });
+
+  readonly node = $derived(this._node.content!);
+
+  async load() {
+    await this.doc.load();
+    await this.node.load();
   }
 
-  static async forId(id: string) {
-    const doc = this.documentForId(id);
-    await doc.load();
-    return createNodeDocumentModel(doc);
+  readonly dependencies = [this.doc, this._node];
+  readonly serialized = $derived(serialized(this, ['id', 'kind']));
+  readonly isLoaded = $derived(isLoaded([this.doc, this.node]));
+
+  static forId(id: string) {
+    return new this({ doc: nodeDocumentForId(id) });
   }
 }
 
