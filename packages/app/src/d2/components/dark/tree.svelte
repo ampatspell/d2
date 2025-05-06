@@ -103,7 +103,7 @@
   }
   .group {
     > .item {
-      padding: 5px 10px 5px calc(5px + var(--offset));
+      padding: 5px 10px 5px calc(10px + var(--offset));
       border-bottom: 1px solid #eee;
       display: flex;
       flex-direction: row;
