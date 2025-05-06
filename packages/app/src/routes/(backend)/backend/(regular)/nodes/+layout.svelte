@@ -5,7 +5,7 @@
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import { setGlobal } from '$d2/lib/base/utils/set-global';
-    import { isTruthy } from '$d2/lib/base/utils/array';
+  import { isTruthy } from '$d2/lib/base/utils/array';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
