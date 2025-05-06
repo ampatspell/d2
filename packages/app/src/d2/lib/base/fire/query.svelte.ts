@@ -199,5 +199,8 @@ export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase
   );
 }
 
-export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) => new QueryAll<T>(...args);
-export const queryFirst = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryFirst<T>>) => new QueryFirst<T>(...args);
+export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) =>
+  new QueryAll<T>(...args);
+export const queryFirst = <T extends DocumentData = DocumentData>(
+  ...args: ConstructorParameters<typeof QueryFirst<T>>
+) => new QueryFirst<T>(...args);

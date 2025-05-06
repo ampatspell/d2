@@ -6,7 +6,7 @@
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import { setGlobal } from '$d2/lib/base/utils/set-global';
 
-  let { data, children }: { data: LayoutData, children: Snippet } = $props();
+  let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
   let id = $derived(data.id);
   let nodes = $derived(data.nodes);

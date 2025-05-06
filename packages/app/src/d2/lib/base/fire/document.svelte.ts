@@ -65,7 +65,7 @@ export const toData = (input: unknown): unknown => {
     return input.map((entry) => toData(entry));
   } else if (input === null) {
     return null;
-  } else if(input === undefined) {
+  } else if (input === undefined) {
     return deleteField();
   } else if (typeof input === 'object') {
     const out: Record<string, unknown> = {};

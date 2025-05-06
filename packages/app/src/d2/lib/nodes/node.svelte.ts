@@ -56,10 +56,10 @@ class FileNodeDocumentModel extends NodeDocumentModel<'file'> {}
 export const createNodeDocumentModel = (doc: Document<NodeData>) => {
   const kind = doc.data?.kind;
   const cast = <Type extends NodeType>() => doc as Document<NodeData<Type>>;
-  if(kind === 'missing') {
+  if (kind === 'missing') {
     return new MissingNodeDocumentModel({ doc: cast() });
-  } else if(kind === 'file') {
+  } else if (kind === 'file') {
     return new FileNodeDocumentModel({ doc: cast() });
   }
   return new NodeDocumentModel({ doc });
-}
+};

@@ -30,8 +30,8 @@ export const serializedToString = (serialized?: Record<PropertyKey, unknown>) =>
     return Object.keys(serialized)
       .map((key) => {
         let value = serialized[key];
-        if(Array.isArray(value)) {
-          value = `[${value.map(item => String(item)).join(', ')}]`;
+        if (Array.isArray(value)) {
+          value = `[${value.map((item) => String(item)).join(', ')}]`;
         }
         return `${key}=${value}`;
       })

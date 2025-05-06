@@ -49,7 +49,7 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
 
   private _keyFor(source: Source) {
     const key = this.options.key;
-    if(key) {
+    if (key) {
       return key(source);
     }
   }
@@ -63,7 +63,7 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
     const iteration = this._iteration;
     if (cache.has(source)) {
       const value = cache.get(source)!;
-      if(this._keyEquals(source, value)) {
+      if (this._keyEquals(source, value)) {
         value.iteration = iteration;
         return value.target;
       }
@@ -193,5 +193,7 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
   }
 }
 
-export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) => new MapModels<Source, Target>(...args);
-export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) => new MapModel<Source, Target>(...args);
+export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) =>
+  new MapModels<Source, Target>(...args);
+export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) =>
+  new MapModel<Source, Target>(...args);

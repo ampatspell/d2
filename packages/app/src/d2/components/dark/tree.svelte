@@ -28,27 +28,27 @@
   } = $props();
 
   let select = (delegate: TreeModelDelegate<T>) => () => {
-    if(delegate.isSelected) {
+    if (delegate.isSelected) {
       delegate.setOpen(!delegate.isOpen);
     } else {
       delegate.select();
     }
-  }
+  };
 
   let setOpen = (delegate: TreeModelDelegate<T>) => (e: Event) => {
     e.stopPropagation();
-    if(!delegate.isOpen) {
+    if (!delegate.isOpen) {
       delegate.select();
     }
     delegate.setOpen(!delegate.isOpen);
-  }
+  };
 
   let tree = $state<HTMLDivElement>();
   let deselect = (e: Event) => {
-    if(e.target === tree) {
+    if (e.target === tree) {
       _deselect();
     }
-  }
+  };
 
   type Drag = {
     model: T;
@@ -65,27 +65,27 @@
       position: {
         x: e.clientX,
         y: e.clientY,
-      }
+      },
     };
     drag = undefined; //
-  }
+  };
 
   let onMouseMove = (e: MouseEvent) => {
-    if(drag) {
-      if(!drag.isVisible) {
+    if (drag) {
+      if (!drag.isVisible) {
         let diff = (a: number, b: number) => Math.abs(a - b) > 5;
-        if(diff(drag.position.x, e.clientX) || diff(drag.position.y, e.clientY)) {
+        if (diff(drag.position.x, e.clientX) || diff(drag.position.y, e.clientY)) {
           drag.isVisible = true;
         }
       }
     }
-  }
+  };
 
   let onMouseUp = (e: Event) => {
-    if(drag) {
+    if (drag) {
       drag = undefined;
     }
-  }
+  };
 </script>
 
 <svelte:window onmousemove={onMouseMove} onmouseup={onMouseUp} />

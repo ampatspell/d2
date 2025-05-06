@@ -29,7 +29,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly all = $derived(this._nodes.content);
 
   byParentId(id: string | undefined) {
-    return this.all.filter(node => node.parentId === id);
+    return this.all.filter((node) => node.parentId === id);
   }
 
   async load() {
