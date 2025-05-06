@@ -27,9 +27,9 @@ const createToken = () => {
 
 export const TOKEN = '_token';
 
-export type DocumentLoadSource = 'cached' | 'remote' | undefined;
+export type DocumentLoadSource = 'cached' | 'remote';
 
-const getDocBySource = (ref: DocumentReference, source: DocumentLoadSource) => {
+const getDocBySource = (ref: DocumentReference, source: DocumentLoadSource | undefined = 'cached') => {
   if (source === 'cached') {
     return getDocFromCache(ref);
   } else if (source === 'remote') {

@@ -45,8 +45,10 @@ export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscri
     });
   }
 
-  static forId(id: string) {
-    return new this({ doc: this.documentForId(id) });
+  static async forId(id: string) {
+    const doc = this.documentForId(id);
+    await doc.load();
+    return createNodeDocumentModel(doc);
   }
 }
 

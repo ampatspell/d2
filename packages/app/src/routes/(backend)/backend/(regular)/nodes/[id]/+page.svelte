@@ -7,3 +7,5 @@
   let node = $derived(data.node);
   $effect(() => subscribe(node));
 </script>
+
+{node}

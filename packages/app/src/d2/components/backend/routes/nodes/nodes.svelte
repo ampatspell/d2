@@ -25,8 +25,8 @@
 
   let models = $derived(nodes.byParentId(null));
 
-  let delegateFor = (model: NodeDocumentModel) =>
-    options<TreeModelDelegate<NodeDocumentModel>>({
+  let delegateFor = (model: NodeDocumentModel) => {
+    return options<TreeModelDelegate<NodeDocumentModel>>({
       children: getter(() => nodes.byParentId(model.id)),
       isOpen: getter(() => open.includes(model.id)),
       isSelected: getter(() => id === model.id),
@@ -39,6 +39,7 @@
         }
       },
     });
+  };
 
   let deselect = () => goto(route(undefined));
 </script>

@@ -24,7 +24,7 @@ export type DocumentsLoadOptions = {
   force?: boolean;
 };
 
-const getDocsBySource = (ref: Query, source: DocumentLoadSource) => {
+const getDocsBySource = (ref: Query, source: DocumentLoadSource | undefined = 'cached') => {
   if (source === 'cached') {
     return getDocsFromCache(ref);
   } else if (source === 'remote') {
@@ -199,8 +199,12 @@ export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase
   );
 }
 
-export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) =>
-  new QueryAll<T>(...args);
+export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) => {
+  return new QueryAll<T>(...args);
+};
+
 export const queryFirst = <T extends DocumentData = DocumentData>(
   ...args: ConstructorParameters<typeof QueryFirst<T>>
-) => new QueryFirst<T>(...args);
+) => {
+  return new QueryFirst<T>(...args);
+};
