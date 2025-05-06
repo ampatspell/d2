@@ -93,13 +93,6 @@
     display: flex;
     flex-direction: column;
     user-select: none;
-    // > .dragging {
-    //   position: absolute;
-    //   top: 100px;
-    //   left: 100px;
-    //   background: #fff;
-    //   box-shadow: 0 1px 3px var(--dark-border-color-1);
-    // }
   }
   .group {
     > .item {
