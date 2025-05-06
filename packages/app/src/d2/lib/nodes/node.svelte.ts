@@ -14,6 +14,10 @@ const nodeDocumentForId = (id: string) => {
   });
 };
 
+export const nodeDocumentKey = (doc: Document<NodeData>) => {
+  return doc.data?.kind;
+};
+
 export type NodeDocumentModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
 };
@@ -63,7 +67,7 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
   readonly _node = mapModel({
     source: getter(() => this._loaded),
     target: (doc) => createNodeDocumentModel(doc),
-    key: (doc) => doc.data?.kind,
+    key: nodeDocumentKey,
   });
 
   readonly node = $derived(this._node.content!);
