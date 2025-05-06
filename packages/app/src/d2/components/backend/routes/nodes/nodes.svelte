@@ -48,7 +48,7 @@
   {#snippet sidebar()}
     <Tree {models} {delegateFor} {deselect}>
       {#snippet item(model: NodeDocumentModel)}
-        {model.id} {model.kind}
+        {model.id} / {model.kind}
       {/snippet}
     </Tree>
   {/snippet}
