@@ -1,8 +1,9 @@
-import { node } from '$d2/lib/definition/site.svelte';
+import { node } from '$d2/lib/definition/utils.svelte';
 import { FileNodeDocumentModel } from './node.svelte';
 
-export const file = () =>
-  node('file', {
+export const file = () => {
+  return node('file', {
     model: FileNodeDocumentModel,
     defaults: () => undefined,
   });
+};

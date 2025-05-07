@@ -45,14 +45,14 @@ export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscri
   readonly dependencies = [this.doc];
   readonly serialized = $derived(serialized(this, ['id']));
 
-  static buildNew<Type extends NodeType>({ data }: { data: NodeData<Type> }) {
-    return new this({
-      doc: new Document<NodeData<Type>>({
-        ref: fs.doc(nodesCollection),
-        data,
-      }),
-    });
-  }
+  // static buildNew<Type extends NodeType>({ data }: { data: NodeData<Type> }) {
+  //   return new this({
+  //     doc: new Document<NodeData<Type>>({
+  //       ref: fs.doc(nodesCollection),
+  //       data,
+  //     }),
+  //   });
+  // }
 }
 
 export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeData<never>> }> {
@@ -69,7 +69,7 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
 
   readonly _node = mapModel({
     source: getter(() => this._loaded),
-    target: (doc) => createModel(doc),
+    target: (doc) => createNodeDocumentModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -89,6 +89,6 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
   }
 }
 
-export const createModel = (doc: Document<NodeData>) => {
+export const createNodeDocumentModel = (doc: Document<NodeData>) => {
   return getSiteDefinition().byDocument(doc)?.model({ doc });
 };

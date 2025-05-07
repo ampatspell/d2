@@ -1,5 +1,5 @@
 import * as fs from '@firebase/firestore';
-import type { NodeData, NodeType, NodeTypes } from '$d2-shared/documents';
+import type { NodeData } from '$d2-shared/documents';
 import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
@@ -7,7 +7,7 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createModel, nodeDocumentKey, NodeDocumentModel } from './node.svelte';
+import { createNodeDocumentModel, nodeDocumentKey } from './node.svelte';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
@@ -22,7 +22,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createModel(doc),
+    target: (doc) => createNodeDocumentModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -37,18 +37,18 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     await this._nodes.load();
   }
 
-  async create<Type extends NodeType>(parent: string | undefined, kind: Type, properties: NodeTypes[Type]) {
-    const model = NodeDocumentModel.buildNew({
-      data: {
-        kind,
-        properties,
-        parent: parent ?? null,
-        createdAt: new Date(),
-      },
-    });
-    await model.save();
-    return model;
-  }
+  // async create<Type extends NodeType>(parent: string | undefined, kind: Type, properties: NodeTypes[Type]) {
+  //   const model = NodeDocumentModel.buildNew({
+  //     data: {
+  //       kind,
+  //       properties,
+  //       parent: parent ?? null,
+  //       createdAt: new Date(),
+  //     },
+  //   });
+  //   await model.save();
+  //   return model;
+  // }
 
   readonly isLoaded = $derived(isLoaded([this._query]));
   readonly dependencies = [this._query, this._nodes];
