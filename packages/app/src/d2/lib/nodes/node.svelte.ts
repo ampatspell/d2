@@ -1,12 +1,12 @@
 import * as fs from '@firebase/firestore';
 import type { NodeData, NodeType } from '$d2-shared/documents';
-import { Document } from '../base/fire/document.svelte';
-import { isLoaded } from '../base/fire/is-loaded.svelte';
-import { Subscribable } from '../base/model/model.svelte';
-import { serialized } from '../base/utils/object';
+import { Document } from '$d2/lib/base/fire/document.svelte';
+import { Subscribable } from '$d2/lib/base/model/model.svelte';
+import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
+import { serialized } from '$d2/lib/base/utils/object';
+import { mapModel } from '$d2/lib/base/model/models.svelte';
+import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
-import { mapModel } from '../base/model/models.svelte';
-import { getter } from '../base/utils/options';
 
 const nodeDocumentForId = (id: string) => {
   return new Document<NodeData<never>>({

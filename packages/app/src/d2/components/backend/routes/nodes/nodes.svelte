@@ -5,7 +5,7 @@
   import LucideFile from '$d2/icons/lucide--file.svelte';
   import { addObject, removeObject } from '$d2/lib/base/utils/array';
   import { getter, options } from '$d2/lib/base/utils/options';
-  import { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { Snippet } from 'svelte';
 
