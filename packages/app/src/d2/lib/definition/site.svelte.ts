@@ -19,7 +19,7 @@ export class SiteDefinitionModel extends Model<SiteDefinitionModelOptions> {
 
   byDocument(doc: Document<NodeData>) {
     const kind = doc.data?.kind;
-    if(kind) {
+    if (kind) {
       return this.byType(kind);
     }
   }
