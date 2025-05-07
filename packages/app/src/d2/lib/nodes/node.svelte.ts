@@ -7,6 +7,7 @@ import { serialized } from '$d2/lib/base/utils/object';
 import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
+import { getSiteDefinition } from '../definition/site.svelte';
 
 const nodeDocumentForId = (id: string) => {
   return new Document<NodeData<never>>({
@@ -29,6 +30,8 @@ export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscri
   readonly data = $derived(this.doc.data!);
   readonly kind = $derived(this.data.kind);
   readonly parentId = $derived(this.data.parent);
+
+  readonly definition = $derived(getSiteDefinition().byType(this.kind));
 
   async save() {
     await this.doc.save();
@@ -66,7 +69,7 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
 
   readonly _node = mapModel({
     source: getter(() => this._loaded),
-    target: (doc) => createNodeDocumentModel(doc),
+    target: (doc) => createModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -86,16 +89,6 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
   }
 }
 
-class MissingNodeDocumentModel extends NodeDocumentModel<'missing'> {}
-class FileNodeDocumentModel extends NodeDocumentModel<'file'> {}
-
-export const createNodeDocumentModel = (doc: Document<NodeData>) => {
-  const kind = doc.data?.kind;
-  const cast = <Type extends NodeType>() => doc as Document<NodeData<Type>>;
-  if (kind === 'missing') {
-    return new MissingNodeDocumentModel({ doc: cast() });
-  } else if (kind === 'file') {
-    return new FileNodeDocumentModel({ doc: cast() });
-  }
-  return new NodeDocumentModel({ doc });
+export const createModel = (doc: Document<NodeData>) => {
+  return getSiteDefinition().byDocument(doc)?.model({ doc });
 };

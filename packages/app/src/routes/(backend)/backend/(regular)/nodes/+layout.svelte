@@ -17,4 +17,6 @@
   $effect(() => subscribe(nodes));
 </script>
 
-<Nodes {id} {nodes} {route} {children} />
+<Nodes {id} {nodes} {route}>
+  {@render children()}
+</Nodes>

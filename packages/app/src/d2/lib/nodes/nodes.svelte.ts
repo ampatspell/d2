@@ -7,7 +7,7 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel } from './node.svelte';
+import { createModel, nodeDocumentKey, NodeDocumentModel } from './node.svelte';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
@@ -22,7 +22,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createNodeDocumentModel(doc),
+    target: (doc) => createModel(doc),
     key: nodeDocumentKey,
   });
 
