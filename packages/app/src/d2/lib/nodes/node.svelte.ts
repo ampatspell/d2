@@ -1,5 +1,5 @@
 import * as fs from '@firebase/firestore';
-import type { NodeData, NodeType } from '$d2-shared/documents';
+import type { NodeData, NodeType, NodeTypes } from '$d2-shared/documents';
 import { Document } from '$d2/lib/base/fire/document.svelte';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
@@ -8,6 +8,7 @@ import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { getDefinition } from '../definition/app.svelte';
+import type { PromiseVoidCallback } from '../base/utils/types';
 
 const nodeDocumentForId = (id: string) => {
   return new Document<NodeData<never>>({
@@ -18,6 +19,23 @@ const nodeDocumentForId = (id: string) => {
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
 };
+
+export type NodeModelPropertiesOptions<Type extends NodeType> = {
+  model: {
+    data: { properties: NodeTypes[Type] };
+    save: PromiseVoidCallback;
+  };
+};
+
+export class NodeModelProperties<
+  Type extends NodeType,
+  O extends NodeModelPropertiesOptions<Type> = NodeModelPropertiesOptions<Type>,
+> extends Subscribable<O> {
+  readonly data = $derived(this.options.model.data.properties);
+  async didUpdate() {
+    await this.options.model.save();
+  }
+}
 
 export type NodeDocumentModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;

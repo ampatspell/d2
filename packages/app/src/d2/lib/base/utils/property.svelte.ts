@@ -1,7 +1,7 @@
 import type { DocumentData } from '@firebase/firestore';
 import { getter, type OptionsInput } from './options';
 import type { PromiseVoidCallback } from './types';
-import { Model } from '../model/model.svelte';
+import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 
 export type PropertyDelegateOptions = {
@@ -43,7 +43,7 @@ export type DocumentModelPropertiesOptions<D extends DocumentData> = {
 export class DocumentModelProperties<
   D extends DocumentData,
   O extends DocumentModelPropertiesOptions<D> = DocumentModelPropertiesOptions<D>,
-> extends Model<O> {
+> extends Subscribable<O> {
   readonly data = $derived(this.options.model.doc.data!);
   async didUpdate() {
     await this.options.model.doc.save();
@@ -60,7 +60,7 @@ export type DataModelPropertiesOptions<D extends DocumentData> = {
 export class DataModelProperties<
   D extends DocumentData,
   O extends DataModelPropertiesOptions<D> = DataModelPropertiesOptions<D>,
-> extends Model<O> {
+> extends Subscribable<O> {
   readonly data = $derived(this.options.model.data);
   async didUpdate() {
     await this.options.model.save();

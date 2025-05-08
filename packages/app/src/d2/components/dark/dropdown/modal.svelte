@@ -35,7 +35,7 @@
 
 <Modal type="blank">
   <div class="items">
-    {#each items as model}
+    {#each items as model (model)}
       <!-- svelte-ignore a11y_click_events_have_key_events -->
       <!-- svelte-ignore a11y_no_static_element_interactions -->
       <div class="item" onclick={onSelect(model)}>

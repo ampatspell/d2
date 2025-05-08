@@ -1,4 +1,7 @@
 <script lang="ts">
+  import Inspector from '$d2/components/dark/inspector/inspector.svelte';
+  import Section from '$d2/components/dark/inspector/section.svelte';
+  import Overflow from '$d2/components/dark/overflow.svelte';
   import Delete from '$d2/components/dark/section/page/delete.svelte';
   import MasterDetail from '$d2/components/dark/section/page/master-detail.svelte';
   import Page from '$d2/components/dark/section/page/page.svelte';
@@ -23,7 +26,13 @@
     {#if definition}
       <MasterDetail>
         {#snippet master()}
-          <definition.backend {node} />
+          <Overflow overflow="y">
+            <Inspector>
+              <Section>
+                <definition.backend {node} />
+              </Section>
+            </Inspector>
+          </Overflow>
         {/snippet}
         {#snippet detail()}{/snippet}
       </MasterDetail>

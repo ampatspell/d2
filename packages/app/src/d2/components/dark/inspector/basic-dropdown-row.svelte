@@ -12,7 +12,6 @@
     label: string;
     property: Property<T | undefined>;
     items: readonly T[];
-    toString: (value: T) => string;
     item: Snippet<[value: T]>;
   } = $props();
 </script>
