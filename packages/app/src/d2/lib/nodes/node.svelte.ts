@@ -9,6 +9,7 @@ import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { getDefinition } from '../definition/app.svelte';
 import { data, DocumentModelProperties } from '../base/utils/property.svelte';
+import { UploadFilesModel } from './upload.svelte';
 
 const nodeDocumentForId = (id: string) => {
   return new Document<NodeData<never>>({
@@ -53,6 +54,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
 > {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
+  readonly path = $derived(this.doc.path!);
   readonly exists = $derived(this.doc.exists);
   readonly data = $derived(this.doc.data!);
   readonly kind = $derived(this.data.kind);
@@ -64,6 +66,10 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
 
   async save() {
     await this.doc.save();
+  }
+
+  upload() {
+    return new UploadFilesModel({ node: this });
   }
 
   async load() {

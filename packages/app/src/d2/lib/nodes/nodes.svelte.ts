@@ -32,6 +32,10 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     return this.all.filter((node) => node.parentId === id);
   }
 
+  byId(id: string | undefined) {
+    return this.all.find((node) => node.id === id);
+  }
+
   async load() {
     await this._query.load();
     await this._nodes.load();
