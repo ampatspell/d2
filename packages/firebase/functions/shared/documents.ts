@@ -1,3 +1,5 @@
+import type { NodePropertiesRegistry } from "./nodes";
+
 export const userRoles = ['admin', 'visitor'] as const;
 export type UserRole = (typeof userRoles)[number];
 
@@ -11,18 +13,15 @@ export type UserData = {
   role: UserRole;
 };
 
-export type NodeTypes = {
-  'missing': {
-    message?: string;
-  };
-  'file': undefined;
-};
+//
 
-export type NodeType = keyof NodeTypes;
+export type NodeType = keyof NodePropertiesRegistry;
 
-export type NodeData<T extends NodeType = NodeType> = {
-  kind: T;
-  properties: NodeTypes[T];
+export type { NodePropertiesRegistry };
+
+export type NodeData<Type extends NodeType = NodeType> = {
+  kind: Type;
+  properties: NodePropertiesRegistry[Type];
   parent: string | null;
   createdAt: Date;
 };

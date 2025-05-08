@@ -1,4 +1,4 @@
-import type { NodeType, NodeTypes } from '$d2-shared/documents';
+import type { NodeType, NodePropertiesRegistry } from '$d2-shared/documents';
 import type { Component } from 'svelte';
 import { Model } from '../base/model/model.svelte';
 import type { NodeDocumentModel } from '../nodes/node.svelte';
@@ -13,7 +13,7 @@ export type NodeDefinitionModelOptions<
 > = {
   readonly type: Type;
   readonly node: new (...args: ConstructorParameters<typeof NodeDocumentModel<Type>>) => Node;
-  readonly defaults: () => NodeTypes[Type];
+  readonly defaults: () => NodePropertiesRegistry[Type];
   readonly backend: NodeBackendComponent<Type, Node>;
 };
 

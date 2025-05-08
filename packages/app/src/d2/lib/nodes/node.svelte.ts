@@ -1,5 +1,5 @@
 import * as fs from '@firebase/firestore';
-import type { NodeData, NodeType, NodeTypes } from '$d2-shared/documents';
+import type { NodeData, NodeType, NodePropertiesRegistry } from '$d2-shared/documents';
 import { Document } from '$d2/lib/base/fire/document.svelte';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
@@ -22,7 +22,7 @@ export const nodeDocumentKey = (doc: Document<NodeData>) => {
 
 export type NodeModelPropertiesOptions<Type extends NodeType> = {
   model: {
-    data: { properties: NodeTypes[Type] };
+    data: { properties: NodePropertiesRegistry[Type] };
     save: PromiseVoidCallback;
   };
 };
