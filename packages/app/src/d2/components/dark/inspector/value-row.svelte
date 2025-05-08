@@ -7,7 +7,7 @@
     value,
   }: {
     label: string;
-    value: string | number | undefined;
+    value: string | number | undefined | null;
   } = $props();
 </script>
 

@@ -1,3 +1,7 @@
-import { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelte';
 
-export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {}
+export class FileNodeProperties extends NodeModelProperties<'file'> {}
+
+export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
+  readonly properties: FileNodeProperties = new FileNodeProperties({ model: this });
+}
