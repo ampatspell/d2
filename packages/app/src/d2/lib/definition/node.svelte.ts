@@ -30,4 +30,6 @@ export class NodeDefinitionModel<
   defaults() {
     return this.options.defaults();
   }
+
+  readonly backend = $derived(this.options.backend);
 }

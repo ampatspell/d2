@@ -1,6 +1,6 @@
 <script lang="ts">
+  import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
-  import { setGlobal } from '$d2/lib/base/utils/set-global';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -9,7 +9,11 @@
   $effect(() => subscribe(loader));
 
   let node = $derived(loader.node);
-  $effect(() => setGlobal({ node }));
+  let definition = $derived(node.definition);
 </script>
 
-{node}
+{#if definition}
+  <definition.backend {node} />
+{:else}
+  <Placeholder label="Node definition missing" />
+{/if}
