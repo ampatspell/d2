@@ -6,6 +6,7 @@ import { firebase } from '../base/fire/firebase.svelte';
 import { removeObject } from '../base/utils/array';
 import { Subscribable } from '../base/model/model.svelte';
 import type { NodeDocumentModel } from './node.svelte';
+import { nodesCollection } from './nodes.svelte';
 
 export type UploadFileStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
 
@@ -29,9 +30,7 @@ export class UploadFileModel {
   readonly data = $derived.by(() => this.options.file);
   readonly contentType = $derived.by(() => this.data.type);
   readonly size = $derived.by(() => this.data.size);
-
-  readonly id = $derived.by(() => fs.doc(fs.doc(firebase.firestore, this.options.upload.path).parent));
-  readonly path = $derived.by(() => `${this.options.upload.path}/${this.id}`);
+  readonly path = $derived.by(() => fs.doc(nodesCollection).path);
   readonly ref = $derived.by(() => storage.ref(firebase.storage, this.path));
 
   remove() {
@@ -47,7 +46,7 @@ export class UploadFileModel {
       contentType,
       customMetadata: {
         filename: this.name,
-        node: this.options.upload.id,
+        parent: this.options.upload.id,
       },
     });
 
