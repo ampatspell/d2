@@ -18,6 +18,7 @@ import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
 import type { VoidCallback } from '../utils/types';
 import { insertObjectAt, removeObjectAt } from '../utils/array';
 import { serialized } from '../utils/object';
+import { browser } from '$app/environment';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -25,6 +26,9 @@ export type DocumentsLoadOptions = {
 };
 
 const getDocsBySource = (ref: Query, source: DocumentLoadSource | undefined = 'cached') => {
+  if (!browser) {
+    source = undefined;
+  }
   if (source === 'cached') {
     return getDocsFromCache(ref);
   } else if (source === 'remote') {

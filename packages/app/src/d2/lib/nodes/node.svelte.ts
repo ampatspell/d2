@@ -95,6 +95,7 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
 
   async load() {
     await this.doc.load();
+    await this._node.load();
     await this.node?.load();
   }
 

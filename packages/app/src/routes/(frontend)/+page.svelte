@@ -1,11 +1,19 @@
 <script lang="ts">
-  import { PUBLIC_FIREBASE, PUBLIC_APP_NAME } from '$env/static/public';
-  let config = JSON.parse(PUBLIC_FIREBASE);
+  import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+  import type { MissingNodeDocumentModel } from '$lib/missing/node.svelte';
+  import type { PageData } from './$types';
+
+  let { data }: { data: PageData } = $props();
+
+  let loader = $derived(data.loader);
+  let node = $derived(loader.node as MissingNodeDocumentModel | undefined);
+
+  $effect(() => subscribe(loader));
 </script>
 
 <div class="page">
   <div class="row">
-    {PUBLIC_APP_NAME} / {config.projectId}
+    {node?.data.properties.message ?? `Node ${loader.id} not found`}
   </div>
   <div class="row">
     <a href="/backend">backend</a>
