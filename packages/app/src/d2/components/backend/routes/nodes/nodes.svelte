@@ -1,5 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import Add from '$d2/components/dark/section/page/add.svelte';
+  import Upload from '$d2/components/dark/section/page/upload.svelte';
   import Section from '$d2/components/dark/section/section.svelte';
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
   import LucideFile from '$d2/icons/lucide--file.svelte';
@@ -42,9 +44,18 @@
   };
 
   let deselect = () => goto(route(undefined));
+
+  let onUpload = () => {};
+  let onAdd = () => {};
 </script>
 
 <Section title="Nodes" icon={LucideFile} {children}>
+  {#snippet accessories()}
+    {#if id}
+      <Upload {onUpload} />
+    {/if}
+    <Add {onAdd} />
+  {/snippet}
   {#snippet sidebar()}
     <Tree {models} {delegateFor} {deselect}>
       {#snippet item(model: NodeDocumentModel)}
