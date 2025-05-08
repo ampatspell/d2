@@ -4,12 +4,12 @@ import type { NodeData, NodeType } from '$d2-shared/documents';
 import type { Document } from '../base/fire/document.svelte';
 import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.svelte';
 
-export type SiteDefinitionModelOptions = {
+export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly nodes: NodeDefinitionModelOptions<any, any>[];
 };
 
-export class SiteDefinitionModel extends Model<SiteDefinitionModelOptions> {
+export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
   readonly nodes = $derived(this.options.nodes.map((opts) => new NodeDefinitionModel(opts)));
 
   byType(type: NodeType): NodeDefinitionModel<NodeType> | undefined {
@@ -24,12 +24,12 @@ export class SiteDefinitionModel extends Model<SiteDefinitionModelOptions> {
   }
 }
 
-let _site = $state<SiteDefinitionModel>();
+let _app = $state<AppDefinitionModel>();
 
-export const createSiteDefinition = (opts: OptionsInput<SiteDefinitionModelOptions>) => {
-  _site = new SiteDefinitionModel(opts);
+export const createDefinition = (opts: OptionsInput<AppDefinitionModelOptions>) => {
+  _app = new AppDefinitionModel(opts);
 };
 
-export const getSiteDefinition = () => {
-  return _site!;
+export const getDefinition = () => {
+  return _app!;
 };

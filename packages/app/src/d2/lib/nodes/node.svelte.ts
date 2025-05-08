@@ -7,7 +7,7 @@ import { serialized } from '$d2/lib/base/utils/object';
 import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
-import { getSiteDefinition } from '../definition/site.svelte';
+import { getDefinition } from '../definition/app.svelte';
 
 const nodeDocumentForId = (id: string) => {
   return new Document<NodeData<never>>({
@@ -31,7 +31,7 @@ export class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscri
   readonly kind = $derived(this.data.kind);
   readonly parentId = $derived(this.data.parent);
 
-  readonly definition = $derived(getSiteDefinition().byType(this.kind));
+  readonly definition = $derived(getDefinition().byType(this.kind));
 
   async save() {
     await this.doc.save();
@@ -90,5 +90,5 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
 }
 
 export const createNodeDocumentModel = (doc: Document<NodeData>) => {
-  return getSiteDefinition().byDocument(doc)?.model({ doc });
+  return getDefinition().byDocument(doc)?.model({ doc });
 };
