@@ -5,7 +5,8 @@ import type { Document } from '../base/fire/document.svelte';
 import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.svelte';
 
 export type SiteDefinitionModelOptions = {
-  readonly nodes: NodeDefinitionModelOptions[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly nodes: NodeDefinitionModelOptions<any, any>[];
 };
 
 export class SiteDefinitionModel extends Model<SiteDefinitionModelOptions> {
