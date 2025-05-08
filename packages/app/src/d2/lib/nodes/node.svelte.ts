@@ -73,11 +73,11 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
     key: nodeDocumentKey,
   });
 
-  readonly node = $derived(this._node.content!);
+  readonly node = $derived(this._node.content);
 
   async load() {
     await this.doc.load();
-    await this.node.load();
+    await this.node?.load();
   }
 
   readonly dependencies = [this.doc, this._node];
