@@ -9,7 +9,7 @@
   let filename = $derived(node.data.properties.filename);
   let url = $derived.by(() => {
     if (node.data.properties.type === 'image') {
-      return node.data.properties.thumbnails['2048x2048'].url;
+      return node.data.properties.thumbnails['1024x1024'].url;
     }
   });
 </script>
