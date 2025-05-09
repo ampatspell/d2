@@ -214,6 +214,7 @@ export class App {
         'eslint.config.js',
         '.prettierrc',
         'src/d2',
+        'src/hooks.ts',
         'src/routes/(backend)',
       ],
       source,
