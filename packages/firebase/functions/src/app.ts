@@ -6,7 +6,7 @@ import { Config } from './config';
 import { Auth, getAuth } from 'firebase-admin/auth';
 import { IdentityService } from './identity';
 import { FilesService } from './files';
-import { NodesService } from './nodes';
+import { NodesService } from './nodes/nodes';
 
 export type Logger = {
   info(...args: unknown[]): void;
