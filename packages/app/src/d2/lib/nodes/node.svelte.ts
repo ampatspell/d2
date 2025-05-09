@@ -76,6 +76,10 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
     await this.doc.load();
   }
 
+  async delete() {
+    await this.doc.delete();
+  }
+
   readonly isLoaded = $derived(isLoaded([this.doc]));
   readonly dependencies = [this.doc];
   readonly serialized = $derived(serialized(this, ['id']));
