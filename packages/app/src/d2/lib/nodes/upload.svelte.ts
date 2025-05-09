@@ -30,7 +30,8 @@ export class UploadFileModel {
   readonly data = $derived.by(() => this.options.file);
   readonly contentType = $derived.by(() => this.data.type);
   readonly size = $derived.by(() => this.data.size);
-  readonly path = $derived.by(() => fs.doc(nodesCollection).path);
+  readonly id = $derived.by(() => fs.doc(nodesCollection).path);
+  readonly path = $derived.by(() => `${this.id}/original`);
   readonly ref = $derived.by(() => storage.ref(firebase.storage, this.path));
 
   remove() {

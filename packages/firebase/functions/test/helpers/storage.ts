@@ -25,16 +25,29 @@ export class StorageHelper {
     return mimeTypes[ext] ?? 'application/octet-stream';
   }
 
-  async uploadFile(source: string, target: string) {
+  async uploadFile(source: string, target: string, metadata?: Record<string, unknown>) {
     const buffer = await this.loadBuffer(source);
     const file = this.app.bucket.file(target);
     const contentType = this.contentTypeFor(source);
     await file.save(buffer, {
       resumable: false,
       contentType,
+      metadata: {
+        metadata,
+      },
     });
-    const url = await getDownloadURL(file);
-    return { url };
+
+    const [url, meta] = await Promise.all([getDownloadURL(file), this.getMetadata(target)]);
+
+    const size = meta!.size!;
+
+    return {
+      name: meta!.name!,
+      contentType,
+      size: typeof size === 'number' ? size : parseInt(size),
+      metadata: meta!.metadata as Record<string, string>,
+      url,
+    };
   }
 
   async getMetadata(name: string) {

@@ -33,7 +33,7 @@ const param = <T extends string>(value: T) => {
   return {
     value: () => value,
   } as unknown as Param<T>;
-}
+};
 
 export const setup = (caller: Mocha.Suite) => {
   caller.beforeEach(() => {

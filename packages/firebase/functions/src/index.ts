@@ -2,14 +2,13 @@ import { initializeApp } from 'firebase-admin/app';
 import * as functions from 'firebase-functions/v2';
 import * as logger from 'firebase-functions/logger';
 import Application from './app';
-import {
-  FunctionsSetRoleEventRequest,
-  FunctionsSetRoleEventResponse,
-} from '../shared/functions';
+import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../shared/functions';
 import { config } from './config';
 import { isUserRole } from '../shared/documents';
 
-functions.setGlobalOptions({ region: config.region });
+const { region } = config;
+
+functions.setGlobalOptions({ region });
 
 const instance = initializeApp();
 const app = new Application({ instance, logger, config: config });
@@ -40,5 +39,14 @@ export const setRole = functions.https.onCall<FunctionsSetRoleEventRequest, Prom
         status: 'success',
       };
     });
+  },
+);
+
+
+
+export const storageOnFinalized = functions.storage.onObjectFinalized(
+  { memory: '4GiB', concurrency: 50, region: 'us-central1' },
+  async (event) => {
+    await app.files.onStorageObjectFinalized(event.data);
   },
 );

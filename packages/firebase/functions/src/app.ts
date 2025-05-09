@@ -5,6 +5,7 @@ import { inspect } from 'util';
 import { Config } from './config';
 import { Auth, getAuth } from 'firebase-admin/auth';
 import { IdentityService } from './identity';
+import { FilesService } from './files';
 
 export type Logger = {
   info(...args: unknown[]): void;
@@ -44,6 +45,10 @@ export default class Application {
 
   get identity() {
     return new IdentityService(this);
+  }
+
+  get files() {
+    return new FilesService(this);
   }
 
   dir(object: unknown) {
