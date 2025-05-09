@@ -12,6 +12,7 @@
   import type { Snippet } from 'svelte';
   import { openUploadFilesModal } from '../../node/upload/models.svelte';
   import { getModalsContext } from '$d2/components/dark/modals/base/context.svelte';
+    import Overflow from '$d2/components/dark/overflow.svelte';
 
   let {
     id,
@@ -70,10 +71,12 @@
     {/if}
   {/snippet}
   {#snippet sidebar()}
-    <Tree {models} {delegateFor} {deselect}>
-      {#snippet item(model: NodeDocumentModel)}
-        {model.id} / {model.kind}
-      {/snippet}
-    </Tree>
+    <Overflow overflow="y">
+      <Tree {models} {delegateFor} {deselect}>
+        {#snippet item(model: NodeDocumentModel)}
+          {model.id} / {model.kind}
+        {/snippet}
+      </Tree>
+    </Overflow>
   {/snippet}
 </Section>
