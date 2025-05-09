@@ -18,7 +18,7 @@ export type FileProperty = {
 
 export type FileNodeProperties = {
   original: FileProperty;
-  thumbnails: { [key in FileThumbnails]: FileProperty };
+  thumbnails?: { [key in FileThumbnails]: FileProperty };
 };
 
 export type NodePropertiesRegistry = {

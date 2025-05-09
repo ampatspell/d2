@@ -38,18 +38,18 @@ export class FilesService {
     filename: string;
     url: string;
   }) {
+    const now = new Date();
     const data: NodeData<'file'> = {
       kind: 'file',
-      createdAt: new Date(),
+      createdAt: now,
       parent,
       properties: {
-        file: {
-          original: {
-            contentType,
-            size,
-            filename,
-            url,
-          },
+        original: {
+          contentType,
+          size,
+          dimensions: { width: 100, height: 100 },
+          filename,
+          url,
         },
       },
     };
@@ -62,12 +62,14 @@ export class FilesService {
     const { name, contentType, size, metadata } = data;
     const resolved = this.resolvePathForOriginal(data.name);
     if (resolved) {
+      const { id } = resolved;
+
       const filename = metadata?.['filename'];
       const parent = metadata?.['parent'];
       if (filename && parent) {
-        const { id } = resolved;
         const file = this.app.bucket.file(name);
         const url = await getDownloadURL(file);
+
         await this.createFileNode({
           id,
           contentType: contentType ?? 'application/octet-stream',
