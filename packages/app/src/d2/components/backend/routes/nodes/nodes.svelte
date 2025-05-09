@@ -12,7 +12,7 @@
   import type { Snippet } from 'svelte';
   import { openUploadFilesModal } from '../../node/upload/models.svelte';
   import { getModalsContext } from '$d2/components/dark/modals/base/context.svelte';
-    import Overflow from '$d2/components/dark/overflow.svelte';
+  import Overflow from '$d2/components/dark/overflow.svelte';
 
   let {
     id,

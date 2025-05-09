@@ -4,8 +4,8 @@ import { FileNodeDocumentModel } from './node.svelte';
 
 export const file = () => {
   return node('file', {
-    defaults: () => undefined,
     node: FileNodeDocumentModel,
+    defaults: undefined,
     backend: Backend,
   });
 };

@@ -7,7 +7,7 @@
   import MasterDetail from '$d2/components/dark/section/page/master-detail.svelte';
   import Page from '$d2/components/dark/section/page/page.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
-    import type { VoidCallback } from '$d2/lib/base/utils/types';
+  import type { VoidCallback } from '$d2/lib/base/utils/types';
   import type { NodeDocumentModelLoader } from '$d2/lib/nodes/node.svelte';
 
   let { loader, onWillDelete }: { loader: NodeDocumentModelLoader; onWillDelete: VoidCallback } = $props();

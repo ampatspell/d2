@@ -8,7 +8,7 @@
 
   let filename = $derived(node.data.properties.filename);
   let url = $derived.by(() => {
-    if(node.data.properties.type === 'image') {
+    if (node.data.properties.type === 'image') {
       return node.data.properties.thumbnails['2048x2048'].url;
     }
   });
@@ -20,12 +20,14 @@
       {filename}
     </Row>
   </Column>
+</Section>
+<Section>
   {#if url}
-  <Column>
-    <Row>
-      <!-- svelte-ignore a11y_missing_attribute -->
-      <img src={url} />
-    </Row>
-  </Column>
+    <Column>
+      <Row>
+        <!-- svelte-ignore a11y_missing_attribute -->
+        <img src={url} />
+      </Row>
+    </Column>
   {/if}
 </Section>
