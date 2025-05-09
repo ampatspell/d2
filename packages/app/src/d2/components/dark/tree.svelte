@@ -37,9 +37,7 @@
 
   let setOpen = (delegate: TreeModelDelegate<T>) => (e: Event) => {
     e.stopPropagation();
-    if (!delegate.isOpen) {
-      delegate.select();
-    }
+    delegate.select();
     delegate.setOpen(!delegate.isOpen);
   };
 
