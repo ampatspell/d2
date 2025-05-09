@@ -60,18 +60,19 @@ export class FilesService {
 
   async onStorageObjectFinalized(data: FileData) {
     const { name, contentType, size, metadata } = data;
-    console.log({ name, contentType, size, metadata });
-    if (metadata) {
-      const resolved = this.resolvePathForOriginal(data.name);
-      if (resolved) {
+    const resolved = this.resolvePathForOriginal(data.name);
+    if (resolved) {
+      const filename = metadata?.['filename'];
+      const parent = metadata?.['parent'];
+      if (filename && parent) {
         const { id } = resolved;
         const file = this.app.bucket.file(name);
         const url = await getDownloadURL(file);
         await this.createFileNode({
           id,
           contentType: contentType ?? 'application/octet-stream',
-          filename: metadata['filename'],
-          parent: metadata['parent'],
+          filename,
+          parent,
           size,
           url,
         });

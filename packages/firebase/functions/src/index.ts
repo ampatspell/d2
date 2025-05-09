@@ -42,7 +42,10 @@ export const setRole = functions.https.onCall<FunctionsSetRoleEventRequest, Prom
   },
 );
 
-
+export const onNodeDeleted = functions.firestore.onDocumentDeleted('/nodes/{id}', async (event) => {
+  const id = event.params.id;
+  await app.nodes.onNodeDeleted(id);
+});
 
 export const storageOnFinalized = functions.storage.onObjectFinalized(
   { memory: '4GiB', concurrency: 50, region: 'us-central1' },
