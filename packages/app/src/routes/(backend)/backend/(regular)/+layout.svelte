@@ -1,12 +1,10 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import type { LayoutData } from './$types';
   import Layout from '$d2/components/backend/layout/layout.svelte';
 
-  let { data, children }: { data: LayoutData; children: Snippet } = $props();
-  let route = $derived(data.route);
+  let { children }: { children: Snippet } = $props();
 </script>
 
-<Layout {route}>
+<Layout>
   {@render children()}
 </Layout>

@@ -5,8 +5,9 @@
   import LucideFlame from '$d2/icons/lucide--flame.svelte';
   import LucideSettings from '$d2/icons/lucide--settings.svelte';
   import LucideFile from '$d2/icons/lucide--file.svelte';
+  import { page } from '$app/state';
 
-  let { route }: { route: string } = $props();
+  let route = $derived(page.url.pathname);
 
   let startsWith = (item: string) => route.startsWith(item);
   let equals = (item: string) => route === item;

@@ -2,12 +2,12 @@
   import type { Snippet } from 'svelte';
   import Sidebar from './sidebar/sidebar.svelte';
 
-  let { route, children }: { route: string; children: Snippet } = $props();
+  let { children }: { children: Snippet } = $props();
 </script>
 
 <div class="layout">
   <div class="sidebar">
-    <Sidebar {route} />
+    <Sidebar />
   </div>
   <div class="content">
     {@render children()}

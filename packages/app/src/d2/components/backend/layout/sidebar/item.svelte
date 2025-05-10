@@ -27,10 +27,10 @@
     height: var(--size);
     transition: 0.15s ease-in-out background-color;
     &.current {
-      background: var(--dark-selected-background-color-2);
+      background: var(--dark-selected-background-color-1);
     }
     &:hover {
-      background: var(--dark-selected-background-color-1);
+      background: var(--dark-selected-background-color-2);
     }
   }
 </style>
