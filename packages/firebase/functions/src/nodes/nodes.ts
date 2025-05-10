@@ -1,7 +1,7 @@
 import { NodeData } from '../../shared/documents';
 import Application from '../app';
 import { NodesFilesService } from './files';
-import { NodesPathsService } from './path';
+import { NodesPathsService } from './paths';
 
 export class NodesService {
   constructor(private readonly app: Application) {}
