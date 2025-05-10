@@ -3,6 +3,7 @@ import {
   type DocumentData,
   type DocumentReference,
   type DocumentSnapshot,
+  FieldValue,
   deleteDoc,
   deleteField,
   getDoc,
@@ -66,6 +67,10 @@ export type DocumentOptions<T> = {
 export const toData = (input: unknown): unknown => {
   if (Array.isArray(input)) {
     return input.map((entry) => toData(entry));
+  } else if (input instanceof Date) {
+    return input;
+  } else if (input instanceof FieldValue) {
+    return input;
   } else if (input === null) {
     return null;
   } else if (input === undefined) {

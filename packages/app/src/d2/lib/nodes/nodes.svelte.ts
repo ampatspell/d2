@@ -41,6 +41,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   async create({ parent, definition }: { parent: NodeDocumentModel | undefined; definition: NodeDefinitionModel }) {
     const properties = definition.defaults();
     if (properties) {
+      console.log(fs.serverTimestamp() instanceof fs.FieldValue);
       const ref = fs.doc(nodesCollection);
       const data: NodeData = {
         createdAt: new Date(),
@@ -61,19 +62,6 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     await this._query.load();
     await this._nodes.load();
   }
-
-  // async create<Type extends NodeType>(parent: string | undefined, kind: Type, properties: NodeTypes[Type]) {
-  //   const model = NodeDocumentModel.buildNew({
-  //     data: {
-  //       kind,
-  //       properties,
-  //       parent: parent ?? null,
-  //       createdAt: new Date(),
-  //     },
-  //   });
-  //   await model.save();
-  //   return model;
-  // }
 
   readonly isLoaded = $derived(isLoaded([this._query]));
   readonly dependencies = [this._query, this._nodes];

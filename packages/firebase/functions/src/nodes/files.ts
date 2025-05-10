@@ -1,3 +1,4 @@
+import { FieldValue, WithFieldValue } from 'firebase-admin/firestore';
 import { NodeData } from '../../shared/documents';
 import Application from '../app';
 import { FileData } from '../files';
@@ -53,10 +54,10 @@ export class NodesFilesService {
       return;
     }
 
-    const data: NodeData<'file'> = {
+    const data: WithFieldValue<NodeData<'file'>> = {
       kind: 'file',
       parent,
-      createdAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
       properties,
     };
 

@@ -1,7 +1,5 @@
 <script lang="ts">
   import Inspector from '$d2/components/dark/inspector/inspector.svelte';
-  import Section from '$d2/components/dark/inspector/section.svelte';
-  import ValueRow from '$d2/components/dark/inspector/value-row.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import Delete from '$d2/components/dark/section/page/delete.svelte';
   import MasterDetail from '$d2/components/dark/section/page/master-detail.svelte';
@@ -34,9 +32,6 @@
           <Overflow overflow="y">
             <Inspector>
               <definition.backend {node} />
-              <Section>
-                <ValueRow label="Parent" value={node.properties.base.parent.value ?? 'No parent'} />
-              </Section>
             </Inspector>
           </Overflow>
         {/snippet}
