@@ -4,6 +4,7 @@ import Backend from './backend.svelte';
 
 export const missing = () => {
   return node('missing', {
+    name: 'Missing',
     node: MissingNodeDocumentModel,
     defaults: () => ({
       message: '404 page not found',

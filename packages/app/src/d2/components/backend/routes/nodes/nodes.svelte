@@ -76,13 +76,15 @@
 
 <Section title="Nodes" icon={LucideFile} {children}>
   {#snippet accessories()}
+    {#if models.length > 0}
+      <Fold {fold} {onFold} />
+    {/if}
     {#if selected?.exists}
       <Upload {onUpload} />
     {/if}
     {#if !selected || selected.exists}
       <Add {onAdd} />
     {/if}
-    <Fold {fold} {onFold} />
   {/snippet}
   {#snippet sidebar()}
     <Overflow overflow="y">

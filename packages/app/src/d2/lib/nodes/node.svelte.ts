@@ -55,10 +55,10 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly createdAt = $derived(this.data.createdAt);
   readonly updatedAt = $derived(this.data.updatedAt);
 
-  readonly definition = $derived(getDefinition().byType(this.kind));
+  readonly definition = $derived(getDefinition().byType(this.kind)!);
+  readonly name = $derived(this.definition.name);
 
   abstract readonly properties: NodeModelProperties<Type>;
-  abstract readonly name: string;
   abstract readonly icon: Component;
 
   async save() {

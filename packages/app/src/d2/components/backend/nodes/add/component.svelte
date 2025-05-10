@@ -35,7 +35,7 @@
       <Table>
         {#each definitions as definition (definition)}
           <Cell onClick={onClick(definition)}>
-            {definition.type}
+            {definition.name}
           </Cell>
         {/each}
       </Table>

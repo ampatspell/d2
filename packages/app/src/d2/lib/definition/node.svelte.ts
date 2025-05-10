@@ -12,6 +12,7 @@ export type NodeDefinitionModelOptions<
   Node extends NodeDocumentModel<Type> = NodeDocumentModel<Type>,
 > = {
   readonly type: Type;
+  readonly name: string;
   readonly node: new (...args: ConstructorParameters<typeof NodeDocumentModel<Type>>) => Node;
   readonly defaults: (() => NodePropertiesRegistry[Type]) | undefined;
   readonly backend: NodeBackendComponent<Type, Node>;
@@ -22,6 +23,8 @@ export class NodeDefinitionModel<
   Model extends NodeDocumentModel<Type> = NodeDocumentModel<Type>,
 > extends Model<NodeDefinitionModelOptions<Type, Model>> {
   readonly type = $derived(this.options.type);
+  readonly name = $derived(this.options.name);
+  readonly backend = $derived(this.options.backend);
   readonly hasDefaults = $derived(!!this.options.defaults);
 
   model(...args: ConstructorParameters<typeof NodeDocumentModel<Type>>) {
@@ -31,6 +34,4 @@ export class NodeDefinitionModel<
   defaults() {
     return this.options.defaults?.();
   }
-
-  readonly backend = $derived(this.options.backend);
 }
