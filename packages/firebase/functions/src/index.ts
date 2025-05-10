@@ -4,7 +4,7 @@ import * as logger from 'firebase-functions/logger';
 import Application from './app';
 import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../shared/functions';
 import { config } from './config';
-import { isUserRole, NodeData } from '../shared/documents';
+import { isUserRole } from '../shared/documents';
 
 const { region } = config;
 
@@ -44,7 +44,7 @@ export const setRole = functions.https.onCall<FunctionsSetRoleEventRequest, Prom
 
 export const onNodeDeleted = functions.firestore.onDocumentDeleted('/nodes/{id}', async (event) => {
   const id = event.params.id;
-  await app.nodes.onNodeDeleted(id, event.data!.data() as NodeData);
+  await app.nodes.onNodeDeleted(id);
 });
 
 export const storageOnFinalized = functions.storage.onObjectFinalized(

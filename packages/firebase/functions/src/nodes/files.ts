@@ -86,4 +86,9 @@ export class NodesFilesService {
     }
     return false;
   }
+
+  async onNodeDeleted(id: string) {
+    const [files] = await this.app.bucket.getFiles({ prefix: `nodes/${id}` });
+    await Promise.all(files.map((file) => file.delete()));
+  }
 }

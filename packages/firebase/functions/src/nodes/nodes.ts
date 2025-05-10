@@ -1,4 +1,3 @@
-import { NodeData } from '../../shared/documents';
 import Application from '../app';
 import { NodesFilesService } from './files';
 
@@ -19,8 +18,7 @@ export class NodesService {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async onNodeDeleted(nodeId: string, data: NodeData) {
-    await this.deleteChildren(nodeId);
+  async onNodeDeleted(nodeId: string) {
+    await Promise.all([this.files.onNodeDeleted(nodeId), this.deleteChildren(nodeId)]);
   }
 }
