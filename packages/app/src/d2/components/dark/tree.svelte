@@ -115,6 +115,10 @@
       > .content {
         flex: 1;
         min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
       &.selected {
         background: var(--dark-selected-background-color-1);
