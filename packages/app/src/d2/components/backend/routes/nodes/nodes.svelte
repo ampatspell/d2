@@ -70,20 +70,19 @@
     }
   };
 
-  let onFold = () => settings.setOpenAll(false);
+  let fold = $derived(settings.fold);
+  let onFold = (open: boolean) => settings.setOpenAll(open);
 </script>
 
 <Section title="Nodes" icon={LucideFile} {children}>
   {#snippet accessories()}
-    {#if models.length > 0}
-      <Fold {onFold} />
-    {/if}
     {#if selected?.exists}
       <Upload {onUpload} />
     {/if}
     {#if !selected || selected.exists}
       <Add {onAdd} />
     {/if}
+    <Fold {fold} {onFold} />
   {/snippet}
   {#snippet sidebar()}
     <Overflow overflow="y">

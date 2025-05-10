@@ -8,6 +8,7 @@ import { mapModels } from '../base/model/models.svelte';
 import type { UserNodeData } from '$d2-shared/documents';
 import { Document } from '../base/fire/document.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
+import type { FoldSate } from '$d2/components/dark/section/page/fold.svelte';
 
 export const userNodesCollection = (uid: string) => fs.collection(firebase.firestore, `users/${uid}/nodes`);
 
@@ -52,6 +53,24 @@ export class NodesSettingsModel extends Subscribable<NodesSettingsModelOptions> 
   });
 
   readonly models = $derived(this._models.content);
+
+  get isAnyOpen() {
+    return !!this.models.find(model => model.isOpen);
+  }
+
+  get isAllClosed() {
+    return !this.models.find(model => model.isOpen);
+  }
+
+  get fold(): FoldSate | undefined {
+    if(this.isAnyOpen) {
+      return 'fold';
+    }
+    if(this.isAllClosed) {
+      return 'unfold';
+    }
+    return undefined;
+  }
 
   forNode(id: string) {
     return this.models.find((model) => model.id === id);
