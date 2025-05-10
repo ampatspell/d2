@@ -4,7 +4,7 @@
 
 <script lang="ts">
   import LucideFoldVertical from '$d2/icons/lucide--fold-vertical.svelte';
-    import LucideUnfoldVertical from '$d2/icons/lucide--unfold-vertical.svelte';
+  import LucideUnfoldVertical from '$d2/icons/lucide--unfold-vertical.svelte';
   import Icon from './icon.svelte';
 
   let {
@@ -19,5 +19,5 @@
 </script>
 
 {#if fold}
-  <Icon icon={fold === 'fold' ? LucideFoldVertical: LucideUnfoldVertical} {onClick} />
+  <Icon icon={fold === 'fold' ? LucideFoldVertical : LucideUnfoldVertical} {onClick} />
 {/if}

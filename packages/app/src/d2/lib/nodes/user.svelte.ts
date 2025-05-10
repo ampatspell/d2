@@ -55,18 +55,18 @@ export class NodesSettingsModel extends Subscribable<NodesSettingsModelOptions> 
   readonly models = $derived(this._models.content);
 
   get isAnyOpen() {
-    return !!this.models.find(model => model.isOpen);
+    return !!this.models.find((model) => model.isOpen);
   }
 
   get isAllClosed() {
-    return !this.models.find(model => model.isOpen);
+    return !this.models.find((model) => model.isOpen);
   }
 
   get fold(): FoldSate | undefined {
-    if(this.isAnyOpen) {
+    if (this.isAnyOpen) {
       return 'fold';
     }
-    if(this.isAllClosed) {
+    if (this.isAllClosed) {
       return 'unfold';
     }
     return undefined;
