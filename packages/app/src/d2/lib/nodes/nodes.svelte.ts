@@ -41,7 +41,6 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   async create({ parent, definition }: { parent: NodeDocumentModel | undefined; definition: NodeDefinitionModel }) {
     const properties = definition.defaults();
     if (properties) {
-      console.log(fs.serverTimestamp() instanceof fs.FieldValue);
       const ref = fs.doc(nodesCollection);
       const now = new Date();
       const data: NodeData = {

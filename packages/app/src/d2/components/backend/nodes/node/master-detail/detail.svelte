@@ -20,9 +20,7 @@
       <ValueRow label="Type" value={node.name} />
       <ValueRow label="Path" value={node.path} />
       <ValueRow label="Created" value={createdAt} />
-      {#if createdAt !== updatedAt}
-        <ValueRow label="Updated" value={updatedAt} />
-      {/if}
+      <ValueRow label="Updated" value={updatedAt} />
     </Section>
     <Section>
       <InputRow label="Identifier" property={identifier} />
