@@ -10,12 +10,7 @@ import { nodesCollection } from './nodes.svelte';
 import { getDefinition } from '../definition/app.svelte';
 import { data, DocumentModelProperties } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
-
-const nodeDocumentForId = (id: string) => {
-  return new Document<NodeData<never>>({
-    ref: fs.doc(nodesCollection, id),
-  });
-};
+import { queryFirst } from '../base/fire/query.svelte';
 
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
@@ -27,7 +22,7 @@ export type NodeModelPropertiesOptions<Type extends NodeType> = {
 
 export class NodeModelBaseProperties<Type extends NodeType> extends DocumentModelProperties<NodeData<Type>> {
   readonly createdAt = data(this, 'createdAt');
-  readonly parent = data(this, 'parent');
+  readonly identifier = data(this, 'identifier');
 }
 
 export class NodeModelProperties<
@@ -59,6 +54,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly data = $derived(this.doc.data!);
   readonly kind = $derived(this.data.kind);
   readonly parentId = $derived(this.data.parent);
+  readonly identifier = $derived(this.data.identifier);
 
   readonly definition = $derived(getDefinition().byType(this.kind));
 
@@ -85,14 +81,16 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly serialized = $derived(serialized(this, ['id']));
 }
 
-export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeData<never>> }> {
-  readonly doc = $derived(this.options.doc);
-  readonly id = $derived(this.doc.id);
-  readonly kind = $derived(this.doc.data?.kind);
+export class NodeDocumentModelLoader extends Subscribable<{ ref: fs.Query }> {
+  private _query = queryFirst<NodeData>({
+    ref: getter(() => this.options.ref),
+  });
+
+  readonly doc = $derived(this._query.content);
 
   private readonly _loaded = $derived.by(() => {
     const doc = this.doc;
-    if (doc.isLoaded) {
+    if (doc?.isLoaded) {
       return doc;
     }
   });
@@ -106,18 +104,27 @@ export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeDa
   readonly node = $derived(this._node.content);
 
   async load() {
-    await this.doc.load();
+    await this._query.load();
     await this._node.load();
     await this.node?.load();
   }
 
-  readonly dependencies = [this.doc, this._node];
-  readonly serialized = $derived(serialized(this, ['id', 'kind']));
-  readonly isLoaded = $derived(isLoaded([this.doc, this.node]));
+  readonly dependencies = [this._query, this._node];
+  readonly serialized = $derived(serialized(this, []));
+  readonly isLoaded = $derived(isLoaded([this._query, this.node]));
+
+  static forQuery(ref: fs.Query) {
+    return new this({ ref });
+  }
 
   static forId(id: string) {
-    return new this({ doc: nodeDocumentForId(id) });
+    return this.forQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)));
   }
+
+  static forIdentifier(identifier: string) {
+    return this.forQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier), fs.limit(1)));
+  }
+
 }
 
 export const createNodeDocumentModel = (doc: Document<NodeData>) => {

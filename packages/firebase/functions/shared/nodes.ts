@@ -27,23 +27,24 @@ export type FileProperty = {
   url: string;
 };
 
+export type RegularFileNodeProperties = {
+  type: 'regular';
+  original: FileProperty;
+};
+
 export type ImageFileProperty = FileProperty & {
   dimensions: Dimensions;
 };
 
+export type ImageFileNodeProperties = {
+  type: 'image';
+  original: ImageFileProperty;
+  thumbnails: { [key in FileThumbnails]: ImageFileProperty };
+};
+
 export type FileNodeProperties = {
   filename: string;
-} & (
-  | {
-      type: 'regular';
-      original: FileProperty;
-    }
-  | {
-      type: 'image';
-      original: ImageFileProperty;
-      thumbnails: { [key in FileThumbnails]: ImageFileProperty };
-    }
-);
+} & (RegularFileNodeProperties | ImageFileNodeProperties);
 
 export type NodePropertiesRegistry = {
   missing: MissingNodeProperties;

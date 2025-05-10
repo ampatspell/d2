@@ -3,7 +3,7 @@ import { NodeDocumentModelLoader } from '$d2/lib/nodes/node.svelte';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
-  const loader = NodeDocumentModelLoader.forId('3QzardCUYRvfIXg83Q1r');
+  const loader = NodeDocumentModelLoader.forIdentifier('foof');
   return {
     loader: await preloadModel(loader),
   };

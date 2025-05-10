@@ -88,9 +88,31 @@
     <Overflow overflow="y">
       <Tree {models} {delegateFor} {deselect}>
         {#snippet item(model: NodeDocumentModel)}
-          {model.id} / {model.kind}
+          <div class="item">
+            <div class="identifier">{model.identifier}</div>
+            <div class="kind">{model.kind}</div>
+          </div>
         {/snippet}
       </Tree>
     </Overflow>
   {/snippet}
 </Section>
+
+<style lang="scss">
+  .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    > .identifier {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+    > .kind {
+      font-size: 10px;
+      color: var(--dark-faded-color-1);
+    }
+  }
+</style>

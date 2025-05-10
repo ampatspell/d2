@@ -3,6 +3,7 @@ import { NodeData } from '../../shared/documents';
 import Application from '../app';
 import { FileData } from '../files';
 import { murl } from '../utils/murl';
+import { parse } from 'node:path';
 
 type NodeFileData = {
   name: string;
@@ -54,8 +55,11 @@ export class NodesFilesService {
       return;
     }
 
+    const identifier = parse(filename).name;
+
     const data: WithFieldValue<NodeData<'file'>> = {
       kind: 'file',
+      identifier,
       parent,
       createdAt: FieldValue.serverTimestamp(),
       properties,

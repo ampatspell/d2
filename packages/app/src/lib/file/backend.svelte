@@ -14,20 +14,20 @@
   });
 </script>
 
-<Section>
-  <Column>
-    <Row>
-      {filename}
-    </Row>
-  </Column>
-</Section>
-<Section>
-  {#if url}
+{#if url}
+  <Section>
     <Column>
       <Row>
         <!-- svelte-ignore a11y_missing_attribute -->
         <img src={url} />
       </Row>
     </Column>
-  {/if}
+  </Section>
+{/if}
+<Section>
+  <Column>
+    <Row>
+      {filename}
+    </Row>
+  </Column>
 </Section>

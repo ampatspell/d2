@@ -44,10 +44,11 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       console.log(fs.serverTimestamp() instanceof fs.FieldValue);
       const ref = fs.doc(nodesCollection);
       const data: NodeData = {
-        createdAt: new Date(),
         kind: definition.type,
+        identifier: 'untitled',
         parent: parent?.id || null,
         properties,
+        createdAt: new Date(),
       };
       const doc = new Document<NodeData>({
         ref,

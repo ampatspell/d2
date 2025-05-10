@@ -55,7 +55,7 @@
   <div class="group">
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="item" class:selected={delegate.isSelected} style:--offset="{level * 20}px" onclick={select(delegate)}>
+    <div class="item" class:selected={delegate.isSelected} style:--offset="{level * 18}px" onclick={select(delegate)}>
       <div class="toggle" class:closed={delegate.children.length && !delegate.isOpen}>
         {#if delegate.children.length}
           <Icon icon={LucideChevronDown} onClick={setOpen(delegate)} size="small" />
@@ -98,7 +98,9 @@
       border-bottom: 1px solid #eee;
       display: flex;
       flex-direction: row;
+      align-items: center;
       gap: 5px;
+      height: 32px;
       > .toggle {
         width: 12px;
         display: flex;
@@ -112,6 +114,7 @@
       }
       > .content {
         flex: 1;
+        min-width: 0;
       }
       &.selected {
         background: var(--dark-selected-background-color-1);
