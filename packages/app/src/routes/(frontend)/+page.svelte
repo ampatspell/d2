@@ -1,20 +1,36 @@
 <script lang="ts">
+    import type { ImageFileNodeProperties } from '$d2-shared/nodes';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+    import type { FileNodeDocumentModel } from '$lib/file/node.svelte';
   import type { MissingNodeDocumentModel } from '$lib/missing/node.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 
-  let loader = $derived(data.loader);
-  let node = $derived(loader.node as MissingNodeDocumentModel | undefined);
+  let foofNode = $derived(data.foof);
+  let imageNode = $derived(data.image);
 
-  $effect(() => subscribe(loader));
+  let foof = $derived(foofNode.node as MissingNodeDocumentModel | undefined);
+  let image = $derived(imageNode.node as FileNodeDocumentModel | undefined);
+  let url = $derived.by(() => {
+    let properties = image?.data.properties as ImageFileNodeProperties | undefined;
+    return properties?.thumbnails['1024x1024'].url;
+  });
+
+  $effect(() => subscribe(foofNode));
+  $effect(() => subscribe(imageNode));
 </script>
 
 <div class="page">
   <div class="row">
-    {node?.data.properties.message ?? `Node not found`}
+    {foof?.data.properties.message ?? `Node not found`}
   </div>
+  {#if url}
+    <div class="row">
+      <!-- svelte-ignore a11y_missing_attribute -->
+      <img src={url} />
+    </div>
+  {/if}
   <div class="row">
     <a href="/backend">backend</a>
   </div>
