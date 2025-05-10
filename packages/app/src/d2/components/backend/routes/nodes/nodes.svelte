@@ -42,6 +42,7 @@
       isOpen: getter(() => open.includes(model.id)),
       isSelected: getter(() => id === model.id),
       select: () => select(model),
+      icon: getter(() => model.icon),
       setOpen: (isOpen) => {
         if (isOpen) {
           addObject(open, model.id);

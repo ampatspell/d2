@@ -7,6 +7,7 @@ import { getter } from '$d2/lib/base/utils/options';
 import { getDefinition } from '../definition/app.svelte';
 import { data, DocumentModelProperties } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
+import type { Component } from 'svelte';
 
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
@@ -56,6 +57,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
 
   abstract readonly properties: NodeModelProperties<Type>;
   abstract readonly name: string;
+  abstract readonly icon: Component;
 
   async save() {
     await this.doc.save();

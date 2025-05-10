@@ -5,15 +5,15 @@
     setOpen: (open: boolean) => void;
     isSelected: boolean;
     select: VoidCallback;
+    icon: Component;
   };
 </script>
 
 <script lang="ts" generics="T">
   import Icon from '$d2/components/dark/icon.svelte';
   import LucideChevronDown from '$d2/icons/lucide--chevron-down.svelte';
-  import LucideFile from '$d2/icons/lucide--file.svelte';
   import type { VoidCallback } from '$d2/lib/base/utils/types';
-  import type { Snippet } from 'svelte';
+  import type { Component, Snippet } from 'svelte';
 
   let {
     models,
@@ -59,10 +59,9 @@
       <div class="toggle" class:closed={delegate.children.length && !delegate.isOpen}>
         {#if delegate.children.length}
           <Icon icon={LucideChevronDown} onClick={setOpen(delegate)} size="small" />
-        {:else}
-          <Icon icon={LucideFile} size="small" />
         {/if}
       </div>
+      <Icon icon={delegate.icon} size="small" />
       <div class="content">
         {@render item(current)}
       </div>
