@@ -55,6 +55,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly definition = $derived(getDefinition().byType(this.kind));
 
   abstract readonly properties: NodeModelProperties<Type>;
+  abstract readonly name: string;
 
   async save() {
     await this.doc.save();

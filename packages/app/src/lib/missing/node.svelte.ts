@@ -6,6 +6,7 @@ export class MissingNodeProperties extends NodeModelProperties<'missing'> {
 }
 
 export class MissingNodeDocumentModel extends NodeDocumentModel<'missing'> {
+  readonly name = 'Missing';
   readonly properties: MissingNodeProperties = new MissingNodeProperties({
     model: this,
   });

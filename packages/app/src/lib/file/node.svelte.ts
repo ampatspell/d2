@@ -3,5 +3,6 @@ import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelt
 export class FileNodeProperties extends NodeModelProperties<'file'> {}
 
 export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
+  readonly name = 'File';
   readonly properties: FileNodeProperties = new FileNodeProperties({ model: this });
 }

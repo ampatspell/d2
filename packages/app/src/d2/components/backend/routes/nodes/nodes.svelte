@@ -90,7 +90,7 @@
         {#snippet item(model: NodeDocumentModel)}
           <div class="item">
             <div class="identifier">{model.identifier}</div>
-            <div class="kind">{model.kind}</div>
+            <div class="kind">{model.name}</div>
           </div>
         {/snippet}
       </Tree>

@@ -14,7 +14,7 @@
 <Overflow overflow="y">
   <Inspector>
     <Section>
-      <ValueRow label="Kind" value={node.kind} />
+      <ValueRow label="Type" value={node.name} />
       <ValueRow label="Path" value={node.path} />
     </Section>
     <Section>
