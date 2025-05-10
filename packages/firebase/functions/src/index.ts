@@ -4,7 +4,7 @@ import * as logger from 'firebase-functions/logger';
 import Application from './app';
 import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../shared/functions';
 import { config } from './config';
-import { isUserRole } from '../shared/documents';
+import { isUserRole, NodeData } from '../shared/documents';
 
 const { region } = config;
 
@@ -42,9 +42,26 @@ export const setRole = functions.https.onCall<FunctionsSetRoleEventRequest, Prom
   },
 );
 
+export const onNodeCreated = functions.firestore.onDocumentCreated('/nodes/{id}', async (event) => {
+  const id = event.params.id;
+  const data = event.data?.data();
+  if (data) {
+    await app.nodes.onNodeCreated({ id, data: data as NodeData });
+  }
+});
+
+export const onNodeUpdated = functions.firestore.onDocumentUpdated('/nodes/{id}', async (event) => {
+  const id = event.params.id;
+  const before = event.data?.before.data() as NodeData | undefined;
+  const after = event.data?.after.data() as NodeData | undefined;
+  if (before && after) {
+    await app.nodes.onNodeUpdated({ id, before, after });
+  }
+});
+
 export const onNodeDeleted = functions.firestore.onDocumentDeleted('/nodes/{id}', async (event) => {
   const id = event.params.id;
-  await app.nodes.onNodeDeleted(id);
+  await app.nodes.onNodeDeleted({ id });
 });
 
 export const storageOnFinalized = functions.storage.onObjectFinalized(

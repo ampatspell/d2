@@ -15,6 +15,7 @@
   <Inspector>
     <Section>
       <ValueRow label="Kind" value={node.kind} />
+      <ValueRow label="Path" value={node.path} />
     </Section>
     <Section>
       <InputRow label="Identifier" property={identifier} />

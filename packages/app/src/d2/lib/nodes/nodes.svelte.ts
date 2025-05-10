@@ -45,6 +45,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const ref = fs.doc(nodesCollection);
       const data: NodeData = {
         kind: definition.type,
+        path: '__pending__',
         identifier: 'untitled',
         parent: parent?.id || null,
         properties,

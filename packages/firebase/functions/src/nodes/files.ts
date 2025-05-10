@@ -59,6 +59,7 @@ export class NodesFilesService {
 
     const data: WithFieldValue<NodeData<'file'>> = {
       kind: 'file',
+      path: '__pending__',
       identifier,
       parent,
       createdAt: FieldValue.serverTimestamp(),
