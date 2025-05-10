@@ -11,6 +11,7 @@
 
   let identifier = $derived(node.properties.base.identifier);
   let createdAt = $derived(formatDate(node.createdAt, 'medium', 'short'));
+  let updatedAt = $derived(formatDate(node.updatedAt, 'medium', 'short'));
 </script>
 
 <Overflow overflow="y">
@@ -19,6 +20,9 @@
       <ValueRow label="Type" value={node.name} />
       <ValueRow label="Path" value={node.path} />
       <ValueRow label="Created" value={createdAt} />
+      {#if createdAt !== updatedAt}
+        <ValueRow label="Updated" value={updatedAt} />
+      {/if}
     </Section>
     <Section>
       <InputRow label="Identifier" property={identifier} />

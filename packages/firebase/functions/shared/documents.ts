@@ -26,4 +26,5 @@ export type NodeData<Type extends NodeType = NodeType> = {
   properties: NodePropertiesRegistry[Type];
   parent: string | null;
   createdAt: Date;
+  updatedAt: Date;
 };

@@ -63,6 +63,7 @@ export class NodesFilesService {
       identifier,
       parent,
       createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
       properties,
     };
 

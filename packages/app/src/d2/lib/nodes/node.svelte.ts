@@ -18,7 +18,6 @@ export type NodeModelPropertiesOptions<Type extends NodeType> = {
 };
 
 export class NodeModelBaseProperties<Type extends NodeType> extends DocumentModelProperties<NodeData<Type>> {
-  readonly createdAt = data(this, 'createdAt');
   readonly identifier = data(this, 'identifier');
 }
 
@@ -54,6 +53,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly identifier = $derived(this.data.identifier);
   readonly path = $derived(this.data.path);
   readonly createdAt = $derived(this.data.createdAt);
+  readonly updatedAt = $derived(this.data.updatedAt);
 
   readonly definition = $derived(getDefinition().byType(this.kind));
 
@@ -62,6 +62,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   abstract readonly icon: Component;
 
   async save() {
+    this.data.updatedAt = new Date();
     await this.doc.save();
   }
 
