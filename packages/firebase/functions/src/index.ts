@@ -6,9 +6,7 @@ import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../
 import { config } from './config';
 import { isUserRole, NodeData } from '../shared/documents';
 
-const { region } = config;
-
-functions.setGlobalOptions({ region });
+functions.setGlobalOptions({ region: config.regionFunctions });
 
 const instance = initializeApp();
 const app = new Application({ instance, logger, config: config });
@@ -65,7 +63,7 @@ export const onNodeDeleted = functions.firestore.onDocumentDeleted('/nodes/{id}'
 });
 
 export const storageOnFinalized = functions.storage.onObjectFinalized(
-  { memory: '4GiB', concurrency: 50, region: 'us-central1' },
+  { memory: '4GiB', concurrency: 50, region: config.regionBucket },
   async (event) => {
     await app.files.onStorageObjectFinalized(event.data);
   },

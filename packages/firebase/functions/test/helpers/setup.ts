@@ -42,7 +42,8 @@ export const setup = (caller: Mocha.Suite) => {
       logger,
       config: {
         adminEmail: param('ampatspell@gmail.com'),
-        region: param('europe-west1'),
+        regionFunctions: param('europe-west1'),
+        regionBucket: param('europe-west1'),
       },
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

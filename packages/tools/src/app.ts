@@ -14,7 +14,8 @@ const firebase_rc = (app: App) => dedent`
 
 const firebase_dot_env = (app: App) => dedent`
   ADMIN_EMAIL=${app.admin}
-  REGION=${app.region}
+  REGION_FUNCTIONS=${app.region.functions}
+  REGION_BUCKET=${app.region.bucket}
 
 `;
 
@@ -40,7 +41,7 @@ const firebase_json = (app: App) => {
         "source": "../../apps/${app.id}",
         "ignore": ["**/.*", "**/node_modules/**"],
         "frameworksBackend": {
-          "region": "${app.region}"
+          "region": "${app.region.functions}"
         }
       },
       "storage": {
@@ -53,7 +54,7 @@ const firebase_json = (app: App) => {
 
 const frontend_env = (app: App) => dedent`
   PUBLIC_FIREBASE='${JSON.stringify(app.firebase, null, 2)}'
-  PUBLIC_FIREBASE_REGION=${app.region}
+  PUBLIC_FIREBASE_REGION=${app.region.functions}
   PUBLIC_APP_NAME=${app.id}
 
 `;
@@ -143,7 +144,10 @@ const svelte_config = () => dedent`
 
 export type AppConfig = {
   admin: string;
-  region: string;
+  region: {
+    functions: string;
+    bucket: string;
+  };
   firebase: {
     projectId: string;
   };

@@ -1,6 +1,9 @@
 {
   "admin": "ampatspell@gmail.com",
-  "region": "europe-west1",
+  "region": {
+    "functions": "europe-west1",
+    "bucket": "us-central1"
+  },
   "firebase": {
     "apiKey": "AIzaSyDwCGLTmvKCiCxIO9msehKyULJ_rilnEvw",
     "authDomain": "quatsch-38adf.firebaseapp.com",
