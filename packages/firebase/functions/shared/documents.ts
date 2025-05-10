@@ -13,6 +13,10 @@ export type UserData = {
   role: UserRole;
 };
 
+export type UserNodeData = {
+  open: boolean;
+};
+
 //
 
 export type NodeType = keyof NodePropertiesRegistry;

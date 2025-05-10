@@ -15,10 +15,10 @@ export class NodesService {
   }
 
   private async deleteChildren(nodeId: string) {
-    const childrenSnapshot = await this.app.firestore.collection('nodes').where('parent', '==', nodeId).select().get();
+    const snap = await this.app.firestore.collection('nodes').where('parent', '==', nodeId).select().get();
     await Promise.all(
-      childrenSnapshot.docs.map(async (nodeSnap) => {
-        const ref = nodeSnap.ref;
+      snap.docs.map(async (snap) => {
+        const ref = snap.ref;
         await ref.delete();
       }),
     );
@@ -29,7 +29,11 @@ export class NodesService {
   }
 
   async onNodeDeleted({ id }: { id: string }) {
-    await Promise.all([this.files.onNodeDeleted(id), this.deleteChildren(id)]);
+    await Promise.all([
+      this.files.onNodeDeleted(id),
+      this.deleteChildren(id),
+      this.app.users.deleteUserNodeForAllUsers(id),
+    ]);
   }
 
   async onNodeUpdated({ id, before, after }: { id: string; before: NodeData; after: NodeData }) {

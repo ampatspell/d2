@@ -37,7 +37,7 @@ export class Property<T = unknown, O extends PropertyOptions<T> = PropertyOption
 }
 
 export type DocumentModelPropertiesOptions<D extends DocumentData> = {
-  model: { doc: Document<D>; save: PromiseVoidCallback; };
+  model: { doc: Document<D>; save: PromiseVoidCallback };
 };
 
 export class DocumentModelProperties<

@@ -10,13 +10,16 @@
 
   let id = $derived(data.id);
   let nodes = $derived(data.nodes);
+  let settings = $derived(data.settings);
+
   let route = (node: NodeDocumentModel | undefined) => {
     return [`/backend/nodes`, node?.id].filter(isTruthy).join('/');
   };
 
   $effect(() => subscribe(nodes));
+  $effect(() => subscribe(settings));
 </script>
 
-<Nodes {id} {nodes} {route}>
+<Nodes {id} {nodes} {settings} {route}>
   {@render children()}
 </Nodes>

@@ -3,7 +3,7 @@ export const formatDate = (
   dateStyle: Intl.DateTimeFormatOptions['dateStyle'],
   timeStyle: Intl.DateTimeFormatOptions['timeStyle'],
 ) => {
-  if(date) {
+  if (date) {
     const { locale, timeZone } = Intl.DateTimeFormat().resolvedOptions();
     const format = new Intl.DateTimeFormat(locale, {
       dateStyle,

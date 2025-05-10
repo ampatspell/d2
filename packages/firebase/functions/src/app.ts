@@ -7,6 +7,7 @@ import { Auth, getAuth } from 'firebase-admin/auth';
 import { IdentityService } from './identity';
 import { FilesService } from './files';
 import { NodesService } from './nodes/nodes';
+import { UsersService } from './users';
 
 export type Logger = {
   info(...args: unknown[]): void;
@@ -50,6 +51,10 @@ export default class Application {
 
   get nodes() {
     return new NodesService(this);
+  }
+
+  get users() {
+    return new UsersService(this);
   }
 
   get files() {
