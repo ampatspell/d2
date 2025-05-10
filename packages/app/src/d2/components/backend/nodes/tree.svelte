@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
