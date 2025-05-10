@@ -26,7 +26,7 @@
     }
     > .detail {
       height: 100%;
-      width: 250px;
+      width: 300px;
       display: flex;
       flex-direction: column;
       border-left: 1px solid var(--dark-border-color-1);

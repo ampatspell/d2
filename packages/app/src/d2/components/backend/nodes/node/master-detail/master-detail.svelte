@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import MasterDetail from '$d2/components/dark/section/page/master-detail.svelte';
-  import Sidebar from './sidebar.svelte';
+  import Detail from './detail.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import Master from './master.svelte';
 
@@ -15,7 +15,7 @@
       <Master {node} {definition} />
     {/snippet}
     {#snippet detail()}
-      <Sidebar {node} />
+      <Detail {node} />
     {/snippet}
   </MasterDetail>
 {:else}

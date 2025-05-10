@@ -52,4 +52,8 @@ export class NodeDocumentModelLoader extends Subscribable<{ ref: fs.Query }> {
   static forIdentifier(identifier: string) {
     return this.forQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)));
   }
+
+  static forPath(path: string) {
+    return this.forQuery(fs.query(nodesCollection, fs.where('path', '==', path)));
+  }
 }
