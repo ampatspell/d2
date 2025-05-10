@@ -75,7 +75,9 @@
 
 <Section title="Nodes" icon={LucideFile} {children}>
   {#snippet accessories()}
-    <Fold {onFold} />
+    {#if models.length > 0}
+      <Fold {onFold} />
+    {/if}
     {#if selected?.exists}
       <Upload {onUpload} />
     {/if}
