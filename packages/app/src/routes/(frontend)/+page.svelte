@@ -13,7 +13,7 @@
 
 <div class="page">
   <div class="row">
-    {node?.data.properties.message ?? `Node ${loader.id} not found`}
+    {node?.data.properties.message ?? `Node not found`}
   </div>
   <div class="row">
     <a href="/backend">backend</a>
