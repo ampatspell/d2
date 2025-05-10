@@ -33,7 +33,7 @@
   let models = $derived(nodes.byParentId(null));
   let selected = $derived(nodes.byId(id));
 
-  let select = (model: NodeDocumentModel) => {
+  let select = (model: NodeDocumentModel | undefined) => {
     goto(route(model));
   };
 
@@ -71,7 +71,13 @@
   };
 
   let fold = $derived(settings.fold);
-  let onFold = (open: boolean) => settings.setOpenAll(open);
+
+  let onFold = (open: boolean) => {
+    if(!open) {
+      select(undefined);
+    }
+    settings.setOpenAll(open);
+  };
 </script>
 
 <Section title="Nodes" icon={LucideFile} {children}>
