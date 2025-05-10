@@ -83,15 +83,6 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly isLoaded = $derived(isLoaded([this.doc]));
   readonly dependencies = [this.doc];
   readonly serialized = $derived(serialized(this, ['id']));
-
-  // static buildNew<Type extends NodeType>({ data }: { data: NodeData<Type> }) {
-  //   return new this({
-  //     doc: new Document<NodeData<Type>>({
-  //       ref: fs.doc(nodesCollection),
-  //       data,
-  //     }),
-  //   });
-  // }
 }
 
 export class NodeDocumentModelLoader extends Subscribable<{ doc: Document<NodeData<never>> }> {

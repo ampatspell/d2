@@ -1,6 +1,5 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import Add from '$d2/components/dark/section/page/add.svelte';
   import Upload from '$d2/components/dark/section/page/upload.svelte';
   import Section from '$d2/components/dark/section/section.svelte';
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
@@ -10,9 +9,11 @@
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { Snippet } from 'svelte';
-  import { openUploadFilesModal } from '../../node/upload/models.svelte';
+  import { openUploadFilesModal } from '../../nodes/node/upload/models.svelte';
   import { getModalsContext } from '$d2/components/dark/modals/base/context.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
+  import Add from '$d2/components/dark/section/page/add.svelte';
+  import { openSelectNodeModal } from '../../nodes/add/models.svelte';
 
   let {
     id,
@@ -31,12 +32,16 @@
   let models = $derived(nodes.byParentId(null));
   let selected = $derived(nodes.byId(id));
 
+  let select = (model: NodeDocumentModel) => {
+    goto(route(model));
+  };
+
   let delegateFor = (model: NodeDocumentModel) => {
     return options<TreeModelDelegate<NodeDocumentModel>>({
       children: getter(() => nodes.byParentId(model.id)),
       isOpen: getter(() => open.includes(model.id)),
       isSelected: getter(() => id === model.id),
-      select: () => goto(route(model)),
+      select: () => select(model),
       setOpen: (isOpen) => {
         if (isOpen) {
           addObject(open, model.id);
@@ -50,6 +55,7 @@
   let deselect = () => goto(route(undefined));
 
   let modals = getModalsContext();
+
   let onUpload = () => {
     if (selected) {
       openUploadFilesModal(modals, {
@@ -58,7 +64,15 @@
     }
   };
 
-  let onAdd = () => {};
+  let onAdd = async () => {
+    let resolution = await openSelectNodeModal(modals, { parent: selected });
+    if (resolution) {
+      let node = await nodes.create(resolution);
+      if (node) {
+        select(node);
+      }
+    }
+  };
 </script>
 
 <Section title="Nodes" icon={LucideFile} {children}>

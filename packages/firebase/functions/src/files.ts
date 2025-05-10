@@ -85,6 +85,7 @@ export class FilesService {
         await file.save(data, {
           resumable: false,
           contentType,
+          public: true,
         });
 
         const url = await getDownloadURL(file);

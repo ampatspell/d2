@@ -7,7 +7,9 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeDocumentModel, nodeDocumentKey } from './node.svelte';
+import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel } from './node.svelte';
+import type { NodeDefinitionModel } from '../definition/node.svelte';
+import { Document } from '../base/fire/document.svelte';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
@@ -34,6 +36,25 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   byId(id: string | undefined) {
     return this.all.find((node) => node.id === id);
+  }
+
+  async create({ parent, definition }: { parent: NodeDocumentModel | undefined; definition: NodeDefinitionModel }) {
+    const properties = definition.defaults();
+    if (properties) {
+      const ref = fs.doc(nodesCollection);
+      const data: NodeData = {
+        createdAt: new Date(),
+        kind: definition.type,
+        parent: parent?.id || null,
+        properties,
+      };
+      const doc = new Document<NodeData>({
+        ref,
+        data,
+      });
+      await doc.save();
+      return this.all.find((node) => node.id === ref.id);
+    }
   }
 
   async load() {

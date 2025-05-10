@@ -33,5 +33,6 @@
 <style lang="scss">
   .icon {
     cursor: pointer;
+    user-select: none;
   }
 </style>

@@ -1,13 +1,16 @@
 <script lang="ts">
+  import type { VoidCallback } from '$d2/lib/base/utils/types';
   import type { Snippet } from 'svelte';
 
   let {
     children,
     route,
+    onClick,
     isSelected: _isSelected,
   }: {
     children: Snippet;
     route?: string;
+    onClick?: VoidCallback;
     isSelected?: boolean;
   } = $props();
 
@@ -18,10 +21,18 @@
   {@render children?.()}
 {/snippet}
 
-{#if route}
-  <a class="cell has-action" class:selected={isSelected} href={route}>
-    {@render content()}
-  </a>
+{#if route || onClick}
+  {#if route}
+    <a class="cell has-action" class:selected={isSelected} href={route}>
+      {@render content()}
+    </a>
+  {:else}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="cell has-action" class:selected={isSelected} onclick={onClick}>
+      {@render content()}
+    </div>
+  {/if}
 {:else}
   <div class="cell no-action" class:selected={isSelected}>
     {@render content()}

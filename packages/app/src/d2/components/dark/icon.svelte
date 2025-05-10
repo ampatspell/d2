@@ -16,11 +16,13 @@
     size: _size,
     onClick,
     route,
+    element = $bindable(),
   }: {
     icon: Component;
     size?: IconSize;
     onClick?: (e: MouseEvent) => void;
     route?: string;
+    element?: HTMLElement;
   } = $props();
 
   let size = $derived(iconSizes[_size ?? 'regular']);
@@ -33,7 +35,7 @@
 {#snippet content()}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="icon" style:--size="{size}px" {onclick}>
+  <div class="icon" style:--size="{size}px" {onclick} bind:this={element}>
     <Icon />
   </div>
 {/snippet}

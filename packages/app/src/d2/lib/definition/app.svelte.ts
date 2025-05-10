@@ -11,6 +11,7 @@ export type AppDefinitionModelOptions = {
 
 export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
   readonly nodes = $derived(this.options.nodes.map((opts) => new NodeDefinitionModel(opts)));
+  readonly nodesWithDefaults = $derived(this.nodes.filter((node) => node.hasDefaults));
 
   byType(type: NodeType): NodeDefinitionModel<NodeType> | undefined {
     return this.nodes.find((node) => node.type === type);

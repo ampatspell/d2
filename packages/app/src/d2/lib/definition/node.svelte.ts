@@ -22,6 +22,7 @@ export class NodeDefinitionModel<
   Model extends NodeDocumentModel<Type> = NodeDocumentModel<Type>,
 > extends Model<NodeDefinitionModelOptions<Type, Model>> {
   readonly type = $derived(this.options.type);
+  readonly hasDefaults = $derived(!!this.options.defaults);
 
   model(...args: ConstructorParameters<typeof NodeDocumentModel<Type>>) {
     return new this.options.node(...args);
