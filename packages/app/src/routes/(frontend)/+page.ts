@@ -5,6 +5,6 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async () => {
   return {
     foof: await preloadModel(NodeDocumentModelLoader.forIdentifier('foof')),
-    image: await preloadModel(NodeDocumentModelLoader.forIdentifier('film-0258-005'))
+    image: await preloadModel(NodeDocumentModelLoader.forIdentifier('film-0258-005')),
   };
 };
