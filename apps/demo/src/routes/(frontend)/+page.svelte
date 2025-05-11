@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PUBLIC_FIREBASE, PUBLIC_APP_NAME } from "$env/static/public";
+  import { PUBLIC_FIREBASE, PUBLIC_APP_NAME } from '$env/static/public';
   let config = JSON.parse(PUBLIC_FIREBASE);
 </script>
 

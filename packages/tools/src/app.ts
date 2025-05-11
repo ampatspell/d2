@@ -142,6 +142,15 @@ const svelte_config = () => dedent`
   export default config;
 `;
 
+const definition = () => dedent`
+  import { app } from '$d2/lib/definition/utils.svelte';
+
+  export const definition = app({
+    nodes: [],
+  });
+
+`;
+
 export type AppConfig = {
   admin: string;
   region: {
@@ -226,6 +235,10 @@ export class App {
     });
 
     await writeString(join(target, 'svelte.config.js'), svelte_config());
+
+    if (!exists({ path: 'src/lib/definition.svelte.ts', target })) {
+      await writeString(join(target, 'src/lib/definition.svelte.ts'), definition());
+    }
 
     if (!exists({ path: 'src/routes/(frontend)', target })) {
       await Promise.all([
