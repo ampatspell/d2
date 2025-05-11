@@ -8,7 +8,11 @@ export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
   readonly properties: FileNodeProperties = new FileNodeProperties({ model: this });
 
   readonly type = $derived(this.data.properties.type);
+
+  readonly isRegular = $derived(this.type === 'regular');
   readonly isImage = $derived(this.type === 'image');
+
+  readonly original = $derived(this.data.properties.original);
 
   readonly thumbnails = $derived.by(() => {
     const props = this.data.properties;
