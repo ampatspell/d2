@@ -4,9 +4,9 @@
   import Page from '$d2/components/dark/section/page/page.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import type { VoidCallback } from '$d2/lib/base/utils/types';
-  import type { NodeDocumentModelLoader } from '$d2/lib/nodes/loader.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/loader.svelte';
 
-  let { loader, onWillDelete }: { loader: NodeDocumentModelLoader; onWillDelete: VoidCallback } = $props();
+  let { loader, onWillDelete }: { loader: NodeModel; onWillDelete: VoidCallback } = $props();
 
   let node = $derived(loader.node);
   let title = $derived(node?.identifier);
