@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import type { Apps } from './apps';
 import { exec, exists, readJSON, symlinks, writeString } from './utils';
 import dedent from 'dedent-js';
@@ -38,7 +38,7 @@ const firebase_json = (app: App) => {
         }
       ],
       "hosting": {
-        "source": "../../apps/${app.id}",
+        "source": "${app.appRootRelativeToFirebase}",
         "ignore": ["**/.*", "**/node_modules/**"],
         "frameworksBackend": {
           "region": "${app.region.functions}"
@@ -119,7 +119,7 @@ const frontend_page = () => dedent`
 
 `;
 
-const svelte_config = () => dedent`
+const svelte_config = (app: App) => dedent`
   import adapter from '@sveltejs/adapter-node';
   import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
@@ -134,7 +134,7 @@ const svelte_config = () => dedent`
       alias: {
         '$lib/*': 'src/lib/*',
         '$d2/*': 'src/d2/*',
-        '$d2-shared/*': '../../firebase/functions/shared/*',
+        '$d2-shared/*': '${app.functionsSharedRootRelativeToApp}',
       },
     },
   };
@@ -177,6 +177,15 @@ export class App {
 
   get frontendRoot() {
     return this.path;
+  }
+
+  get appRootRelativeToFirebase() {
+    return relative(this._apps.firebaseRoot, this.frontendRoot);
+  }
+
+  get functionsSharedRootRelativeToApp() {
+    const path = relative(this.frontendRoot, join(this._apps.firebaseRoot, 'functions/shared'));
+    return `${path}/*`;
   }
 
   get isCurrent() {
@@ -236,7 +245,7 @@ export class App {
       target,
     });
 
-    await writeString(join(target, 'svelte.config.js'), svelte_config());
+    await writeString(join(target, 'svelte.config.js'), svelte_config(this));
 
     if (!exists({ path: 'src/lib/definition.svelte.ts', target })) {
       await writeString(join(target, 'src/lib/definition.svelte.ts'), definition());

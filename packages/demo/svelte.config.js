@@ -12,7 +12,7 @@ const config = {
     alias: {
       '$lib/*': 'src/lib/*',
       '$d2/*': 'src/d2/*',
-      '$d2-shared/*': '../../firebase/functions/shared/*',
+      '$d2-shared/*': '../firebase/functions/shared/*',
     },
   },
 };

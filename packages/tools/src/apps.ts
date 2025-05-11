@@ -1,9 +1,13 @@
 import * as p from '@clack/prompts';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import type { Tools } from './tools';
 import { glob, realpath } from 'node:fs/promises';
 import { App } from './app';
-import { readJSON } from './utils';
+import { readJSON, symlink } from './utils';
+
+type AppsConfig = {
+  [key: string]: string;
+};
 
 type FirebaseRc = {
   projects: {
@@ -21,16 +25,20 @@ export class Apps {
     this._tools = app;
   }
 
+  get root() {
+    return this._tools.root
+  }
+
   get appsRoot() {
-    return join(this._tools.root, 'apps');
+    return join(this.root, 'apps');
   }
 
   get firebaseRoot() {
-    return join(this._tools.root, 'packages/firebase');
+    return join(this.root, 'packages/firebase');
   }
 
   get appRoot() {
-    return join(this._tools.root, 'packages/app');
+    return join(this.root, 'packages/app');
   }
 
   async load() {
@@ -48,12 +56,14 @@ export class Apps {
             res.path = await realpath(res.path);
             return res;
           }
+          return undefined;
         }
         const processed = await process();
         if (processed) {
           apps.push(new App(this, processed.id, processed.path));
         }
       }
+      apps.push(new App(this, 'demo', join(this.root, 'packages/demo')));
       await Promise.all(apps.map((app) => app.load()));
       return apps;
     };
