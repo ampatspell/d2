@@ -31,16 +31,17 @@ export class NodesFilesService {
   private async onStorageObjectForFileNodeFinalized(opts: NodeFileData) {
     const { id, name, contentType, filename } = opts;
 
-    const processFile = () => this.app.files.processFile({
-      name,
-      contentType,
-      nameForThumbnail: (thumbnail) => `nodes/${id}/${thumbnail}`,
-    });
+    const processFile = () =>
+      this.app.files.processFile({
+        name,
+        contentType,
+        nameForThumbnail: (thumbnail) => `nodes/${id}/${thumbnail}`,
+      });
 
     const loadParent = async () => {
       const snap = await this.app.firestore.doc(`nodes/${opts.parent}`).get();
       const data = snap.data() as FunctionsNodeData;
-      if(data) {
+      if (data) {
         const { id } = snap;
         const { path, identifier } = data;
         return {
@@ -50,7 +51,7 @@ export class NodesFilesService {
         } satisfies NodeParentData;
       }
       return null;
-    }
+    };
 
     const [file, parent] = await Promise.all([processFile(), loadParent()]);
 
@@ -78,7 +79,7 @@ export class NodesFilesService {
     const identifier = parse(filename).name;
 
     let path = `/${identifier}`;
-    if(parent) {
+    if (parent) {
       path = `${parent.path}/${identifier}`;
     }
 

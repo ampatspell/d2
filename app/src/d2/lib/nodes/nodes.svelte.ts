@@ -43,6 +43,9 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly all = $derived(this._nodes.content);
 
   byParentId(id: string | null) {
+    if (id === null) {
+      return this.all.filter((node) => !node.parent);
+    }
     return this.all.filter((node) => node.parent?.id === id);
   }
 
@@ -57,7 +60,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const now = new Date();
       const identifier = ref.id;
       let path = `/${identifier}`;
-      if(parent) {
+      if (parent) {
         path = `${parent.path}/${identifier}`;
       }
       const data: NodeData = {

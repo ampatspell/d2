@@ -5,7 +5,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
   return {
-    index: await node.forPath('/index', IndexNodeDocumentModel).preload(),
-    images: await nodes.forParentId('pJvLadgkfITfGjehPE2s', FileNodeDocumentModel).preload(),
+    index: await node.forPath('/hello', IndexNodeDocumentModel).preload(),
+    images: await nodes.forParentPath('/hello/images', FileNodeDocumentModel).preload(),
   };
 };
