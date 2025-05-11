@@ -25,9 +25,4 @@ export const load: LayoutLoad = async (event) => {
       return redirect(307, forbidden);
     }
   }
-
-  const route = event.route.id;
-  return {
-    route,
-  };
 };

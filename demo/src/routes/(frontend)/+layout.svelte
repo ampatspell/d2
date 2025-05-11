@@ -7,6 +7,10 @@
   let fonts = ['https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'];
 </script>
 
+<svelte:head>
+  <title>d2 demo</title>
+</svelte:head>
+
 <Layout {fonts}>
   <div class="frontend">
     {@render children()}

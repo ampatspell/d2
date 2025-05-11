@@ -59,7 +59,7 @@ const frontend_env = (app: App) => dedent`
 
 `;
 
-const frontend_layout = () => dedent`
+const frontend_layout = (app: App) => dedent`
   <script lang="ts">
     import Layout from '$d2/components/layout.svelte';
     import type { Snippet } from 'svelte';
@@ -70,6 +70,10 @@ const frontend_layout = () => dedent`
       'https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'
     ];
   </script>
+
+  <svelte:head>
+    <title>${app.id}</title>
+  </svelte:head>
 
   <Layout {fonts}>
     <div class="frontend">
@@ -339,7 +343,7 @@ export class App {
 
     if (!exists({ path: 'src/routes/(frontend)', target })) {
       await Promise.all([
-        writeString(join(target, 'src/routes/(frontend)/+layout.svelte'), frontend_layout()),
+        writeString(join(target, 'src/routes/(frontend)/+layout.svelte'), frontend_layout(this)),
         writeString(join(target, 'src/routes/(frontend)/+page.svelte'), frontend_page()),
       ]);
     }
