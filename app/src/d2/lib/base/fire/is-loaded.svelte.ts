@@ -1,8 +1,10 @@
+export type IsLoadedModels = (IsLoadedModel | undefined)[];
+
 export type IsLoadedModel = {
   isLoaded: boolean;
 };
 
-export const isLoaded = (arr: (IsLoadedModel | undefined)[]) => {
+export const isLoaded = (arr: IsLoadedModels) => {
   return !arr.find((item) => {
     if (item) {
       return !item.isLoaded;
@@ -11,7 +13,7 @@ export const isLoaded = (arr: (IsLoadedModel | undefined)[]) => {
   });
 };
 
-export const asIsLoadedModel = (arr: (IsLoadedModel | undefined)[]) => {
+export const asIsLoadedModel = (arr: IsLoadedModels) => {
   return {
     isLoaded: isLoaded(arr),
   };

@@ -35,11 +35,7 @@
   };
 
   let onCancel = () => modal.dismiss();
-  let onResolve = () => {
-    if (selected) {
-      modal.resolve({ node: selected });
-    }
-  };
+  let onResolve = () => modal.resolve({ node: selected! });
 </script>
 
 <Modal size={{ width: 320, height: 400 }}>

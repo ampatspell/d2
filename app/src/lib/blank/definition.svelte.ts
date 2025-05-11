@@ -4,6 +4,7 @@ import { BlankNodeDocumentModel } from './node.svelte';
 
 export type BlankNodeProperties = {
   title: string;
+  background?: string;
 };
 
 export const blank = () => {

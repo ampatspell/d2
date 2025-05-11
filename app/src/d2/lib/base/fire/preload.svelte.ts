@@ -15,11 +15,13 @@ export const preloadModel = <T extends PreloadModel>(model: T, isLoaded?: () => 
   const deferred = new Deferred<T, unknown>();
 
   if (browser) {
+    console.log('> preload', model+'');
     const cancel = $effect.root(() => {
       $effect.pre(() => subscribe(model));
       $effect.pre(() => {
         if (model.isLoaded && isLoaded() !== false) {
           scope(async () => {
+            console.log('< preload', model+'');
             await Promise.resolve();
             cancel();
             deferred.resolve(model);

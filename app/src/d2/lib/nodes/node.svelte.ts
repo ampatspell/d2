@@ -1,6 +1,5 @@
 import { Document } from '$d2/lib/base/fire/document.svelte';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
-import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { getter } from '$d2/lib/base/utils/options';
 import { getDefinition } from '../definition/app.svelte';
@@ -94,8 +93,14 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
     return false;
   }
 
-  readonly isLoaded = $derived(isLoaded([this.doc]));
-  readonly dependencies = [this.doc];
+  readonly nodeIsLoaded = [this.doc];
+  readonly nodeDependencies = [this.doc];
+
+  abstract readonly isLoaded: boolean;
+
+  // readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
+  // readonly dependencies = [...this.nodeDependencies];
+
   readonly serialized = $derived(serialized(this, ['id']));
 }
 

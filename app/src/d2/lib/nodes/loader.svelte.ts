@@ -17,6 +17,7 @@ import { preloadModel } from '../base/fire/preload.svelte';
 
 export type NodeDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
+  key: string;
   factory?: NodeDocumentModelFactory<Model>;
 };
 
@@ -67,41 +68,44 @@ export class NodeModel<Model extends NodeDocumentModel = NodeDocumentModel> exte
     await this._node?.load();
   }
 
-  async preload() {
+  preload() {
     return preloadModel(this);
   }
 
+  readonly key = $derived(this.options.key);
+
   readonly dependencies = [this._query, this.__node];
-  readonly serialized = $derived(serialized(this, ['node']));
   readonly isLoaded = $derived(isLoaded([this._query, this._node]));
+  readonly serialized = $derived(serialized(this, ['key', 'node']));
 }
 
 export const nodeForQuery = <Model extends NodeDocumentModel = NodeDocumentModel>(
   ref: fs.Query,
+  key: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return new NodeModel({ ref, factory });
+  return new NodeModel({ ref, key, factory });
 };
 
 export const nodeForId = <Model extends NodeDocumentModel = NodeDocumentModel>(
   id: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)), factory);
+  return nodeForQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)), `id:${id}`, factory);
 };
 
 export const nodeForIdentifier = <Model extends NodeDocumentModel = NodeDocumentModel>(
   identifier: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)), factory);
+  return nodeForQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)), `identifier:${identifier}`, factory);
 };
 
 export const nodeForPath = <Model extends NodeDocumentModel = NodeDocumentModel>(
   path: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where('path', '==', path)), factory);
+  return nodeForQuery(fs.query(nodesCollection, fs.where('path', '==', path)), `path:${path}`, factory);
 };
 
 export const node = {
@@ -155,37 +159,40 @@ export class NodesModel<Model extends NodeDocumentModel = NodeDocumentModel> ext
     return preloadModel(this);
   }
 
+  readonly key = $derived(this.options.key);
+
   readonly dependencies = [this._query, this.__nodes];
-  readonly serialized = $derived(serialized(this, ['nodes']));
+  readonly serialized = $derived(serialized(this, ['key', 'nodes']));
   readonly isLoaded = $derived(isLoaded([this._query, asIsLoadedModel(this._nodes)]));
 }
 
 export const nodesForQuery = <Model extends NodeDocumentModel = NodeDocumentModel>(
   ref: fs.Query,
+  key: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return new NodesModel({ ref, factory });
+  return new NodesModel({ ref, key, factory });
 };
 
 export const nodesForParentId = <Model extends NodeDocumentModel = NodeDocumentModel>(
   parentId: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.id', '==', parentId)), factory);
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.id', '==', parentId)), `parent:${parentId}`, factory);
 };
 
 export const nodesForParentPath = <Model extends NodeDocumentModel = NodeDocumentModel>(
   path: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.path', '==', path)), factory);
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.path', '==', path)), `path:${path}`, factory);
 };
 
 export const nodesForParentIdentifier = <Model extends NodeDocumentModel = NodeDocumentModel>(
   identifier: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)), factory);
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)), `identifier:${identifier}`, factory);
 };
 
 export const nodes = {

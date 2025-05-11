@@ -195,5 +195,6 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
 
 export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) =>
   new MapModels<Source, Target>(...args);
+
 export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) =>
   new MapModel<Source, Target>(...args);

@@ -1,6 +1,7 @@
 import type { ImageFileNodeProperties } from '$d2-shared/nodes/file';
 import LucideFileImage from '$d2/icons/lucide--file-image.svelte';
 import LucideFile from '$d2/icons/lucide--file.svelte';
+import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import { data } from '$d2/lib/base/utils/property.svelte';
 import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelte';
@@ -27,6 +28,9 @@ export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
 
   readonly name = 'File';
   readonly icon = $derived(this.isImage ? LucideFileImage : LucideFile);
+
+  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
+  readonly dependencies = [...this.nodeDependencies];
 }
 
 type FileNodeImageModelOptions = {
