@@ -4,6 +4,6 @@ import { Tools } from './tools';
 
 silence();
 
-const root = join(dirnameForFileURL(import.meta.url), '..', '..', '..');
+const root = join(dirnameForFileURL(import.meta.url), '..', '..');
 
 new Tools({ root }).run();

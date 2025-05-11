@@ -78,3 +78,10 @@ Run your app locally
 npm run dev
 o
 ```
+
+Deploy your app
+
+```
+cd ~/dummy/d2
+npm run cli
+```

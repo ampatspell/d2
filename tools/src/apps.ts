@@ -33,11 +33,11 @@ export class Apps {
   }
 
   get firebaseRoot() {
-    return join(this.root, 'packages/firebase');
+    return join(this.root, 'firebase');
   }
 
   get appRoot() {
-    return join(this.root, 'packages/app');
+    return join(this.root, 'app');
   }
 
   async load() {
@@ -48,7 +48,7 @@ export class Apps {
         const path = resolve(join(this.root, json[id]));
         apps.push(new App(this, id, path));
       }
-      apps.push(new App(this, 'demo', join(this.root, 'packages/demo')));
+      apps.push(new App(this, 'demo', join(this.root, 'demo')));
       await Promise.all(apps.map((app) => app.load()));
       return apps;
     };
