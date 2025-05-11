@@ -11,7 +11,7 @@ export class BlankNodeDocumentModel extends NodeDocumentModel<'blank'> {
     model: this,
   });
 
-  readonly name = 'Index';
+  readonly name = 'Blank';
   readonly icon = LucideFlame;
 
   readonly title = $derived(this.data.properties.title);
