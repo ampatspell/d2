@@ -1,6 +1,5 @@
 <script lang="ts">
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
-  import { IndexNodeDocumentModel } from '$lib/index/node.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -8,7 +7,7 @@
   let index = $derived(data.index);
   $effect(() => subscribe(index));
 
-  let node = $derived(data.index.as(IndexNodeDocumentModel));
+  let node = $derived(data.index.node);
 </script>
 
 <div class="page">

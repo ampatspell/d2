@@ -10,11 +10,12 @@ import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeD
 
 type NodeDocumentModelFactory<Model extends NodeDocumentModel> = { new (...args: ConstructorParameters<typeof NodeDocumentModel<never>>): Model };
 
-export type NodeDocumentModelLoaderOptions = {
+export type NodeDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
+  factory?: NodeDocumentModelFactory<Model>;
 }
 
-export class NodeDocumentModelLoader extends Subscribable<NodeDocumentModelLoaderOptions> {
+export class NodeDocumentModelLoader<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<NodeDocumentModelLoaderOptions<Model>> {
   private readonly _query = queryFirst<NodeData>({
     ref: getter(() => this.options.ref),
   });
@@ -28,7 +29,7 @@ export class NodeDocumentModelLoader extends Subscribable<NodeDocumentModelLoade
     }
   });
 
-  private readonly _node = mapModel({
+  private readonly __node = mapModel({
     source: getter(() => this.loaded),
     target: (doc) => {
       return createNodeDocumentModel(doc);
@@ -36,10 +37,16 @@ export class NodeDocumentModelLoader extends Subscribable<NodeDocumentModelLoade
     key: nodeDocumentKey,
   });
 
-  readonly node = $derived(this._node.content);
+  readonly _node = $derived(this.__node.content);
+  readonly node = $derived.by(() => {
+    const factory = this.options.factory;
+    if(factory) {
+      return this.as(factory);
+    }
+  });
 
   as<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>) {
-    const node = this.node;
+    const node = this._node;
     if(node instanceof factory) {
       return node;
     }
@@ -47,27 +54,27 @@ export class NodeDocumentModelLoader extends Subscribable<NodeDocumentModelLoade
 
   async load() {
     await this._query.load();
-    await this._node.load();
-    await this.node?.load();
+    await this.__node.load();
+    await this._node?.load();
   }
 
-  readonly dependencies = [this._query, this._node];
+  readonly dependencies = [this._query, this.__node];
   readonly serialized = $derived(serialized(this, []));
-  readonly isLoaded = $derived(isLoaded([this._query, this.node]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._node]));
 
-  static forQuery(ref: fs.Query) {
-    return new this({ ref });
+  static forQuery<Model extends NodeDocumentModel = NodeDocumentModel>(ref: fs.Query, factory?: NodeDocumentModelFactory<Model>) {
+    return new this({ ref, factory });
   }
 
-  static forId(id: string) {
-    return this.forQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)));
+  static forId<Model extends NodeDocumentModel = NodeDocumentModel>(id: string, factory?: NodeDocumentModelFactory<Model>) {
+    return this.forQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)), factory);
   }
 
-  static forIdentifier(identifier: string) {
-    return this.forQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)));
+  static forIdentifier<Model extends NodeDocumentModel = NodeDocumentModel>(identifier: string, factory?: NodeDocumentModelFactory<Model>) {
+    return this.forQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)), factory);
   }
 
-  static forPath(path: string) {
-    return this.forQuery(fs.query(nodesCollection, fs.where('path', '==', path)));
+  static forPath<Model extends NodeDocumentModel = NodeDocumentModel>(path: string, factory?: NodeDocumentModelFactory<Model>) {
+    return this.forQuery(fs.query(nodesCollection, fs.where('path', '==', path)), factory);
   }
 }
