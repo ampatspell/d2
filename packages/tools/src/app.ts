@@ -38,7 +38,7 @@ const firebase_json = (app: App) => {
         }
       ],
       "hosting": {
-        "source": "${app.appRootRelativeToFirebase}",
+        "source": "${app.frontendRootRelativeToFirebase}",
         "ignore": ["**/.*", "**/node_modules/**"],
         "frameworksBackend": {
           "region": "${app.region.functions}"
@@ -134,13 +134,30 @@ const svelte_config = (app: App) => dedent`
       alias: {
         '$lib/*': 'src/lib/*',
         '$d2/*': 'src/d2/*',
-        '$d2-shared/*': '${app.functionsSharedRootRelativeToApp}',
+        '$d2-shared/*': '${app.functionsSharedRootRelativeToFrontend}',
       },
     },
   };
 
   export default config;
 `;
+
+const vite_config = (app: App) => dedent`
+  import { sveltekit } from '@sveltejs/kit/vite';
+  import { defineConfig, searchForWorkspaceRoot } from 'vite';
+
+  export default defineConfig({
+    plugins: [sveltekit()],
+    server: {
+      fs: {
+        allow: [
+          searchForWorkspaceRoot(process.cwd()),
+          '${app.rootRelativeToFrontend}'
+        ]
+      }
+    }
+  });
+`
 
 const definition = () => dedent`
   import { app } from '$d2/lib/definition/utils.svelte';
@@ -149,6 +166,54 @@ const definition = () => dedent`
     nodes: [],
   });
 
+`;
+
+const package_json = (app: App) => dedent`
+  {
+    "name": "${app.id}",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+      "dev": "vite dev",
+      "build": "vite build",
+      "preview": "vite preview",
+      "prepare": "svelte-kit sync || echo ''",
+      "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+      "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+      "format": "prettier --write .",
+      "lint": "prettier --check . && eslint ."
+    },
+    "dependencies": {
+      "@firebase/auth": "^1.8.1",
+      "@firebase/firestore": "^4.7.5",
+      "@firebase/functions": "^0.11.10",
+      "@firebase/storage": "^0.13.4",
+      "firebase": "^11.0.2"
+    },
+    "devDependencies": {
+      "@eslint/compat": "^1.2.5",
+      "@eslint/js": "^9.18.0",
+      "@sveltejs/adapter-node": "^5.0.0",
+      "@sveltejs/kit": "^2.16.0",
+      "@sveltejs/vite-plugin-svelte": "^5.0.0",
+      "eslint": "^9.18.0",
+      "eslint-config-prettier": "^10.0.1",
+      "eslint-plugin-svelte": "^3.0.0",
+      "globals": "^16.0.0",
+      "prettier": "^3.4.2",
+      "prettier-plugin-svelte": "^3.3.3",
+      "sass-embedded": "^1.88.0",
+      "svelte": "^5.0.0",
+      "svelte-check": "^4.0.0",
+      "typescript": "^5.0.0",
+      "typescript-eslint": "^8.20.0",
+      "vite": "^6.2.6"
+    },
+    "engines": {
+      "node": "22"
+    }
+  }
 `;
 
 export type AppConfig = {
@@ -179,11 +244,15 @@ export class App {
     return this.path;
   }
 
-  get appRootRelativeToFirebase() {
+  get rootRelativeToFrontend() {
+    return relative(this.frontendRoot, this._apps.root);
+  }
+
+  get frontendRootRelativeToFirebase() {
     return relative(this._apps.firebaseRoot, this.frontendRoot);
   }
 
-  get functionsSharedRootRelativeToApp() {
+  get functionsSharedRootRelativeToFrontend() {
     const path = relative(this.frontendRoot, join(this._apps.firebaseRoot, 'functions/shared'));
     return `${path}/*`;
   }
@@ -245,6 +314,8 @@ export class App {
       target,
     });
 
+    await writeString(join(target, 'package.json'), package_json(this));
+    await writeString(join(target, 'vite.config.ts'), vite_config(this));
     await writeString(join(target, 'svelte.config.js'), svelte_config(this));
 
     if (!exists({ path: 'src/lib/definition.svelte.ts', target })) {

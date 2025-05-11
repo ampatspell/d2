@@ -8,7 +8,6 @@
     "./packages/app",
     "./packages/demo",
     "./packages/firebase/functions",
-    "./packages/tools",
-    "./apps/*"
+    "./packages/tools"
   ]
 }
