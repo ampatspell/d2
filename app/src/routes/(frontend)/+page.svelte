@@ -16,8 +16,13 @@
   <div class="images">
     {#each images as image (image)}
       {#if image.thumbnails}
+        {@const thumbnail = image.thumbnails['400x400']}
         <!-- svelte-ignore a11y_missing_attribute -->
-        <img src={image.thumbnails['400x400'].url} />
+        <img
+          src={thumbnail.url}
+          style:--width="{thumbnail.dimensions.width}px"
+          style:--height="{thumbnail.dimensions.height}px"
+        />
       {/if}
     {/each}
   </div>
@@ -39,6 +44,10 @@
       flex-direction: row;
       flex-wrap: wrap;
       gap: 15px;
+      > img {
+        width: var(--width);
+        height: var(--height);
+      }
     }
   }
 </style>
