@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts';
 import { join } from 'node:path';
 import type { Tools } from './tools';
-import { glob } from 'node:fs/promises';
+import { glob, realpath } from 'node:fs/promises';
 import { App } from './app';
 import { readJSON } from './utils';
 
@@ -37,8 +37,21 @@ export class Apps {
     const all = async () => {
       const apps: App[] = [];
       for await (const entry of glob(`${this.appsRoot}/*`, { withFileTypes: true })) {
-        if (entry.isDirectory()) {
-          apps.push(new App(this, entry.name));
+        const process = async () => {
+          const res = {
+            id: entry.name,
+            path: join(this.appsRoot, entry.name)
+          };
+          if(entry.isDirectory()) {
+            return res;
+          } else if(entry.isSymbolicLink()) {
+            res.path = await realpath(res.path);
+            return res;
+          }
+        }
+        const processed = await process();
+        if (processed) {
+          apps.push(new App(this, processed.id, processed.path));
         }
       }
       await Promise.all(apps.map((app) => app.load()));

@@ -165,16 +165,18 @@ export type AppConfig = {
 export class App {
   private readonly _apps: Apps;
   readonly id: string;
+  readonly path: string;
 
   private config!: AppConfig;
 
-  constructor(apps: Apps, id: string) {
+  constructor(apps: Apps, id: string, path: string) {
     this._apps = apps;
     this.id = id;
+    this.path = path;
   }
 
   get frontendRoot() {
-    return join(this._apps.appsRoot, this.id);
+    return this.path;
   }
 
   get isCurrent() {
