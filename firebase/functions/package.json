@@ -12,7 +12,8 @@
     "logs": "firebase functions:log",
     "test": "mocha --recursive --reporter spec --slow 60000 --no-timeouts --exit test/**/*-test.ts",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "flc": "npm run format && npm run lint && npm run build"
   },
   "main": "lib/src/index.js",
   "dependencies": {

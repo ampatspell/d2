@@ -21,18 +21,20 @@ export class Tools {
 
   async index() {
     console.clear();
-    p.intro(`d2`);
+    p.intro(`d2 @ ${this.root}`);
 
     const { apps } = this;
     await apps.load();
     const current = apps.current;
 
     {
-      const rows = [`root: ${this.root}`];
       if (current) {
-        rows.push(`app: ${current.id} @ ${current.projectId}`);
+        const rows: string[] = [];
+        rows.push(`"${current.id}"`);
+        rows.push(`${current.frontendRoot}`);
+        rows.push(`${current.projectId}`)
+        p.log.info(rows.join('\n'));
       }
-      p.log.info(rows.join('\n'));
     }
 
     const tool = await p.select({
