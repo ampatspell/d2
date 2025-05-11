@@ -6,7 +6,7 @@
   import { getModalsContext } from '$d2/components/dark/modals/base/context.svelte';
   import { getter } from '$d2/lib/base/utils/options';
   import { toRequired } from '$d2/lib/base/utils/property.svelte';
-    import { setGlobal } from '$d2/lib/base/utils/set-global';
+  import { setGlobal } from '$d2/lib/base/utils/set-global';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { BlankNodeDocumentModel } from './node.svelte';
 
@@ -24,7 +24,7 @@
       nodes: getter(() => nodes),
       title: 'Select file',
     });
-    if(res) {
+    if (res) {
       background.update(res.node.path);
     }
   };

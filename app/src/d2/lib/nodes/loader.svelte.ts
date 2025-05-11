@@ -14,15 +14,16 @@ import {
   type NodeDocumentModelFactory,
 } from './node.svelte';
 import { preloadModel } from '../base/fire/preload.svelte';
+import { setGlobal } from '../base/utils/set-global';
 
-export type NodeDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
+export type NodeModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
   key: string;
   factory?: NodeDocumentModelFactory<Model>;
 };
 
-export class NodeModel<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
-  NodeDocumentModelLoaderOptions<Model>
+export class NodeModelLoader<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
+  NodeModelLoaderOptions<Model>
 > {
   private readonly _query = queryFirst<NodeData>({
     ref: getter(() => this.options.ref),
@@ -39,9 +40,7 @@ export class NodeModel<Model extends NodeDocumentModel = NodeDocumentModel> exte
 
   private readonly __node = mapModel({
     source: getter(() => this._loaded),
-    target: (doc) => {
-      return createNodeDocumentModel(doc);
-    },
+    target: (doc) => createNodeDocumentModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -69,6 +68,9 @@ export class NodeModel<Model extends NodeDocumentModel = NodeDocumentModel> exte
   }
 
   preload() {
+    if (this.key === 'id:eZhmyQ61i3PbB4MSfkNC') {
+      setGlobal({ loader: this });
+    }
     return preloadModel(this);
   }
 
@@ -84,7 +86,7 @@ export const nodeForQuery = <Model extends NodeDocumentModel = NodeDocumentModel
   key: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return new NodeModel({ ref, key, factory });
+  return new NodeModelLoader({ ref, key, factory });
 };
 
 export const nodeForId = <Model extends NodeDocumentModel = NodeDocumentModel>(
@@ -98,7 +100,11 @@ export const nodeForIdentifier = <Model extends NodeDocumentModel = NodeDocument
   identifier: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where('identifier', '==', identifier)), `identifier:${identifier}`, factory);
+  return nodeForQuery(
+    fs.query(nodesCollection, fs.where('identifier', '==', identifier)),
+    `identifier:${identifier}`,
+    factory,
+  );
 };
 
 export const nodeForPath = <Model extends NodeDocumentModel = NodeDocumentModel>(
@@ -115,13 +121,14 @@ export const node = {
   forPath: nodeForPath,
 };
 
-export type NodesDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
+export type NodesModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
+  key: string;
   factory?: NodeDocumentModelFactory<Model>;
 };
 
-export class NodesModel<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
-  NodeDocumentModelLoaderOptions<Model>
+export class NodesModelLoader<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
+  NodesModelLoaderOptions<Model>
 > {
   private readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.ref),
@@ -171,7 +178,8 @@ export const nodesForQuery = <Model extends NodeDocumentModel = NodeDocumentMode
   key: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return new NodesModel({ ref, key, factory });
+  console.log('key', key);
+  return new NodesModelLoader({ ref, key, factory });
 };
 
 export const nodesForParentId = <Model extends NodeDocumentModel = NodeDocumentModel>(
@@ -192,7 +200,11 @@ export const nodesForParentIdentifier = <Model extends NodeDocumentModel = NodeD
   identifier: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)), `identifier:${identifier}`, factory);
+  return nodesForQuery(
+    fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)),
+    `identifier:${identifier}`,
+    factory,
+  );
 };
 
 export const nodes = {
