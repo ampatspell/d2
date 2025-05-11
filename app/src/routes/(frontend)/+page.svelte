@@ -1,5 +1,6 @@
 <script lang="ts">
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+    import { isTruthy } from '$d2/lib/base/utils/array';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
@@ -8,22 +9,20 @@
   $effect(() => subscribe(data.images));
 
   let index = $derived(data.index.node);
-  let images = $derived(data.images.nodes.filter((node) => node.isImage));
+  let images = $derived(data.images.nodes.map((node) => node.asImage).filter(isTruthy));
 </script>
 
 <div class="page">
   <div class="title">{index?.title}</div>
   <div class="images">
     {#each images as image (image)}
-      {#if image.thumbnails}
-        {@const thumbnail = image.thumbnails['400x400']}
-        <!-- svelte-ignore a11y_missing_attribute -->
-        <img
-          src={thumbnail.url}
-          style:--width="{thumbnail.dimensions.width}px"
-          style:--height="{thumbnail.dimensions.height}px"
-        />
-      {/if}
+      {@const thumbnail = image.thumbnails['400x400']}
+      <!-- svelte-ignore a11y_missing_attribute -->
+      <img
+        src={thumbnail.url}
+        style:--width="{thumbnail.dimensions.width}px"
+        style:--height="{thumbnail.dimensions.height}px"
+      />
     {/each}
   </div>
 </div>
