@@ -1,0 +1,16 @@
+{
+  "admin": "ampatspell@gmail.com",
+  "region": {
+    "functions": "europe-west1",
+    "bucket": "europe-west1"
+  },
+  "firebase": {
+    "apiKey": "…",
+    "authDomain": "…",
+    "databaseURL": "…",
+    "projectId": "…",
+    "storageBucket": "…",
+    "messagingSenderId": "…",
+    "appId": "…"
+  }
+}
