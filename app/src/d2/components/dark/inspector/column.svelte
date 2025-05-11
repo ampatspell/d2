@@ -29,6 +29,10 @@
     flex-direction: column;
     justify-content: center;
     gap: 2px;
+    > .label {
+      color: var(--dark-faded-color-1);
+      font-size: var(--dark-font-size-small);
+    }
     &.flex {
       flex: 1;
     }

@@ -1,6 +1,7 @@
 <script lang="ts">
   import InputRow from '$d2/components/dark/inspector/input-row.svelte';
   import Inspector from '$d2/components/dark/inspector/inspector.svelte';
+  import PathRow from '$d2/components/dark/inspector/path-row.svelte';
   import Section from '$d2/components/dark/inspector/section.svelte';
   import ValueRow from '$d2/components/dark/inspector/value-row.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
@@ -18,7 +19,7 @@
   <Inspector>
     <Section>
       <ValueRow label="Type" value={node.name} />
-      <ValueRow label="Path" value={node.path} copy={true} />
+      <PathRow label="Path" value={node.path} />
       <ValueRow label="Created" value={createdAt} />
       <ValueRow label="Updated" value={updatedAt} />
     </Section>
