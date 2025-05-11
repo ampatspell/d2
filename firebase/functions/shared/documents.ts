@@ -15,12 +15,18 @@ export type UserNodeData = {
   open: boolean;
 };
 
+export type NodeParentData = {
+  id: string;
+  path: string;
+  identifier: string;
+};
+
 export type BaseNodeData<Type extends string, NodePropertiesRegistry extends { [key in Type]: object }> = {
   kind: Type;
   path: string;
   identifier: string;
   properties: NodePropertiesRegistry[Type];
-  parent: string | null;
+  parent: NodeParentData | null;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -9,8 +9,21 @@ import { mapModels } from '../base/model/models.svelte';
 import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeData } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
+import type { NodeParentData } from '$d2-shared/documents';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
+
+const asParent = (node: NodeDocumentModel | undefined): NodeParentData | null => {
+  if (node) {
+    const { id, path, identifier } = node;
+    return {
+      id,
+      path,
+      identifier,
+    };
+  }
+  return null;
+};
 
 export type NodesModelOptions = {
   query: fs.Query;
@@ -30,7 +43,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly all = $derived(this._nodes.content);
 
   byParentId(id: string | null) {
-    return this.all.filter((node) => node.parentId === id);
+    return this.all.filter((node) => node.parent?.id === id);
   }
 
   byId(id: string | undefined) {
@@ -46,7 +59,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
         kind: definition.type,
         path: '__pending__',
         identifier: ref.id,
-        parent: parent?.id || null,
+        parent: asParent(parent),
         properties,
         createdAt: now,
         updatedAt: now,

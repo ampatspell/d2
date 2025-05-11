@@ -4,6 +4,7 @@ import { FileData } from '../files';
 import { murl } from '../utils/murl';
 import { parse } from 'node:path';
 import { FunctionsNodeData } from '../../shared/nodes/registry';
+import type { NodeParentData } from '../../shared/documents';
 
 type NodeFileData = {
   name: string;
@@ -27,12 +28,31 @@ export class NodesFilesService {
     return nodeFileOriginalPattern(path) ?? undefined;
   }
 
-  private async onStorageObjectForFileNodeFinalized({ id, name, contentType, parent, filename }: NodeFileData) {
-    const file = await this.app.files.processFile({
+  private async onStorageObjectForFileNodeFinalized(opts: NodeFileData) {
+    const { id, name, contentType, filename } = opts;
+
+    const processFile = () => this.app.files.processFile({
       name,
       contentType,
       nameForThumbnail: (thumbnail) => `nodes/${id}/${thumbnail}`,
     });
+
+    const loadParent = async () => {
+      const snap = await this.app.firestore.doc(`nodes/${opts.parent}`).get();
+      const data = snap.data() as FunctionsNodeData;
+      if(data) {
+        const { id } = snap;
+        const { path, identifier } = data;
+        return {
+          id,
+          path,
+          identifier,
+        } satisfies NodeParentData;
+      }
+      return null;
+    }
+
+    const [file, parent] = await Promise.all([processFile(), loadParent()]);
 
     let properties: FunctionsNodeData<'file'>['properties'];
 
@@ -57,9 +77,14 @@ export class NodesFilesService {
 
     const identifier = parse(filename).name;
 
+    let path = `/${identifier}`;
+    if(parent) {
+      path = `${parent.path}/${identifier}`;
+    }
+
     const data: WithFieldValue<FunctionsNodeData<'file'>> = {
       kind: 'file',
-      path: '__pending__',
+      path,
       identifier,
       parent,
       createdAt: FieldValue.serverTimestamp(),
