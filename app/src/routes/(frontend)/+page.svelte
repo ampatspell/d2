@@ -33,7 +33,7 @@
     padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 30px;
     > .title {
       font-size: 21px;
       font-weight: 500;
