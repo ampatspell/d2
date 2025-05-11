@@ -1,4 +1,4 @@
-import type { NodePropertiesRegistry } from './nodes';
+import type { NodePropertiesRegistry } from './nodes/registry';
 
 export const userRoles = ['admin', 'visitor'] as const;
 export type UserRole = (typeof userRoles)[number];

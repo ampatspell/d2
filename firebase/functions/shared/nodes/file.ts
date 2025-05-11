@@ -1,7 +1,3 @@
-export type MissingNodeProperties = {
-  message?: string;
-};
-
 export type FileThumbnail = '100x100' | '400x400' | '1024x1024' | '2048x2048';
 
 export type FileThumbnailDefinition = {
@@ -45,8 +41,3 @@ export type ImageFileNodeProperties = {
 export type FileNodeProperties = {
   filename: string;
 } & (RegularFileNodeProperties | ImageFileNodeProperties);
-
-export type NodePropertiesRegistry = {
-  missing: MissingNodeProperties;
-  file: FileNodeProperties;
-};

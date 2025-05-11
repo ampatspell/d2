@@ -2,7 +2,7 @@ import { getDownloadURL } from 'firebase-admin/storage';
 import { File } from '@google-cloud/storage';
 import Application from './app';
 import sharp from 'sharp';
-import { Dimensions, FileThumbnail, fileThumbnails } from '../shared/nodes';
+import { Dimensions, FileThumbnail, fileThumbnails } from '../shared/nodes/file';
 
 export type FileData = {
   name: string;

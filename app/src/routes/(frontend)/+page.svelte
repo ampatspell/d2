@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ImageFileNodeProperties } from '$d2-shared/nodes';
+  import type { ImageFileNodeProperties } from '$d2-shared/nodes/file';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import type { FileNodeDocumentModel } from '$lib/file/node.svelte';
   import type { MissingNodeDocumentModel } from '$lib/missing/node.svelte';
