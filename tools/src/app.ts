@@ -189,7 +189,8 @@ const package_json = (app: App) => dedent`
       "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
       "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
       "format": "prettier --write .",
-      "lint": "prettier --check . && eslint ."
+      "lint": "prettier --check . && eslint .",
+      "cli": "(cd ${app.rootRelativeToFrontend} && npm run cli)"
     },
     "dependencies": {
       "@firebase/auth": "^1.8.1",
