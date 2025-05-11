@@ -14,6 +14,10 @@ export type NodeType = keyof NodePropertiesRegistry;
 
 export type NodeData<Type extends NodeType = NodeType> = BaseNodeData<Type, NodePropertiesRegistry>;
 
+export type NodeDocumentModelFactory<Model extends NodeDocumentModel> = {
+  new (...args: ConstructorParameters<typeof NodeDocumentModel<never>>): Model;
+};
+
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
 };
@@ -81,6 +85,13 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
 
   async delete() {
     await this.doc.delete();
+  }
+
+  is<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>): this is Model {
+    if (this instanceof factory) {
+      return true;
+    }
+    return false;
   }
 
   readonly isLoaded = $derived(isLoaded([this.doc]));

@@ -10,3 +10,9 @@ export const isLoaded = (arr: (IsLoadedModel | undefined)[]) => {
     return true;
   });
 };
+
+export const asIsLoadedModel = (arr: (IsLoadedModel | undefined)[]) => {
+  return {
+    isLoaded: isLoaded(arr),
+  };
+};

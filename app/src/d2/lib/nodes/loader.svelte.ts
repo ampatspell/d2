@@ -1,17 +1,19 @@
 import * as fs from '@firebase/firestore';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
-import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
+import { asIsLoadedModel, isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
-import { mapModel } from '$d2/lib/base/model/models.svelte';
+import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
-import { queryFirst } from '../base/fire/query.svelte';
-import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeData } from './node.svelte';
+import { queryAll, queryFirst } from '../base/fire/query.svelte';
+import {
+  createNodeDocumentModel,
+  nodeDocumentKey,
+  NodeDocumentModel,
+  type NodeData,
+  type NodeDocumentModelFactory,
+} from './node.svelte';
 import { preloadModel } from '../base/fire/preload.svelte';
-
-type NodeDocumentModelFactory<Model extends NodeDocumentModel> = {
-  new (...args: ConstructorParameters<typeof NodeDocumentModel<never>>): Model;
-};
 
 export type NodeDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
@@ -49,11 +51,12 @@ export class NodeModel<Model extends NodeDocumentModel = NodeDocumentModel> exte
     if (factory) {
       return this.as(factory);
     }
+    return this._node as Model;
   });
 
   as<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>) {
     const node = this._node;
-    if (node instanceof factory) {
+    if (node?.is(factory)) {
       return node;
     }
   }
@@ -106,4 +109,72 @@ export const node = {
   forId: nodeForId,
   forIdentifier: nodeForIdentifier,
   forPath: nodeForPath,
+};
+
+export type NodesDocumentModelLoaderOptions<Model extends NodeDocumentModel> = {
+  ref: fs.Query;
+  factory?: NodeDocumentModelFactory<Model>;
+};
+
+export class NodesModel<Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
+  NodeDocumentModelLoaderOptions<Model>
+> {
+  private readonly _query = queryAll<NodeData>({
+    ref: getter(() => this.options.ref),
+  });
+
+  private readonly _docs = $derived(this._query.content);
+
+  private readonly _loaded = $derived.by(() => this._docs.filter((doc) => doc.isLoaded));
+
+  private readonly __nodes = mapModels({
+    source: getter(() => this._loaded),
+    target: (doc) => {
+      return createNodeDocumentModel(doc);
+    },
+    key: nodeDocumentKey,
+  });
+
+  private readonly _nodes = $derived(this.__nodes.content);
+
+  readonly nodes = $derived.by(() => {
+    const factory = this.options.factory;
+    if (factory) {
+      return this._nodes.filter((node) => node.is(factory));
+    }
+    return this._nodes as Model[];
+  });
+
+  async load() {
+    await this._query.load();
+    await this.__nodes.load();
+    await Promise.all(this._nodes?.map((node) => node.load()));
+  }
+
+  async preload() {
+    return preloadModel(this);
+  }
+
+  readonly dependencies = [this._query, this.__nodes];
+  readonly serialized = $derived(serialized(this, ['nodes']));
+  readonly isLoaded = $derived(isLoaded([this._query, asIsLoadedModel(this._nodes)]));
+}
+
+export const nodesForQuery = <Model extends NodeDocumentModel = NodeDocumentModel>(
+  ref: fs.Query,
+  factory?: NodeDocumentModelFactory<Model>,
+) => {
+  return new NodesModel({ ref, factory });
+};
+
+export const nodesForParentId = <Model extends NodeDocumentModel = NodeDocumentModel>(
+  parentId: string,
+  factory?: NodeDocumentModelFactory<Model>,
+) => {
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent', '==', parentId)), factory);
+};
+
+export const nodes = {
+  forQuery: nodesForQuery,
+  forParentId: nodesForParentId,
 };

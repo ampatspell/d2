@@ -24,6 +24,7 @@ export type FileProperty = {
 };
 
 export type RegularFileNodeProperties = {
+  filename: string;
   type: 'regular';
   original: FileProperty;
 };
@@ -33,11 +34,10 @@ export type ImageFileProperty = FileProperty & {
 };
 
 export type ImageFileNodeProperties = {
+  filename: string;
   type: 'image';
   original: ImageFileProperty;
   thumbnails: { [key in FileThumbnails]: ImageFileProperty };
 };
 
-export type FileNodeProperties = {
-  filename: string;
-} & (RegularFileNodeProperties | ImageFileNodeProperties);
+export type FileNodeProperties = RegularFileNodeProperties | ImageFileNodeProperties;

@@ -7,10 +7,10 @@
   let { data }: { data: PageData } = $props();
 
   let loader = $derived(data.node);
-  $effect(() => subscribe(loader));
+  $effect(() => subscribe(data.node));
 
   let onWillDelete = () => {
-    let parent = loader._node?.parentId;
+    let parent = loader.node?.parentId;
     if (parent) {
       goto(`/backend/nodes/${parent}`);
     } else {
