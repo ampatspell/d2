@@ -2,12 +2,12 @@
   "name": "workspace",
   "private": true,
   "scripts": {
-    "cli": "(cd packages/tools && npm run cli)"
+    "cli": "(cd tools && npm run cli)"
   },
   "workspaces": [
-    "./packages/app",
-    "./packages/firebase/functions",
-    "./packages/tools",
-    "./apps/*"
+    "./app",
+    "./demo",
+    "./firebase/functions",
+    "./tools"
   ]
 }
