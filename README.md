@@ -85,3 +85,5 @@ Deploy your app
 cd ~/dummy/d2
 npm run cli
 ```
+
+* deploy "amateurinmotion"
