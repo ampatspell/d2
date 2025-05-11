@@ -1,6 +1,6 @@
 <script lang="ts">
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
-    import { IndexNodeDocumentModel } from '$lib/index/node.svelte';
+  import { IndexNodeDocumentModel } from '$lib/index/node.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
