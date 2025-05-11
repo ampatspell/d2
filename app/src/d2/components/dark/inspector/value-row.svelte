@@ -1,6 +1,6 @@
 <script lang="ts">
-    import LucideClipboardCopy from '$d2/icons/lucide--clipboard-copy.svelte';
-    import Icon from '$d2/components/dark/icon.svelte';
+  import LucideClipboardCopy from '$d2/icons/lucide--clipboard-copy.svelte';
+  import Icon from '$d2/components/dark/icon.svelte';
   import Column from './column.svelte';
   import Row from './row.svelte';
 
@@ -16,7 +16,7 @@
 
   let onCopy = async () => {
     await navigator.clipboard.writeText(String(value));
-  }
+  };
 </script>
 
 <Row>
