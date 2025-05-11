@@ -6,9 +6,15 @@ import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { queryFirst } from '../base/fire/query.svelte';
-import { createNodeDocumentModel, nodeDocumentKey, type NodeData } from './node.svelte';
+import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeData } from './node.svelte';
 
-export class NodeDocumentModelLoader extends Subscribable<{ ref: fs.Query }> {
+type NodeDocumentModelFactory<Model extends NodeDocumentModel> = { new (...args: ConstructorParameters<typeof NodeDocumentModel<never>>): Model };
+
+export type NodeDocumentModelLoaderOptions = {
+  ref: fs.Query;
+}
+
+export class NodeDocumentModelLoader extends Subscribable<NodeDocumentModelLoaderOptions> {
   private readonly _query = queryFirst<NodeData>({
     ref: getter(() => this.options.ref),
   });
@@ -24,11 +30,20 @@ export class NodeDocumentModelLoader extends Subscribable<{ ref: fs.Query }> {
 
   private readonly _node = mapModel({
     source: getter(() => this.loaded),
-    target: (doc) => createNodeDocumentModel(doc),
+    target: (doc) => {
+      return createNodeDocumentModel(doc);
+    },
     key: nodeDocumentKey,
   });
 
   readonly node = $derived(this._node.content);
+
+  as<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>) {
+    const node = this.node;
+    if(node instanceof factory) {
+      return node;
+    }
+  }
 
   async load() {
     await this._query.load();
