@@ -3,7 +3,7 @@
   import Icon from '$d2/components/dark/icon.svelte';
   import Column from './column.svelte';
   import Row from './row.svelte';
-    import { copyToClipboard } from '$d2/lib/base/utils/browser';
+  import { copyToClipboard } from '$d2/lib/base/utils/browser';
 
   let {
     label,

@@ -6,6 +6,8 @@
 
   let { data }: { data: PageData } = $props();
 
+  let nodes = $derived(data.nodes);
+
   let loader = $derived(data.node);
   $effect(() => subscribe(data.node));
 
@@ -19,4 +21,4 @@
   };
 </script>
 
-<Node {loader} {onWillDelete} />
+<Node {loader} {nodes} {onWillDelete} />

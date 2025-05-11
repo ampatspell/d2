@@ -1,9 +1,15 @@
+<script lang="ts" module>
+  export type NodesTreeSettings = {
+    isOpen: (id: string) => boolean;
+    setOpen: (id: string, open: boolean) => void;
+  };
+</script>
+
 <script lang="ts">
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
-  import type { NodesSettingsModel } from '$d2/lib/nodes/user.svelte';
 
   let {
     nodes,
@@ -13,7 +19,7 @@
   }: {
     nodes: NodesModel;
     selected: NodeDocumentModel | undefined;
-    settings: NodesSettingsModel;
+    settings: NodesTreeSettings;
     onSelect: (model: NodeDocumentModel | undefined) => void;
   } = $props();
 

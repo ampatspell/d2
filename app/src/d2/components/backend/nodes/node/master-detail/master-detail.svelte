@@ -3,13 +3,14 @@
   import MasterDetail from '$d2/components/dark/section/page/master-detail.svelte';
   import Detail from './detail.svelte';
   import Master from './master.svelte';
+  import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
-  let { node }: { node: NodeDocumentModel } = $props();
+  let { node, nodes }: { node: NodeDocumentModel; nodes: NodesModel } = $props();
 </script>
 
 <MasterDetail>
   {#snippet master()}
-    <Master {node} />
+    <Master {node} {nodes} />
   {/snippet}
   {#snippet detail()}
     <Detail {node} />

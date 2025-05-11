@@ -5,8 +5,9 @@
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import type { VoidCallback } from '$d2/lib/base/utils/types';
   import type { NodeModel } from '$d2/lib/nodes/loader.svelte';
+  import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
-  let { loader, onWillDelete }: { loader: NodeModel; onWillDelete: VoidCallback } = $props();
+  let { loader, nodes, onWillDelete }: { loader: NodeModel; nodes: NodesModel; onWillDelete: VoidCallback } = $props();
 
   let node = $derived(loader.node);
   let title = $derived(node?.identifier);
@@ -22,7 +23,7 @@
     {#snippet actions()}
       <Delete name="node" {onDelete} />
     {/snippet}
-    <MasterDetail {node} />
+    <MasterDetail {node} {nodes} />
   </Page>
 {:else}
   <Placeholder label="Node not found" />

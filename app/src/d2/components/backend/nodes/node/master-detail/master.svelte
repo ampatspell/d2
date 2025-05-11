@@ -2,14 +2,15 @@
   import Inspector from '$d2/components/dark/inspector/inspector.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
-  let { node }: { node: NodeDocumentModel } = $props();
+  let { node, nodes }: { node: NodeDocumentModel; nodes: NodesModel } = $props();
 
   let definition = $derived(node.definition);
 </script>
 
 <Overflow overflow="y">
   <Inspector>
-    <definition.backend {node} />
+    <definition.backend {node} {nodes} />
   </Inspector>
 </Overflow>

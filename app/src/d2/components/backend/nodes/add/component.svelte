@@ -9,9 +9,10 @@
   import Table from '$d2/components/dark/table/table.svelte';
   import { getDefinition } from '$d2/lib/definition/app.svelte';
   import type { NodeDefinitionModel } from '$d2/lib/definition/node.svelte';
-  import type { SelectNodeModalProps, SelectNodeModalResolution } from './models.svelte';
+  import type { SelectNodeDefinitionModalProps, SelectNodeDefinitionModalResolution } from './models.svelte';
 
-  let { modal }: { modal: ModalRuntime<SelectNodeModalProps, SelectNodeModalResolution> } = $props();
+  let { modal }: { modal: ModalRuntime<SelectNodeDefinitionModalProps, SelectNodeDefinitionModalResolution> } =
+    $props();
 
   let parent = $derived(modal.props.parent);
 

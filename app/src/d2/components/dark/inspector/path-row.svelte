@@ -4,7 +4,7 @@
   import Column from './column.svelte';
   import Row from './row.svelte';
   import { isTruthy } from '$d2/lib/base/utils/array';
-    import { copyToClipboard } from '$d2/lib/base/utils/browser';
+  import { copyToClipboard } from '$d2/lib/base/utils/browser';
 
   let {
     label,
