@@ -1,5 +1,4 @@
-import type { NodeType } from '$d2-shared/documents';
-import type { NodeDocumentModel } from '../nodes/node.svelte';
+import type { NodeDocumentModel, NodeType } from '../nodes/node.svelte';
 import type { NodeDefinitionModelOptions } from './node.svelte';
 import type { AppDefinitionModelOptions } from './app.svelte';
 

@@ -2,8 +2,8 @@ import assert from 'assert';
 import { getTestApp, setup } from './helpers/setup';
 import { getStorageHelper, storage } from './helpers/storage';
 import { firestore, getFirestoreHelper } from './helpers/firestore';
-import { NodeData } from '../shared/documents';
 import { ImageFileNodeProperties } from '../shared/nodes/file';
+import { FunctionsNodeData } from '../shared/nodes/registry';
 
 describe('files', function () {
   setup(this);
@@ -25,7 +25,7 @@ describe('files', function () {
     await app.files.onStorageObjectFinalized(file);
 
     const snapshot = await app.firestore.doc(`nodes/image-id`).get();
-    const data = snapshot.data() as NodeData<'file'>;
+    const data = snapshot.data() as FunctionsNodeData<'file'>;
     const properties = data.properties as ImageFileNodeProperties;
     assert.deepStrictEqual(data, {
       kind: 'file',

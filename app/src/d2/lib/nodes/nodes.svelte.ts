@@ -1,5 +1,4 @@
 import * as fs from '@firebase/firestore';
-import type { NodeData } from '$d2-shared/documents';
 import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
@@ -7,7 +6,7 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel } from './node.svelte';
+import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeData } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 

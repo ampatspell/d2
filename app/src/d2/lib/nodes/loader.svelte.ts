@@ -1,5 +1,4 @@
 import * as fs from '@firebase/firestore';
-import type { NodeData } from '$d2-shared/documents';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
@@ -7,7 +6,7 @@ import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { queryFirst } from '../base/fire/query.svelte';
-import { createNodeDocumentModel, nodeDocumentKey } from './node.svelte';
+import { createNodeDocumentModel, nodeDocumentKey, type NodeData } from './node.svelte';
 
 export class NodeDocumentModelLoader extends Subscribable<{ ref: fs.Query }> {
   private readonly _query = queryFirst<NodeData>({

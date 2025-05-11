@@ -1,7 +1,7 @@
-import type { NodeType, NodePropertiesRegistry } from '$d2-shared/documents';
 import type { Component } from 'svelte';
 import { Model } from '../base/model/model.svelte';
-import type { NodeDocumentModel } from '../nodes/node.svelte';
+import type { NodeDocumentModel, NodeType } from '../nodes/node.svelte';
+import type { NodePropertiesRegistry } from '$lib/registry';
 
 export type NodeBackendComponent<Type extends NodeType, Node extends NodeDocumentModel<Type>> = Component<{
   node: Node;

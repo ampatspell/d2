@@ -1,8 +1,8 @@
 import { Model } from '../base/model/model.svelte';
 import type { OptionsInput } from '../base/utils/options';
-import type { NodeData, NodeType } from '$d2-shared/documents';
 import type { Document } from '../base/fire/document.svelte';
 import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.svelte';
+import type { NodeData, NodeType } from '../nodes/node.svelte';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

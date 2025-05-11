@@ -1,16 +1,16 @@
 import { FieldValue } from 'firebase-admin/firestore';
-import { NodeData } from '../../shared/documents';
 import Application from '../app';
+import { FunctionsNodeData } from '../../shared/nodes/registry';
 
 export class NodesPathsService {
   constructor(private readonly app: Application) {}
 
-  async updateOwn({ id, data }: { id: string; data: NodeData }) {
+  async updateOwn({ id, data }: { id: string; data: FunctionsNodeData }) {
     const parentId = data.parent;
     let path = `/${data.identifier}`;
     if (parentId) {
       const snap = await this.app.firestore.doc(`nodes/${parentId}`).get();
-      const parent = snap.data() as NodeData | undefined;
+      const parent = snap.data() as FunctionsNodeData | undefined;
       if (parent) {
         path = `${parent.path}/${data.identifier}`;
       }
@@ -26,11 +26,11 @@ export class NodesPathsService {
     }
   }
 
-  async updateChildren({ id, data }: { id: string; data: NodeData }) {
+  async updateChildren({ id, data }: { id: string; data: FunctionsNodeData }) {
     const snap = await this.app.firestore.collection('nodes').where('parent', '==', id).get();
     await Promise.all(
       snap.docs.map(async (snap) => {
-        const node = snap.data() as NodeData;
+        const node = snap.data() as FunctionsNodeData;
         const path = `${data.path}/${node.identifier}`;
         if (node.path !== path) {
           await snap.ref.set(

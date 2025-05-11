@@ -168,6 +168,13 @@ const definition = () => dedent`
 
 `;
 
+const registry = () => dedent`
+  import type { FunctionsNodePropertiesRegistry } from '$d2-shared/nodes/registry';
+
+  export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry;
+
+`;
+
 const package_json = (app: App) => dedent`
   {
     "name": "${app.id}",
@@ -203,6 +210,7 @@ const package_json = (app: App) => dedent`
       "globals": "^16.0.0",
       "prettier": "^3.4.2",
       "prettier-plugin-svelte": "^3.3.3",
+      "p-limit": "^6.2.0",
       "sass-embedded": "^1.88.0",
       "svelte": "^5.0.0",
       "svelte-check": "^4.0.0",
@@ -320,6 +328,10 @@ export class App {
 
     if (!exists({ path: 'src/lib/definition.svelte.ts', target })) {
       await writeString(join(target, 'src/lib/definition.svelte.ts'), definition());
+    }
+
+    if (!exists({ path: 'src/lib/registry.ts', target })) {
+      await writeString(join(target, 'src/lib/registry.ts'), registry());
     }
 
     if (!exists({ path: 'src/routes/(frontend)', target })) {

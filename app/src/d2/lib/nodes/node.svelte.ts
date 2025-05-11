@@ -1,4 +1,3 @@
-import type { NodeData, NodeType } from '$d2-shared/documents';
 import { Document } from '$d2/lib/base/fire/document.svelte';
 import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
@@ -8,6 +7,12 @@ import { getDefinition } from '../definition/app.svelte';
 import { data, DocumentModelProperties } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
+import type { BaseNodeData } from '$d2-shared/documents';
+import type { NodePropertiesRegistry } from '$lib/registry';
+
+export type NodeType = keyof NodePropertiesRegistry;
+
+export type NodeData<Type extends NodeType = NodeType> = BaseNodeData<Type, NodePropertiesRegistry>;
 
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;

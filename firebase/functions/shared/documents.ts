@@ -1,5 +1,3 @@
-import type { NodePropertiesRegistry } from './nodes/registry';
-
 export const userRoles = ['admin', 'visitor'] as const;
 export type UserRole = (typeof userRoles)[number];
 
@@ -17,13 +15,7 @@ export type UserNodeData = {
   open: boolean;
 };
 
-//
-
-export type NodeType = keyof NodePropertiesRegistry;
-
-export type { NodePropertiesRegistry };
-
-export type NodeData<Type extends NodeType = NodeType> = {
+export type BaseNodeData<Type extends string, NodePropertiesRegistry extends { [key in Type]: object }> = {
   kind: Type;
   path: string;
   identifier: string;

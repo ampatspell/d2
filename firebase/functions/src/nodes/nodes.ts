@@ -1,4 +1,4 @@
-import { NodeData } from '../../shared/documents';
+import { FunctionsNodeData } from '../../shared/nodes/registry';
 import Application from '../app';
 import { NodesFilesService } from './files';
 import { NodesPathsService } from './paths';
@@ -24,7 +24,7 @@ export class NodesService {
     );
   }
 
-  async onNodeCreated(opts: { id: string; data: NodeData }) {
+  async onNodeCreated(opts: { id: string; data: FunctionsNodeData }) {
     await this.paths.updateOwn(opts);
   }
 
@@ -36,7 +36,7 @@ export class NodesService {
     ]);
   }
 
-  async onNodeUpdated({ id, before, after }: { id: string; before: NodeData; after: NodeData }) {
+  async onNodeUpdated({ id, before, after }: { id: string; before: FunctionsNodeData; after: FunctionsNodeData }) {
     if (before.identifier !== after.identifier) {
       await this.paths.updateOwn({ id, data: after });
     } else if (before.path !== after.path) {

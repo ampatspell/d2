@@ -1,9 +1,9 @@
 import { FieldValue, WithFieldValue } from 'firebase-admin/firestore';
-import { NodeData } from '../../shared/documents';
 import Application from '../app';
 import { FileData } from '../files';
 import { murl } from '../utils/murl';
 import { parse } from 'node:path';
+import { FunctionsNodeData } from '../../shared/nodes/registry';
 
 type NodeFileData = {
   name: string;
@@ -34,7 +34,7 @@ export class NodesFilesService {
       nameForThumbnail: (thumbnail) => `nodes/${id}/${thumbnail}`,
     });
 
-    let properties: NodeData<'file'>['properties'];
+    let properties: FunctionsNodeData<'file'>['properties'];
 
     if (file.type === 'image') {
       const { original, thumbnails } = file;
@@ -57,7 +57,7 @@ export class NodesFilesService {
 
     const identifier = parse(filename).name;
 
-    const data: WithFieldValue<NodeData<'file'>> = {
+    const data: WithFieldValue<FunctionsNodeData<'file'>> = {
       kind: 'file',
       path: '__pending__',
       identifier,
