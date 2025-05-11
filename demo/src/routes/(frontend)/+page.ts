@@ -1,5 +1,5 @@
+import { FileNodeDocumentModel } from '$d2/lib/definition/file/node.svelte';
 import { node, nodes } from '$d2/lib/nodes/loader.svelte';
-import { FileNodeDocumentModel } from '$lib/file/node.svelte';
 import { IndexNodeDocumentModel } from '$lib/index/node.svelte';
 import type { PageLoad } from './$types';
 
