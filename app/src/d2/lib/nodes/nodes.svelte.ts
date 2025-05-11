@@ -55,10 +55,15 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     if (properties) {
       const ref = fs.doc(nodesCollection);
       const now = new Date();
+      const identifier = ref.id;
+      let path = `/${identifier}`;
+      if(parent) {
+        path = `${parent.path}/${identifier}`;
+      }
       const data: NodeData = {
         kind: definition.type,
-        path: '__pending__',
-        identifier: ref.id,
+        path,
+        identifier,
         parent: asParent(parent),
         properties,
         createdAt: now,
