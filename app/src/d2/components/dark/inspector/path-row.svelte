@@ -4,6 +4,7 @@
   import Column from './column.svelte';
   import Row from './row.svelte';
   import { isTruthy } from '$d2/lib/base/utils/array';
+    import { copyToClipboard } from '$d2/lib/base/utils/browser';
 
   let {
     label,
@@ -15,11 +16,7 @@
 
   let parts = $derived(value?.split('/').filter(isTruthy) ?? []);
 
-  let onCopy = async () => {
-    if (value) {
-      await navigator.clipboard.writeText(value);
-    }
-  };
+  let onCopy = () => copyToClipboard(value);
 </script>
 
 <Row>

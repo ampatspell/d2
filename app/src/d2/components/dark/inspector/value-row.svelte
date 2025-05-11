@@ -3,6 +3,7 @@
   import Icon from '$d2/components/dark/icon.svelte';
   import Column from './column.svelte';
   import Row from './row.svelte';
+    import { copyToClipboard } from '$d2/lib/base/utils/browser';
 
   let {
     label,
@@ -14,9 +15,7 @@
     copy?: boolean;
   } = $props();
 
-  let onCopy = async () => {
-    await navigator.clipboard.writeText(String(value));
-  };
+  let onCopy = () => copyToClipboard(String(value));
 </script>
 
 <Row>
