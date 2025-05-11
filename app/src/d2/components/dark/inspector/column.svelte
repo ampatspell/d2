@@ -32,5 +32,11 @@
     &.flex {
       flex: 1;
     }
+    min-width: 0;
+    > .content {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 </style>

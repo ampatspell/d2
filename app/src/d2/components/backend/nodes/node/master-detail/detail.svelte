@@ -18,7 +18,7 @@
   <Inspector>
     <Section>
       <ValueRow label="Type" value={node.name} />
-      <ValueRow label="Path" value={node.path} />
+      <ValueRow label="Path" value={node.path} copy={true} />
       <ValueRow label="Created" value={createdAt} />
       <ValueRow label="Updated" value={updatedAt} />
     </Section>
