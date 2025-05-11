@@ -171,10 +171,26 @@ export const nodesForParentId = <Model extends NodeDocumentModel = NodeDocumentM
   parentId: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent', '==', parentId)), factory);
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.id', '==', parentId)), factory);
+};
+
+export const nodesForParentPath = <Model extends NodeDocumentModel = NodeDocumentModel>(
+  path: string,
+  factory?: NodeDocumentModelFactory<Model>,
+) => {
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.path', '==', path)), factory);
+};
+
+export const nodesForParentIdentifier = <Model extends NodeDocumentModel = NodeDocumentModel>(
+  identifier: string,
+  factory?: NodeDocumentModelFactory<Model>,
+) => {
+  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)), factory);
 };
 
 export const nodes = {
   forQuery: nodesForQuery,
   forParentId: nodesForParentId,
+  forParentPath: nodesForParentPath,
+  forParentIdentifier: nodesForParentIdentifier,
 };

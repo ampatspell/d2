@@ -58,7 +58,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly data = $derived(this.doc.data!);
 
   readonly kind = $derived(this.data.kind);
-  readonly parentId = $derived(this.data.parent);
+  readonly parent = $derived(this.data.parent ?? undefined);
   readonly identifier = $derived(this.data.identifier);
   readonly path = $derived(this.data.path);
   readonly createdAt = $derived(this.data.createdAt);

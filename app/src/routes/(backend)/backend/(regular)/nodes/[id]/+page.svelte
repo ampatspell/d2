@@ -10,7 +10,7 @@
   $effect(() => subscribe(data.node));
 
   let onWillDelete = () => {
-    let parent = loader.node?.parentId;
+    let parent = loader.node?.parent?.id;
     if (parent) {
       goto(`/backend/nodes/${parent}`);
     } else {

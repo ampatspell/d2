@@ -1,5 +1,5 @@
-import type { BaseNodeData } from "../documents";
-import type { FileNodeProperties } from "./file";
+import type { BaseNodeData } from '../documents';
+import type { FileNodeProperties } from './file';
 
 export type FunctionsNodePropertiesRegistry = {
   file: FileNodeProperties;
@@ -7,4 +7,7 @@ export type FunctionsNodePropertiesRegistry = {
 
 export type FunctionsNodeType = keyof FunctionsNodePropertiesRegistry;
 
-export type FunctionsNodeData<Type extends FunctionsNodeType = FunctionsNodeType> = BaseNodeData<Type, FunctionsNodePropertiesRegistry>;
+export type FunctionsNodeData<Type extends FunctionsNodeType = FunctionsNodeType> = BaseNodeData<
+  Type,
+  FunctionsNodePropertiesRegistry
+>;

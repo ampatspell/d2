@@ -20,7 +20,7 @@ export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
   readonly original = $derived(this.data.properties.original);
 
   readonly asImage = $derived.by(() => {
-    if(this.isImage) {
+    if (this.isImage) {
       return new FileNodeImageModel({ node: this });
     }
   });
@@ -37,5 +37,5 @@ export class FileNodeImageModel extends Model<FileNodeImageModelOptions> {
   readonly node = $derived(this.options.node);
   readonly properties = $derived(this.node.data.properties as ImageFileNodeProperties);
   readonly original = $derived(this.properties.original);
-  readonly thumbnails = $derived(this.properties.thumbnails)
+  readonly thumbnails = $derived(this.properties.thumbnails);
 }
