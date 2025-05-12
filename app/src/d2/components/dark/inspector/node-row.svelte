@@ -15,20 +15,17 @@
   let modals = getModalsContext();
   let button = $state<HTMLButtonElement>();
   let onClick = async () => {
-    let res = await openSelectNodeModal(
-      modals,
-      {
-        nodes: getter(() => nodes),
-        title: 'Select node',
-      },
-      relativeToBottomRight({
+    let res = await openSelectNodeModal(modals, {
+      nodes: getter(() => nodes),
+      title: 'Select node',
+      placement: relativeToBottomRight({
         relativeTo: button,
         offset: {
           x: 0,
           y: 3,
         },
       }),
-    );
+    });
     if (res) {
       property.update(res.node.path);
     }

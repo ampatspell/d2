@@ -18,9 +18,11 @@
   let rect = $derived(observer.rect);
   let left = $derived(px(rect?.left));
   let top = $derived(px(rect?.top));
+
+  let hasPosition = $derived(!!rect && !!rect && !!top);
 </script>
 
-<div class="relative-to" class:has-position={!!rect} bind:this={content} style:--left={left} style:--top={top}>
+<div class="relative-to" class:has-position={hasPosition} bind:this={content} style:--left={left} style:--top={top}>
   {@render children()}
 </div>
 
