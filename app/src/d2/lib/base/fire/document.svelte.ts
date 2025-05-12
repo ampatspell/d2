@@ -152,7 +152,7 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const next = snapshot.data({ serverTimestamps: 'estimate' }) as T | undefined;
     if (next && next[TOKEN] !== this.token) {
       const cast = toData(next) as T;
-      if(!deepEqual($state.snapshot(this.data), cast)) {
+      if (!deepEqual($state.snapshot(this.data), cast)) {
         this.data = cast;
       }
     }

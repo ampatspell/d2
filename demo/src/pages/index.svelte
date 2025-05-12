@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { IndexNodeDocumentModel } from "$lib/index/node.svelte";
+  import type { IndexNodeDocumentModel } from '$lib/index/node.svelte';
 
   let { index }: { index: IndexNodeDocumentModel } = $props();
 
   let background = $derived(index.background.node?.asImage);
-  let url = $derived(background?.thumbnails["2048x2048"].url);
+  let url = $derived(background?.thumbnails['2048x2048'].url);
 </script>
 
 <div class="page">
