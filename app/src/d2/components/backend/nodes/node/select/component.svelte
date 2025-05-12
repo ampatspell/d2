@@ -11,6 +11,7 @@
   import type { SelectNodeModalProps, SelectNodeModalResolution } from './models.svelte';
 
   let { modal }: { modal: ModalRuntime<SelectNodeModalProps, SelectNodeModalResolution> } = $props();
+
   let title = $derived(modal.props.title);
   let nodes = $derived(modal.props.nodes);
 

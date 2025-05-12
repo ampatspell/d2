@@ -52,14 +52,12 @@ export class RelativeToPlacementObserver extends Model<RelativeToPlacementObserv
     });
     this.elements = [this.parent, this.modal];
     $effect.pre(() => {
-      $effect.pre(() => {
-        this.observer = new ResizeObserver((entries) => {
-          this.onEntries(entries);
-        });
-        return () => {
-          this.observer?.disconnect();
-        };
+      this.observer = new ResizeObserver((entries) => {
+        this.onEntries(entries);
       });
+      return () => {
+        this.observer?.disconnect();
+      };
     });
   }
 

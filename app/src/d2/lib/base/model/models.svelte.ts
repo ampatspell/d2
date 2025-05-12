@@ -178,7 +178,7 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
 
   subscribe() {
     return $effect.root(() => {
-      $effect.pre(() => {
+      $effect(() => {
         const content = this.update();
         return maybeSubscribeContent(content);
       });

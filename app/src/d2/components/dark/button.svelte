@@ -12,12 +12,14 @@
     onClick,
     children,
     type: _type,
+    element = $bindable(),
   }: {
     isDisabled?: boolean;
     onClick: (e: MouseEvent) => void;
     label?: string;
     children?: Snippet;
     type?: ButtonType;
+    element?: HTMLButtonElement;
   } = $props();
 
   let onclick = (e: MouseEvent) => {
@@ -28,7 +30,13 @@
   let type = $derived(_type ?? 'regular');
 </script>
 
-<button class={classes('button', `type-${type}`)} class:disabled={isDisabled} disabled={isDisabled} {onclick}>
+<button
+  class={classes('button', `type-${type}`)}
+  class:disabled={isDisabled}
+  disabled={isDisabled}
+  {onclick}
+  bind:this={element}
+>
   {#if children}
     {@render children()}
   {:else}

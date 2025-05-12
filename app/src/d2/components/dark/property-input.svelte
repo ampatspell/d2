@@ -1,0 +1,12 @@
+<script lang="ts">
+  import type { Property } from '$d2/lib/base/utils/property.svelte';
+  import Input from './input.svelte';
+
+  let { property }: { property: Property<string> } = $props();
+
+  let value = $derived(property.value);
+  let onInput = (next: string) => (value = next);
+  let onBlur = () => property.update(value);
+</script>
+
+<Input {value} {onInput} {onBlur} />

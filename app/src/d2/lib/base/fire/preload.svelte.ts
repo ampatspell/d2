@@ -6,21 +6,17 @@ import { scope } from '../utils/scope';
 
 export type PreloadModel = Subscribable<unknown> & {
   isLoaded: boolean;
-  load?: () => Promise<void>;
+  load: () => Promise<void>;
 };
 
-export const preloadModel = <T extends PreloadModel>(model: T, isLoaded?: () => boolean | undefined): Promise<T> => {
-  isLoaded = isLoaded ?? (() => true);
-
+export const preloadModel = <T extends PreloadModel>(model: T): Promise<T> => {
   const deferred = new Deferred<T, unknown>();
 
   if (browser) {
-    console.log('> preload', model + '');
     const cancel = $effect.root(() => {
       $effect(() => subscribe(model));
       $effect(() => {
-        console.log(model + '', model.isLoaded);
-        if (model.isLoaded && isLoaded() !== false) {
+        if (model.isLoaded) {
           scope(async () => {
             await Promise.resolve();
             cancel();
@@ -36,13 +32,9 @@ export const preloadModel = <T extends PreloadModel>(model: T, isLoaded?: () => 
       }
     };
     scope(async () => {
-      if (model.load) {
-        await model.load();
-        if (!model.isLoaded) {
-          log(model + '', 'insufficient load');
-        }
-      } else {
-        log(model + '', 'missing load');
+      await model.load();
+      if (!model.isLoaded) {
+        log(model + '', 'insufficient load');
       }
       deferred.resolve(model);
     });

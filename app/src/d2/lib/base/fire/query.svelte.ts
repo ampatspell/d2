@@ -80,7 +80,7 @@ export class QueryBase<
 
   _subscribeActive() {
     return $effect.root(() => {
-      $effect.pre(() => {
+      $effect(() => {
         const ref = this.ref;
 
         untrack(() => this._onWillLoad(!!ref));

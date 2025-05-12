@@ -21,8 +21,10 @@ export class BlankNodeDocumentModel extends NodeDocumentModel<'blank'> {
 
   readonly title = $derived(this.data.properties.title);
 
+  private readonly __background = $derived(this.data.properties.background);
+
   private readonly _background = mapModel({
-    source: getter(() => this.data.properties.background),
+    source: getter(() => this.__background),
     target: (path) => node.forPath(path),
   });
 
@@ -34,6 +36,6 @@ export class BlankNodeDocumentModel extends NodeDocumentModel<'blank'> {
     await this.background?.load();
   }
 
-  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded, this.background]));
   readonly dependencies = [...this.nodeDependencies, this._background];
+  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded, this.background]));
 }

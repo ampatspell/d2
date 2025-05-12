@@ -1,3 +1,5 @@
+import { getter, options } from '../utils/options';
+
 export type IsLoadedModels = (IsLoadedModel | undefined)[];
 
 export type IsLoadedModel = {
@@ -14,7 +16,7 @@ export const isLoaded = (arr: IsLoadedModels) => {
 };
 
 export const asIsLoadedModel = (arr: IsLoadedModels) => {
-  return {
-    isLoaded: isLoaded(arr),
-  };
+  return options({
+    isLoaded: getter(() => isLoaded(arr)),
+  });
 };

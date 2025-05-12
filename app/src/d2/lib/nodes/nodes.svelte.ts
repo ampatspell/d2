@@ -53,6 +53,12 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     return this.all.find((node) => node.id === id);
   }
 
+  byPath(path: string | undefined) {
+    if (path) {
+      return this.all.find((node) => node.path === path);
+    }
+  }
+
   async create({ parent, definition }: { parent: NodeDocumentModel | undefined; definition: NodeDefinitionModel }) {
     const properties = definition.defaults();
     if (properties) {

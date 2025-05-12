@@ -14,7 +14,6 @@ import {
   type NodeDocumentModelFactory,
 } from './node.svelte';
 import { preloadModel } from '../base/fire/preload.svelte';
-import { setGlobal } from '../base/utils/set-global';
 
 export type NodeModelLoaderOptions<Model extends NodeDocumentModel> = {
   ref: fs.Query;
@@ -68,9 +67,6 @@ export class NodeModelLoader<Model extends NodeDocumentModel = NodeDocumentModel
   }
 
   preload() {
-    if (this.key === 'id:eZhmyQ61i3PbB4MSfkNC') {
-      setGlobal({ loader: this });
-    }
     return preloadModel(this);
   }
 
