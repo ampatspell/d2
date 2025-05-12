@@ -19,19 +19,19 @@
   let left = $derived(px(rect?.left));
   let top = $derived(px(rect?.top));
 
-  let hasPosition = $derived(!!rect && !!rect && !!top);
+  let hasPosition = $derived(!!rect && !!left && !!top);
 </script>
 
-<div class="relative-to" class:has-position={hasPosition} bind:this={content} style:--left={left} style:--top={top}>
+<div class="relative-to" class:has-position={hasPosition} style:--left={left} style:--top={top} bind:this={content}>
   {@render children()}
 </div>
 
 <style lang="scss">
   .relative-to {
     position: fixed;
-    display: none;
+    visibility: hidden;
     &.has-position {
-      display: block;
+      visibility: visible;
       left: var(--left);
       top: var(--top);
     }
