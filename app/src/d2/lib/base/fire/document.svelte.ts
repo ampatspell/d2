@@ -19,6 +19,7 @@ import { fireStats } from './stats.svelte';
 import type { OptionsInput } from '../utils/options';
 import type { VoidCallback } from '../utils/types';
 import { serialized } from '../utils/object';
+import deepEqual from 'fast-deep-equal';
 
 const createToken = () => {
   if (browser) {
@@ -150,7 +151,10 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const exists = snapshot.exists();
     const next = snapshot.data({ serverTimestamps: 'estimate' }) as T | undefined;
     if (next && next[TOKEN] !== this.token) {
-      this.data = toData(next) as T;
+      const cast = toData(next) as T;
+      if(!deepEqual($state.snapshot(this.data), cast)) {
+        this.data = cast;
+      }
     }
     this.exists = exists;
     this._onDidLoad(snapshot.metadata);

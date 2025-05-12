@@ -204,7 +204,8 @@ const package_json = (app: App) => dedent`
       "@firebase/functions": "^0.11.10",
       "@firebase/storage": "^0.13.4",
       "firebase": "^11.0.2",
-      "p-limit": "^6.2.0"
+      "p-limit": "^6.2.0",
+      "fast-deep-equal": "^3.1.3"
     },
     "devDependencies": {
       "@eslint/compat": "^1.2.5",

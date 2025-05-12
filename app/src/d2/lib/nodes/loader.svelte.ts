@@ -174,7 +174,6 @@ export const nodesForQuery = <Model extends NodeDocumentModel = NodeDocumentMode
   key: string,
   factory?: NodeDocumentModelFactory<Model>,
 ) => {
-  console.log('key', key);
   return new NodesModelLoader({ ref, key, factory });
 };
 
