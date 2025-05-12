@@ -5,6 +5,7 @@ import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelt
 
 export class IndexNodeProperties extends NodeModelProperties<'index'> {
   title = data(this, 'title');
+  background = data(this, 'background');
 }
 
 export class IndexNodeDocumentModel extends NodeDocumentModel<'index'> {

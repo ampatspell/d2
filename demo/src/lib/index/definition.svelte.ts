@@ -4,6 +4,7 @@ import { IndexNodeDocumentModel } from './node.svelte';
 
 export type IndexNodeProperties = {
   title: string;
+  background?: string;
 };
 
 export const index = () => {
@@ -12,6 +13,7 @@ export const index = () => {
     node: IndexNodeDocumentModel,
     defaults: () => ({
       title: 'maybe',
+      background: '',
     }),
     backend: Backend,
   });
