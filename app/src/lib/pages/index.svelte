@@ -17,7 +17,7 @@
   {/if}
   <div class="title">{index.title}</div>
   <div class="links">
-    <a href="/gallery">Gallery</a>
+    <a href="/gallery">random gallery</a>
   </div>
 </div>
 
