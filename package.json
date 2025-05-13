@@ -3,14 +3,13 @@
   "private": true,
   "scripts": {
     "flc:app": "(cd app && npm run flc)",
-    "flc:demo": "(cd demo && npm run flc)",
+    "flc:tools": "(cd tools && npm run flc)",
     "flc:functions": "(cd firebase/functions && npm run flc)",
-    "flc": "npm run flc:app && npm run flc:demo && npm run flc:functions",
+    "flc": "npm run flc:app && npm run flc:functions",
     "cli": "(cd tools && npm run cli)"
   },
   "workspaces": [
     "./app",
-    "./demo",
     "./firebase/functions",
     "./tools"
   ]

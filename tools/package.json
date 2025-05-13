@@ -5,7 +5,8 @@
   "scripts": {
     "cli": "tsx src/cli",
     "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "flc": "npm run format && npm run lint"
   },
   "devDependencies": {
     "@clack/prompts": "^0.10.1",

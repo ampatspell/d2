@@ -2,6 +2,7 @@
   import Grid, { type GridOptions } from '$d2/components/frontend/galleries/grid/grid.svelte';
   import Lightbox, { type LightboxOptions } from '$d2/components/frontend/galleries/lightbox/lightbox.svelte';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+  import { isTruthy } from '$d2/lib/base/utils/array';
   import { aspectRatio } from '$d2/lib/base/utils/aspect-ratio';
   import { getter, options } from '$d2/lib/base/utils/options';
   import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
@@ -62,6 +63,13 @@
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
+
+<svelte:head>
+  <meta content={[title, introduction].filter(isTruthy).join(': ')} property="og:title" />
+  {#if files?.[0]}
+    <meta content={files[0].asImage?.thumbnails['1024x1024'].url} property="og:image" />
+  {/if}
+</svelte:head>
 
 <div class="page" class:loaded={isLoaded}>
   {#if files}
