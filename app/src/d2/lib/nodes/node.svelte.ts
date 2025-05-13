@@ -66,6 +66,13 @@ export class NodePathModel extends Model<NodePathModelOptions> {
     }
     return path;
   }
+
+  exceptParents(path: string | undefined) {
+    if (typeof path === 'string' && this.value.startsWith(path) && path !== this.value) {
+      return undefined;
+    }
+    return path;
+  }
 }
 
 export type NodeModelOptions<Type extends NodeType> = {

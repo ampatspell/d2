@@ -9,13 +9,13 @@ import { queryAll, queryFirst } from '../base/fire/query.svelte';
 import { createNodeModel, nodeDocumentKey, NodeModel, type NodeData, type NodeModelFactory } from './node.svelte';
 import { preloadModel } from '../base/fire/preload.svelte';
 
-export type NodeModelLoaderOptions<Model extends NodeModel> = {
+export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
   key: string;
   factory?: NodeModelFactory<Model>;
 };
 
-export class NodeModelLoader<Model extends NodeModel = NodeModel> extends Subscribable<NodeModelLoaderOptions<Model>> {
+export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<NodeLoaderModelOptions<Model>> {
   private readonly _query = queryFirst<NodeData>({
     ref: getter(() => this.options.ref),
   });
@@ -74,7 +74,7 @@ export const nodeForQuery = <Model extends NodeModel = NodeModel>(
   key: string,
   factory?: NodeModelFactory<Model>,
 ) => {
-  return new NodeModelLoader({ ref, key, factory });
+  return new NodeLoaderModel({ ref, key, factory });
 };
 
 export const nodeForId = <Model extends NodeModel = NodeModel>(id: string, factory?: NodeModelFactory<Model>) => {
@@ -103,14 +103,14 @@ export const node = {
   forPath: nodeForPath,
 };
 
-export type NodesModelLoaderOptions<Model extends NodeModel> = {
+export type NodesLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
   key: string;
   factory?: NodeModelFactory<Model>;
 };
 
-export class NodesModelLoader<Model extends NodeModel = NodeModel> extends Subscribable<
-  NodesModelLoaderOptions<Model>
+export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<
+  NodesLoaderModelOptions<Model>
 > {
   private readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.ref),
@@ -160,7 +160,7 @@ export const nodesForQuery = <Model extends NodeModel = NodeModel>(
   key: string,
   factory?: NodeModelFactory<Model>,
 ) => {
-  return new NodesModelLoader({ ref, key, factory });
+  return new NodesLoaderModel({ ref, key, factory });
 };
 
 export const nodesForParentId = <Model extends NodeModel = NodeModel>(

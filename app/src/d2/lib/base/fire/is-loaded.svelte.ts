@@ -15,8 +15,13 @@ export const isLoaded = (arr: IsLoadedModels) => {
   });
 };
 
-export const asIsLoadedModel = (arr: IsLoadedModels) => {
+export const asIsLoadedModel = (arr: IsLoadedModels | undefined) => {
   return options({
-    isLoaded: getter(() => isLoaded(arr)),
+    isLoaded: getter(() => {
+      if (arr) {
+        return isLoaded(arr);
+      }
+      return true;
+    }),
   });
 };
