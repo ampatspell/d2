@@ -5,14 +5,13 @@
   import { aspectRatio } from '$d2/lib/base/utils/aspect-ratio';
   import { getter, options } from '$d2/lib/base/utils/options';
   import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
-  import { untrack } from 'svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 
-  $effect(() => subscribe(data.node));
+  $effect(() => subscribe(data.loader));
 
-  let gallery = $derived(data.node.node);
+  let gallery = $derived(data.loader.node);
   let title = $derived(gallery?.title);
   let introduction = $derived(gallery?.introduction);
   let files = $derived(gallery?.images);
@@ -58,12 +57,8 @@
 
   let isLoaded = $state(false);
   $effect(() => {
-    if (data.node.isLoaded) {
-      untrack(() => {
-        selected = files?.[0];
-        isLoaded = true;
-      });
-    }
+    selected = files?.[0];
+    isLoaded = true;
   });
 </script>
 

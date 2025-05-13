@@ -3,7 +3,7 @@ import { GalleryNodeModel } from '$lib/definition/gallery/node.svelte';
 
 export const load = async () => {
   return {
-    node: await node
+    loader: await node
       .forPath({
         path: '/gallery',
         factory: GalleryNodeModel,

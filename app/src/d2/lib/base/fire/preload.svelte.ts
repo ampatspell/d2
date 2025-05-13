@@ -14,15 +14,19 @@ export const preloadModel = <T extends PreloadModel>(model: T): Promise<T> => {
 
   if (browser) {
     const cancel = $effect.root(() => {
+      const tick = async () => {
+        await Promise.resolve();
+        if (model.isLoaded) {
+          await Promise.resolve();
+          cancel();
+          deferred.resolve(model);
+        }
+      }
       $effect(() => subscribe(model));
       $effect(() => {
-        if (model.isLoaded) {
-          scope(async () => {
-            await Promise.resolve();
-            cancel();
-            deferred.resolve(model);
-          });
-        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        model.isLoaded;
+        tick();
       });
     });
   } else {

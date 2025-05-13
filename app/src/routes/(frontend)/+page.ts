@@ -4,7 +4,7 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
   return {
-    index: await node
+    loader: await node
       .forPath({
         path: '/public',
         factory: IndexNodeModel,

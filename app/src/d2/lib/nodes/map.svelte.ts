@@ -13,8 +13,10 @@ export type MapNodeOptions<T, Model extends NodeModel> = {
 };
 
 export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodeOptions<T, Model>> {
+  private readonly _source = $derived(this.options.source);
+
   private readonly _loader = mapModel({
-    source: getter(() => this.options.source),
+    source: getter(() => this._source),
     target: (arg) => this.options.loader(arg),
   });
 
@@ -109,8 +111,10 @@ export type MapNodesOptions<T, Model extends NodeModel> = {
 };
 
 export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodesOptions<T, Model>> {
+  private readonly _source = $derived(this.options.source);
+
   private readonly _loader = mapModel({
-    source: getter(() => this.options.source),
+    source: getter(() => this._source),
     target: (arg) => this.options.loader(arg),
   });
 

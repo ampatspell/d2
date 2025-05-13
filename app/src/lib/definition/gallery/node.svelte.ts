@@ -23,7 +23,7 @@ export class GalleryNodeModel extends NodeModel<'gallery'> {
   readonly title = $derived(this.data.properties.title);
   readonly introduction = $derived(this.data.properties.introduction);
 
-  private readonly _images = mapNodes.forParentPath({
+  readonly _images = mapNodes.forParentPath({
     path: getter(() => this.path.exceptParents(this.data.properties.images)),
     factory: FileNodeModel,
   });
