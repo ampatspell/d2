@@ -8,7 +8,7 @@
 <script lang="ts">
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
   let {
@@ -18,15 +18,15 @@
     onSelect,
   }: {
     nodes: NodesModel;
-    selected: NodeDocumentModel | undefined;
+    selected: NodeModel | undefined;
     settings: NodesTreeSettings;
-    onSelect: (model: NodeDocumentModel | undefined) => void;
+    onSelect: (model: NodeModel | undefined) => void;
   } = $props();
 
   let models = $derived(nodes.byParentId(null));
 
-  let delegateFor = (model: NodeDocumentModel) => {
-    return options<TreeModelDelegate<NodeDocumentModel>>({
+  let delegateFor = (model: NodeModel) => {
+    return options<TreeModelDelegate<NodeModel>>({
       children: getter(() => nodes.byParentId(model.id)),
       isOpen: getter(() => settings.isOpen(model.id)),
       isSelected: getter(() => selected?.id === model.id),
@@ -40,7 +40,7 @@
 </script>
 
 <Tree {models} {delegateFor} {deselect}>
-  {#snippet item(model: NodeDocumentModel)}
+  {#snippet item(model: NodeModel)}
     <div class="item">
       <div class="identifier">{model.identifier}</div>
       <div class="kind">{model.name}</div>

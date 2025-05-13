@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import Fold from '$d2/components/dark/section/page/fold.svelte';
   import type { NodesSettingsModel } from '$d2/lib/nodes/user.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
@@ -11,7 +11,7 @@
   }: {
     nodes: NodesModel;
     settings: NodesSettingsModel;
-    onSelect: (model: NodeDocumentModel | undefined) => void;
+    onSelect: (model: NodeModel | undefined) => void;
   } = $props();
 
   let models = $derived(nodes.byParentId(null));

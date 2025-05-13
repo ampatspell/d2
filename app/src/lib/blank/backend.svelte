@@ -4,9 +4,9 @@
   import Section from '$d2/components/dark/inspector/section.svelte';
   import { toRequired } from '$d2/lib/base/utils/property.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
-  import type { BlankNodeDocumentModel } from './node.svelte';
+  import type { BlankNodeModel } from './node.svelte';
 
-  let { node, nodes }: { node: BlankNodeDocumentModel; nodes: NodesModel } = $props();
+  let { node, nodes }: { node: BlankNodeModel; nodes: NodesModel } = $props();
 
   let title = $derived(node.properties.title);
   let background = $derived(toRequired(node.properties.background, ''));

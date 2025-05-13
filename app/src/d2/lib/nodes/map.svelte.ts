@@ -3,16 +3,14 @@ import { Subscribable } from '../base/model/model.svelte';
 import { mapModel } from '../base/model/models.svelte';
 import { getter, options, type OptionsInput } from '../base/utils/options';
 import { node, type NodeModelLoader } from './loader.svelte';
-import type { NodeDocumentModel, NodeDocumentModelFactory } from './node.svelte';
+import type { NodeModel, NodeModelFactory } from './node.svelte';
 
-export type MapNodeOptions<T, Model extends NodeDocumentModel> = {
+export type MapNodeOptions<T, Model extends NodeModel> = {
   source: T;
   loader: (value: T) => NodeModelLoader<Model> | undefined;
 };
 
-export class MapNode<T, Model extends NodeDocumentModel = NodeDocumentModel> extends Subscribable<
-  MapNodeOptions<T, Model>
-> {
+export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodeOptions<T, Model>> {
   private readonly _loader = mapModel({
     source: getter(() => this.options.source),
     target: (arg) => this.options.loader(arg),
@@ -30,12 +28,12 @@ export class MapNode<T, Model extends NodeDocumentModel = NodeDocumentModel> ext
   }
 }
 
-export type MapNodeForPathOptions<Model extends NodeDocumentModel> = {
+export type MapNodeForPathOptions<Model extends NodeModel> = {
   path: string | undefined;
-  factory?: NodeDocumentModelFactory<Model>;
+  factory?: NodeModelFactory<Model>;
 };
 
-export const mapNodeForPath = <Model extends NodeDocumentModel = NodeDocumentModel>(
+export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<MapNodeForPathOptions<Model>>,
 ) => {
   const opts = options(_opts);

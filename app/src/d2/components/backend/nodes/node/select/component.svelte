@@ -6,7 +6,7 @@
   import Modal from '$d2/components/dark/modals/modal/modal.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import { addObject, removeObject } from '$d2/lib/base/utils/array';
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import Tree, { type NodesTreeSettings } from '../../tree.svelte';
   import type { SelectNodeModalProps, SelectNodeModalResolution } from './models.svelte';
 
@@ -15,8 +15,8 @@
   let title = $derived(modal.props.title);
   let nodes = $derived(modal.props.nodes);
 
-  let selected = $state<NodeDocumentModel>();
-  let onSelect = (model: NodeDocumentModel | undefined) => {
+  let selected = $state<NodeModel>();
+  let onSelect = (model: NodeModel | undefined) => {
     selected = model;
   };
 

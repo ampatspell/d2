@@ -15,27 +15,27 @@ export type NodeType = keyof NodePropertiesRegistry;
 
 export type NodeData<Type extends NodeType = NodeType> = BaseNodeData<Type, NodePropertiesRegistry>;
 
-export type NodeDocumentModelFactory<Model extends NodeDocumentModel> = {
-  new (...args: ConstructorParameters<typeof NodeDocumentModel<never>>): Model;
+export type NodeModelFactory<Model extends NodeModel> = {
+  new (...args: ConstructorParameters<typeof NodeModel<never>>): Model;
 };
 
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
 };
 
-export type NodeModelPropertiesOptions<Type extends NodeType> = {
-  model: NodeDocumentModel<Type>;
+export type NodePropertiesModelOptions<Type extends NodeType> = {
+  model: NodeModel<Type>;
 };
 
-export class NodeModelBaseProperties<Type extends NodeType> extends DocumentModelProperties<NodeData<Type>> {
+export class NodeBasePropertiesModel<Type extends NodeType> extends DocumentModelProperties<NodeData<Type>> {
   readonly identifier = data(this, 'identifier');
 }
 
-export class NodeModelProperties<
+export class NodePropertiesModel<
   Type extends NodeType,
-  O extends NodeModelPropertiesOptions<Type> = NodeModelPropertiesOptions<Type>,
+  O extends NodePropertiesModelOptions<Type> = NodePropertiesModelOptions<Type>,
 > extends Subscribable<O> {
-  readonly base = new NodeModelBaseProperties<Type>({
+  readonly base = new NodeBasePropertiesModel<Type>({
     model: getter(() => this.options.model),
   });
 
@@ -46,21 +46,18 @@ export class NodeModelProperties<
   }
 }
 
-export const is = <Model extends NodeDocumentModel>(
-  model: NodeDocumentModel,
-  factory: NodeDocumentModelFactory<Model>,
-): this is Model => {
+export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModelFactory<Model>): this is Model => {
   if (model instanceof factory) {
     return true;
   }
   return false;
 };
 
-export type NodeDocumentPathModelOptions = {
+export type NodePathModelOptions = {
   path: string;
 };
 
-export class NodeDocumentPathModel extends Model<NodeDocumentPathModelOptions> {
+export class NodePathModel extends Model<NodePathModelOptions> {
   readonly value = $derived(this.options.path);
 
   exceptOwn(path: string | undefined) {
@@ -71,13 +68,11 @@ export class NodeDocumentPathModel extends Model<NodeDocumentPathModelOptions> {
   }
 }
 
-export type NodeDocumentModelOptions<Type extends NodeType> = {
+export type NodeModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
 };
 
-export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extends Subscribable<
-  NodeDocumentModelOptions<Type>
-> {
+export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscribable<NodeModelOptions<Type>> {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
   readonly exists = $derived(this.doc.exists);
@@ -89,14 +84,14 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly createdAt = $derived(this.data.createdAt);
   readonly updatedAt = $derived(this.data.updatedAt);
 
-  readonly path = new NodeDocumentPathModel({
+  readonly path = new NodePathModel({
     path: getter(() => this.data.path),
   });
 
   readonly definition = $derived(getDefinition().byType(this.kind)!);
   readonly name = $derived(this.definition.name);
 
-  abstract readonly properties: NodeModelProperties<Type>;
+  abstract readonly properties: NodePropertiesModel<Type>;
   abstract readonly icon: Component;
 
   async save() {
@@ -116,7 +111,7 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
     await this.doc.delete();
   }
 
-  is<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>): this is Model {
+  is<Model extends NodeModel>(factory: NodeModelFactory<Model>): this is Model {
     return is(this, factory);
   }
 
@@ -129,6 +124,6 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly serialized = $derived(serialized(this, ['id']));
 }
 
-export const createNodeDocumentModel = (doc: Document<NodeData>) => {
+export const createNodeModel = (doc: Document<NodeData>) => {
   return getDefinition().byDocument(doc)?.model({ doc });
 };

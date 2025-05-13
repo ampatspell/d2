@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import Section from '$d2/components/dark/section/section.svelte';
   import LucideFile from '$d2/icons/lucide--file.svelte';
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { Snippet } from 'svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
@@ -22,12 +22,12 @@
     id: string | undefined;
     nodes: NodesModel;
     settings: NodesSettingsModel;
-    route: (node: NodeDocumentModel | undefined) => string;
+    route: (node: NodeModel | undefined) => string;
     children: Snippet;
   } = $props();
 
   let selected = $derived(nodes.byId(id));
-  let onSelect = (model: NodeDocumentModel | undefined) => goto(route(model));
+  let onSelect = (model: NodeModel | undefined) => goto(route(model));
 </script>
 
 <Section title="Nodes" icon={LucideFile} {children}>

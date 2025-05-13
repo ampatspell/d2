@@ -4,13 +4,13 @@ import LucideFile from '$d2/icons/lucide--file.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import { data } from '$d2/lib/base/utils/property.svelte';
-import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelte';
+import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
-export class FileNodeProperties extends NodeModelProperties<'file'> {
+export class FileNodeProperties extends NodePropertiesModel<'file'> {
   readonly filename = data(this, 'filename');
 }
 
-export class FileNodeDocumentModel extends NodeDocumentModel<'file'> {
+export class FileNodeDocumentModel extends NodeModel<'file'> {
   readonly properties: FileNodeProperties = new FileNodeProperties({ model: this });
 
   readonly type = $derived(this.data.properties.type);

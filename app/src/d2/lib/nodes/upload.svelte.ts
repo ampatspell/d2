@@ -5,7 +5,7 @@ import { progress, sum } from '../base/utils/number';
 import { firebase } from '../base/fire/firebase.svelte';
 import { removeObject } from '../base/utils/array';
 import { Subscribable } from '../base/model/model.svelte';
-import type { NodeDocumentModel } from './node.svelte';
+import type { NodeModel } from './node.svelte';
 import { nodesCollection } from './nodes.svelte';
 
 export type UploadFileStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
@@ -81,7 +81,7 @@ export class UploadFileModel {
 }
 
 export type UploadFilesModelOptions = {
-  node: NodeDocumentModel;
+  node: NodeModel;
 };
 
 export class UploadFilesModel extends Subscribable<UploadFilesModelOptions> {

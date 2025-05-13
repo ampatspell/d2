@@ -4,15 +4,15 @@ import { getter } from '$d2/lib/base/utils/options';
 import { data } from '$d2/lib/base/utils/property.svelte';
 import { FileNodeDocumentModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
-import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelte';
+import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
-export class BlankNodeProperties extends NodeModelProperties<'blank'> {
+export class BlankNodePropertiesModel extends NodePropertiesModel<'blank'> {
   readonly title = data(this, 'title');
   readonly background = data(this, 'background');
 }
 
-export class BlankNodeDocumentModel extends NodeDocumentModel<'blank'> {
-  readonly properties: BlankNodeProperties = new BlankNodeProperties({
+export class BlankNodeModel extends NodeModel<'blank'> {
+  readonly properties: BlankNodePropertiesModel = new BlankNodePropertiesModel({
     model: this,
   });
 

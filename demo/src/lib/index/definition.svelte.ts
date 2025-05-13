@@ -1,6 +1,6 @@
 import { node } from '$d2/lib/definition/utils.svelte';
 import Backend from './backend.svelte';
-import { IndexNodeDocumentModel } from './node.svelte';
+import { IndexNodeModel } from './node.svelte';
 
 export type IndexNodeProperties = {
   title: string;
@@ -10,7 +10,7 @@ export type IndexNodeProperties = {
 export const index = () => {
   return node('index', {
     name: 'Index',
-    node: IndexNodeDocumentModel,
+    node: IndexNodeModel,
     defaults: () => ({
       title: 'maybe',
       background: '',

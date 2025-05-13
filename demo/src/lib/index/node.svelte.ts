@@ -4,15 +4,15 @@ import { getter } from '$d2/lib/base/utils/options';
 import { data } from '$d2/lib/base/utils/property.svelte';
 import { FileNodeDocumentModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
-import { NodeDocumentModel, NodeModelProperties } from '$d2/lib/nodes/node.svelte';
+import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
-export class IndexNodeProperties extends NodeModelProperties<'index'> {
+export class IndexNodePropertiesModel extends NodePropertiesModel<'index'> {
   title = data(this, 'title');
   background = data(this, 'background');
 }
 
-export class IndexNodeDocumentModel extends NodeDocumentModel<'index'> {
-  readonly properties: IndexNodeProperties = new IndexNodeProperties({
+export class IndexNodeModel extends NodeModel<'index'> {
+  readonly properties: IndexNodePropertiesModel = new IndexNodePropertiesModel({
     model: this,
   });
 

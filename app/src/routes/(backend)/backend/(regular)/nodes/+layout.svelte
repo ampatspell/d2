@@ -4,7 +4,7 @@
   import type { LayoutData } from './$types';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import { isTruthy } from '$d2/lib/base/utils/array';
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
@@ -12,7 +12,7 @@
   let nodes = $derived(data.nodes);
   let settings = $derived(data.settings);
 
-  let route = (node: NodeDocumentModel | undefined) => {
+  let route = (node: NodeModel | undefined) => {
     return [`/backend/nodes`, node?.id].filter(isTruthy).join('/');
   };
 

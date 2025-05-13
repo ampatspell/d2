@@ -6,14 +6,14 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeDocumentModel, nodeDocumentKey, NodeDocumentModel, type NodeData } from './node.svelte';
+import { createNodeModel, nodeDocumentKey, NodeModel, type NodeData } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { NodeParentData } from '$d2-shared/documents';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
-const asParent = (node: NodeDocumentModel | undefined): NodeParentData | null => {
+const asParent = (node: NodeModel | undefined): NodeParentData | null => {
   if (node) {
     const {
       id,
@@ -40,7 +40,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createNodeDocumentModel(doc),
+    target: (doc) => createNodeModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -63,7 +63,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     }
   }
 
-  async create({ parent, definition }: { parent: NodeDocumentModel | undefined; definition: NodeDefinitionModel }) {
+  async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {
     const properties = definition.defaults();
     if (properties) {
       const ref = fs.doc(nodesCollection);

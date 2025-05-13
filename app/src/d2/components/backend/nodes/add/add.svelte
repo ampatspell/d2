@@ -3,7 +3,7 @@
   import { openSelectNodeDefinitionModal } from './models.svelte';
   import Add from '$d2/components/dark/section/page/add.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
-  import type { NodeDocumentModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
 
   let {
     nodes,
@@ -11,8 +11,8 @@
     onSelect,
   }: {
     nodes: NodesModel;
-    selected: NodeDocumentModel | undefined;
-    onSelect: (node: NodeDocumentModel) => void;
+    selected: NodeModel | undefined;
+    onSelect: (node: NodeModel) => void;
   } = $props();
 
   let modals = getModalsContext();
