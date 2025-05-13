@@ -1,8 +1,9 @@
 import { node } from '$d2/lib/nodes/loader.svelte';
-import { BlankNodeModel } from '$lib/blank/node.svelte';
+import { IndexNodeModel } from '$lib/definition/index/node.svelte';
+import type { PageLoad } from './$types';
 
-export const load = async () => {
+export const load: PageLoad = async () => {
   return {
-    node: await node.forId('eZhmyQ61i3PbB4MSfkNC', BlankNodeModel).preload(),
+    index: await node.forPath('/public', IndexNodeModel).preload(),
   };
 };

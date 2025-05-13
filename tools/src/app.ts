@@ -163,20 +163,16 @@ const vite_config = (app: App) => dedent`
   });
 `
 
-const definition = () => dedent`
+const registry = () => dedent`
   import { file } from '$d2/lib/definition/file/definition.svelte';
   import { app } from '$d2/lib/definition/utils.svelte';
+  import type { FunctionsNodePropertiesRegistry } from '$d2-shared/nodes/registry';
+
+  export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry;
 
   export const definition = app({
     nodes: [file()],
   });
-
-`;
-
-const registry = () => dedent`
-  import type { FunctionsNodePropertiesRegistry } from '$d2-shared/nodes/registry';
-
-  export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry;
 
 `;
 
@@ -254,6 +250,10 @@ export class App {
     this._apps = apps;
     this.id = id;
     this.path = path;
+  }
+
+  get isCanonical() {
+    return this._apps.appRoot === this.path;
   }
 
   get frontendRoot() {
@@ -334,12 +334,8 @@ export class App {
     await writeString(join(target, 'vite.config.ts'), vite_config(this));
     await writeString(join(target, 'svelte.config.js'), svelte_config(this));
 
-    if (!exists({ path: 'src/lib/definition.svelte.ts', target })) {
-      await writeString(join(target, 'src/lib/definition.svelte.ts'), definition());
-    }
-
-    if (!exists({ path: 'src/lib/registry.ts', target })) {
-      await writeString(join(target, 'src/lib/registry.ts'), registry());
+    if (!exists({ path: 'src/lib/definition/registry.ts', target })) {
+      await writeString(join(target, 'src/lib/definition/registry.ts'), registry());
     }
 
     if (!exists({ path: 'src/routes/(frontend)', target })) {

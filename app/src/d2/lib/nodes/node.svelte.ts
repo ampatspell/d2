@@ -7,7 +7,7 @@ import { data, DocumentModelProperties } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData } from '$d2-shared/documents';
-import type { NodePropertiesRegistry } from '$lib/registry';
+import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { HasSubscriber } from '../base/model/subscriber.svelte';
 

@@ -44,7 +44,7 @@ export class Tools {
           value: 'use',
           label: 'select an app',
         },
-        current && {
+        current && !current.isCanonical && {
           value: 'symlink',
           label: `symlink "${current.id}"`,
         },

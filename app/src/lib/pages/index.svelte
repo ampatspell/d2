@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { IndexNodeModel } from '$lib/index/node.svelte';
+  import type { IndexNodeModel } from '$lib/definition/index/node.svelte';
 
   let { index }: { index: IndexNodeModel } = $props();
 
@@ -12,6 +12,9 @@
     <div class="image" style:--url="url({url})"></div>
   {/if}
   <div class="title">{index?.title}</div>
+  <div class="links">
+    <a href="/gallery">Gallery</a>
+  </div>
 </div>
 
 <style lang="scss">
@@ -39,6 +42,14 @@
       font-size: 21px;
       font-weight: 500;
       color: #fff;
+    }
+    > .links {
+      font-size: 21px;
+      font-weight: 200;
+      color: #fff;
+      > a {
+        text-decoration: none;
+      }
     }
   }
 </style>
