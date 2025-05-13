@@ -21,7 +21,7 @@ export const preloadModel = <T extends PreloadModel>(model: T): Promise<T> => {
           cancel();
           deferred.resolve(model);
         }
-      }
+      };
       $effect(() => subscribe(model));
       $effect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
