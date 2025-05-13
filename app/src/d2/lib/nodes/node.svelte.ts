@@ -112,7 +112,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     const identifier = this.properties.base.identifier;
     if (property === this.properties.base.identifier) {
       const cast = identifier.cast(result);
-      console.log('identifier', cast);
+      console.log(this + '', 'didUpdate', 'identifier', cast);
     }
     await this.save();
   }
