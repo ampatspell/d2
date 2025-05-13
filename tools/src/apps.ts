@@ -48,7 +48,7 @@ export class Apps {
         const path = resolve(join(this.root, json[id]));
         apps.push(new App(this, id, path));
       }
-      apps.push(new App(this, 'base app', join(this.root, 'app')));
+      apps.push(new App(this, 'canonical', join(this.root, 'app')));
       await Promise.all(apps.map((app) => app.load()));
       return apps;
     };
