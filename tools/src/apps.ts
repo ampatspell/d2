@@ -43,18 +43,18 @@ export class Apps {
   async load() {
     const all = async () => {
       const apps: App[] = [];
-      const json = await readJSON(join(this.root, 'd2.json')) as AppsConfig;
+      const json = await readJSON(join(this.root, 'd2.json'), true, {}) as AppsConfig;
       for(const id in json) {
         const path = resolve(join(this.root, json[id]));
         apps.push(new App(this, id, path));
       }
       apps.push(new App(this, 'canonical', join(this.root, 'app')));
       await Promise.all(apps.map((app) => app.load()));
-      return apps;
+      return apps.filter(app => !app.isExcluded);
     };
 
     const firebase = async () => {
-      const json = (await readJSON(join(this.firebaseRoot, '.firebaserc'), true)) as FirebaseRc | undefined;
+      const json = (await readJSON(join(this.firebaseRoot, '.firebaserc'), true, {projects: { default: null }})) as FirebaseRc | undefined;
       return json?.projects.default;
     };
 

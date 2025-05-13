@@ -86,8 +86,12 @@ export const readString = async (path: string, optional = false) => {
   }
 };
 
-export const readJSON = async (path: string, optional = false) => {
+export const readJSON = async (path: string, optional = false, defaultContent?: Record<string, unknown>) => {
   const string = await readString(path, optional);
+  if(!string && optional && defaultContent) {
+    await writeString(path, JSON.stringify(defaultContent, null, 2));
+    return readJSON(path, false);
+  }
   if (string) {
     return JSON.parse(string);
   }

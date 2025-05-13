@@ -256,6 +256,10 @@ export class App {
     return this._apps.appRoot === this.path;
   }
 
+  get isExcluded() {
+    return this.isCanonical && !this.config;
+  }
+
   get frontendRoot() {
     return this.path;
   }
@@ -294,7 +298,7 @@ export class App {
   }
 
   async load() {
-    this.config = (await readJSON(join(this.frontendRoot, 'd2.json'))) as AppConfig;
+    this.config = (await readJSON(join(this.frontendRoot, 'd2.json'), true)) as AppConfig;
   }
 
   async write() {
