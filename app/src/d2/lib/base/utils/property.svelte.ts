@@ -3,7 +3,8 @@ import { getter, type OptionsInput } from './options';
 import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 
-export type PropertyUpdateResult<T = unknown> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type PropertyUpdateResult<T = any> = {
   before: T;
   after: T;
 };
@@ -18,7 +19,8 @@ export type PropertyOptions<T> = {
   update: (value: T) => void;
 } & PropertyDelegateOptions;
 
-export class Property<T = unknown, O extends PropertyOptions<T> = PropertyOptions<T>> extends Model<O> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class Property<T = any, O extends PropertyOptions<T> = PropertyOptions<T>> extends Model<O> {
   readonly value = $derived.by(() => this.options.value);
 
   constructor(opts: OptionsInput<O>) {
@@ -38,12 +40,16 @@ export class Property<T = unknown, O extends PropertyOptions<T> = PropertyOption
     }
   }
 
+  cast(result: PropertyUpdateResult<T>): PropertyUpdateResult<T> {
+    return result as PropertyUpdateResult<T>;
+  }
+
   delegate = $derived(this.options.delegate);
 }
 
 export type BasePropertiesModelOptions = {
   model: {
-    didUpdate: <T>(properties: unknown, property: Property<T>, result: PropertyUpdateResult<T>) => Promise<void>;
+    didUpdate: <T>(property: Property<T>, result: PropertyUpdateResult<T>) => Promise<void>;
   };
 };
 
@@ -59,7 +65,7 @@ export class DocumentModelProperties<
 > extends Subscribable<O> {
   readonly data = $derived(this.options.model.doc.data!);
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
-    return this.options.model.didUpdate(this, property, result);
+    return this.options.model.didUpdate(property, result);
   }
 }
 
@@ -75,7 +81,7 @@ export class DataModelProperties<
 > extends Subscribable<O> {
   readonly data = $derived(this.options.model.data);
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
-    return this.options.model.didUpdate(this, property, result);
+    return this.options.model.didUpdate(property, result);
   }
 }
 

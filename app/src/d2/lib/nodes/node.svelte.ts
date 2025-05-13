@@ -42,7 +42,7 @@ export class NodePropertiesModel<
   readonly data = $derived(this.options.model.data.properties);
 
   async didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
-    await this.options.model.didUpdate(this, property, result);
+    await this.options.model.didUpdate(property, result);
   }
 }
 
@@ -108,7 +108,12 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     await this.doc.save();
   }
 
-  async didUpdate<T>(properties: unknown, property: Property<T>, result: PropertyUpdateResult<T>) {
+  async didUpdate(property: Property, result: PropertyUpdateResult) {
+    const identifier = this.properties.base.identifier;
+    if (property === this.properties.base.identifier) {
+      const cast = identifier.cast(result);
+      console.log('identifier', cast);
+    }
     await this.save();
   }
 
