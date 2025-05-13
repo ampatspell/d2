@@ -22,7 +22,7 @@ export class IndexNodeDocumentModel extends NodeDocumentModel<'index'> {
   readonly title = $derived(this.data.properties.title);
 
   readonly background = mapNode.forPath({
-    path: getter(() => this.data.properties.background),
+    path: getter(() => this.path.exceptOwn(this.data.properties.background)),
     factory: FileNodeDocumentModel,
   });
 

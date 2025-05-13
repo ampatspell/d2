@@ -27,7 +27,7 @@
       }),
     });
     if (res) {
-      property.update(res.node.path);
+      property.update(res.node.path.value);
     }
   };
 </script>

@@ -15,7 +15,11 @@ export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
 const asParent = (node: NodeDocumentModel | undefined): NodeParentData | null => {
   if (node) {
-    const { id, path, identifier } = node;
+    const {
+      id,
+      path: { value: path },
+      identifier,
+    } = node;
     return {
       id,
       path,
@@ -55,7 +59,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   byPath(path: string | undefined) {
     if (path) {
-      return this.all.find((node) => node.path === path);
+      return this.all.find((node) => node.path.value === path);
     }
   }
 
@@ -67,7 +71,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const identifier = ref.id;
       let path = `/${identifier}`;
       if (parent) {
-        path = `${parent.path}/${identifier}`;
+        path = `${parent.path.value}/${identifier}`;
       }
       const data: NodeData = {
         kind: definition.type,

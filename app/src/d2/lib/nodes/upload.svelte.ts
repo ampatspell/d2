@@ -102,7 +102,7 @@ export class UploadFilesModel extends Subscribable<UploadFilesModelOptions> {
 
   readonly node = $derived(this.options.node);
   readonly id = $derived(this.node.id);
-  readonly path = $derived(this.node.path);
+  readonly path = $derived(this.node.path.value);
 
   async onUpload() {
     if (this.isBusy) {

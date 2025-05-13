@@ -1,5 +1,5 @@
 import { Document } from '$d2/lib/base/fire/document.svelte';
-import { Subscribable } from '$d2/lib/base/model/model.svelte';
+import { Model, Subscribable } from '$d2/lib/base/model/model.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { getter } from '$d2/lib/base/utils/options';
 import { getDefinition } from '../definition/app.svelte';
@@ -8,6 +8,8 @@ import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/registry';
+import { isLoaded } from '../base/fire/is-loaded.svelte';
+import type { HasSubscriber } from '../base/model/subscriber.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -44,6 +46,31 @@ export class NodeModelProperties<
   }
 }
 
+export const is = <Model extends NodeDocumentModel>(
+  model: NodeDocumentModel,
+  factory: NodeDocumentModelFactory<Model>,
+): this is Model => {
+  if (model instanceof factory) {
+    return true;
+  }
+  return false;
+};
+
+export type NodeDocumentPathModelOptions = {
+  path: string;
+};
+
+export class NodeDocumentPathModel extends Model<NodeDocumentPathModelOptions> {
+  readonly value = $derived(this.options.path);
+
+  exceptOwn(path: string | undefined) {
+    if (path === this.value) {
+      return undefined;
+    }
+    return path;
+  }
+}
+
 export type NodeDocumentModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
 };
@@ -59,9 +86,12 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   readonly kind = $derived(this.data.kind);
   readonly parent = $derived(this.data.parent ?? undefined);
   readonly identifier = $derived(this.data.identifier);
-  readonly path = $derived(this.data.path);
   readonly createdAt = $derived(this.data.createdAt);
   readonly updatedAt = $derived(this.data.updatedAt);
+
+  readonly path = new NodeDocumentPathModel({
+    path: getter(() => this.data.path),
+  });
 
   readonly definition = $derived(getDefinition().byType(this.kind)!);
   readonly name = $derived(this.definition.name);
@@ -87,19 +117,14 @@ export abstract class NodeDocumentModel<Type extends NodeType = NodeType> extend
   }
 
   is<Model extends NodeDocumentModel>(factory: NodeDocumentModelFactory<Model>): this is Model {
-    if (this instanceof factory) {
-      return true;
-    }
-    return false;
+    return is(this, factory);
   }
 
   readonly nodeIsLoaded = [this.doc];
   readonly nodeDependencies = [this.doc];
 
-  abstract readonly isLoaded: boolean;
-
-  // readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
-  // readonly dependencies = [...this.nodeDependencies];
+  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
+  readonly dependencies: HasSubscriber[] = [...this.nodeDependencies];
 
   readonly serialized = $derived(serialized(this, ['id']));
 }

@@ -1,3 +1,4 @@
+import { untrack } from 'svelte';
 import { isTruthy, sortedBy, type SortDescriptors } from '../utils/array';
 import { Subscribable } from './model.svelte';
 
@@ -134,7 +135,7 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     const content = this._withCache((findOrCreate) => {
       return this._source.map((source) => findOrCreate(source)).filter(isTruthy);
     });
-    this._content = content;
+    this._content = untrack(() => content);
     return content;
   }
 
@@ -172,7 +173,7 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     if (source) {
       content = this._withCache((findOrCreate) => findOrCreate(source));
     }
-    this._content = content;
+    this._content = untrack(() => content);
     return content;
   }
 

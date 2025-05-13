@@ -9,10 +9,10 @@
   let { node, nodes }: { node: BlankNodeDocumentModel; nodes: NodesModel } = $props();
 
   let title = $derived(node.properties.title);
-  let backgroundProperty = $derived(toRequired(node.properties.background, ''));
+  let background = $derived(toRequired(node.properties.background, ''));
 </script>
 
 <Section>
   <InputRow label="Title" property={title} />
-  <NodeRow label="Background" property={backgroundProperty} {nodes} />
+  <NodeRow label="Background" property={background} {nodes} />
 </Section>

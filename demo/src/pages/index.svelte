@@ -30,6 +30,7 @@
       bottom: $o;
       right: $o;
       background-color: #222;
+      background-position: center center;
       background-repeat: no-repeat;
       background-image: var(--url);
       background-size: cover;

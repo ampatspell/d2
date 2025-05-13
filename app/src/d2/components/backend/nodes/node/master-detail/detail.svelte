@@ -19,7 +19,7 @@
   <Inspector>
     <Section>
       <ValueRow label="Type" value={node.name} />
-      <PathRow label="Path" value={node.path} />
+      <PathRow label="Path" value={node.path.value} />
       <ValueRow label="Created" value={createdAt} />
       <ValueRow label="Updated" value={updatedAt} />
     </Section>
