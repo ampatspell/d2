@@ -2,4 +2,4 @@
   import Page from '$d2/components/dark/section/page/page.svelte';
 </script>
 
-<Page />
+<Page title="Selected user" />
