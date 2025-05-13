@@ -53,14 +53,17 @@
     aspectRatio: aspectRatio('3x2'),
   });
 
+  let isLoaded = $state(false);
+
   $effect.pre(() => {
     selected = files?.[0];
+    isLoaded = true;
   });
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth />
 
-<div class="page">
+<div class="page" class:loaded={isLoaded}>
   {#if files}
     <div class="lightbox">
       <Lightbox {files} {selected} {onSelect} options={lightboxOptions} />
@@ -79,6 +82,10 @@
 
 <style lang="scss">
   .page {
+    visibility: hidden;
+    &.loaded {
+      visibility: visible;
+    }
     flex: 1;
     display: flex;
     flex-direction: column;
