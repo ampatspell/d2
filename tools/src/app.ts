@@ -325,6 +325,9 @@ export class App {
         'src/d2',
         'src/hooks.ts',
         'src/routes/(backend)',
+        'static/d2/lucide--chevron-down.svg',
+        'static/d2/lucide--chevron-left.svg',
+        'static/d2/lucide--chevron-right.svg',
       ],
       source,
       target,
@@ -344,6 +347,7 @@ export class App {
         writeString(join(target, 'src/routes/(frontend)/+page.svelte'), frontend_page()),
       ]);
     }
+
     if (exists({ path: 'src/routes/+page.svelte', target })) {
       log.warning('please move src/routes/+page.svelte to src/routes/(frontend)');
     }
