@@ -1,11 +1,11 @@
 import { node } from '$d2/lib/definition/utils.svelte';
 import Backend from './backend.svelte';
-import { FileNodeDocumentModel } from './node.svelte';
+import { FileNodeModel } from './node.svelte';
 
 export const file = () => {
   return node('file', {
     name: 'File',
-    node: FileNodeDocumentModel,
+    node: FileNodeModel,
     defaults: undefined,
     backend: Backend,
   });

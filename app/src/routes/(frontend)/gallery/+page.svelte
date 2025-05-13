@@ -1,55 +1,116 @@
 <script lang="ts">
+  import Grid, { type GridOptions } from '$d2/components/frontend/galleries/grid/grid.svelte';
+  import Lightbox, { type LightboxOptions } from '$d2/components/frontend/galleries/lightbox/lightbox.svelte';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
-  import { isTruthy } from '$d2/lib/base/utils/array';
+  import { aspectRatio } from '$d2/lib/base/utils/aspect-ratio';
+  import { getter, options } from '$d2/lib/base/utils/options';
+  import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
+
   $effect(() => subscribe(data.node));
 
   let gallery = $derived(data.node.node);
   let title = $derived(gallery?.title);
-  let images = $derived(gallery?.images.map((file) => file.asImage).filter(isTruthy));
+  let introduction = $derived(gallery?.introduction);
+  let files = $derived(gallery?.images);
+
+  let selected = $state<FileNodeModel>();
+  let onSelect = (node: FileNodeModel) => {
+    selected = node;
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  };
+
+  let innerHeight = $state<number>();
+  let innerWidth = $state<number>(Infinity);
+  let isMobile = $derived(innerWidth <= 768);
+
+  let height = $derived.by(() => {
+    if (innerHeight) {
+      let base = innerHeight - 130;
+      if (isMobile) {
+        return base + 20;
+      }
+      return base;
+    }
+  });
+
+  let horizontalPadding = $derived(isMobile ? 15 : 30);
+
+  let lightboxOptions: LightboxOptions = options({
+    horizontalPadding: getter(() => horizontalPadding),
+    height: getter(() => height),
+    thumbnail: '2048x2048',
+  });
+
+  let gridOptions: GridOptions = options({
+    gap: 15,
+    thumbnail: '400x400',
+    alignment: 'center',
+    aspectRatio: aspectRatio('3x2'),
+  });
+
+  $effect.pre(() => {
+    selected = files?.[0];
+  });
 </script>
 
-{#if title && images}
-  <div class="page">
-    <div class="title">{title}</div>
-    <div class="images">
-      {#each images as image (image)}
-        {@const thumbnail = image.thumbnails['400x400']}
-        <!-- svelte-ignore a11y_missing_attribute -->
-        <img
-          class="image"
-          src={thumbnail.url}
-          style:--width="{thumbnail.dimensions.width}px"
-          style:--height="{thumbnail.dimensions.height}px"
-        />
-      {/each}
+<svelte:window bind:innerHeight bind:innerWidth />
+
+<div class="page">
+  {#if files}
+    <div class="lightbox">
+      <Lightbox {files} {selected} {onSelect} options={lightboxOptions} />
     </div>
-  </div>
-{:else}
-  <div class="page">
-    <div class="title">Missing</div>
-  </div>
-{/if}
+    <div class="details">
+      <div class="caption">
+        <div class="title">{title}</div>
+        {#if introduction}
+          <div class="introduction">{introduction}</div>
+        {/if}
+      </div>
+      <Grid {files} {onSelect} options={gridOptions} />
+    </div>
+  {/if}
+</div>
 
 <style lang="scss">
   .page {
-    padding: 30px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 30px;
-    > .title {
-      font-size: 21px;
+    padding: 30px 0 0 0;
+    @media (max-width: 768px) {
+      padding: 15px 0 0 0;
     }
-    > .images {
+    > .lightbox {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 15px;
-      > .image {
-        width: var(--width);
-        height: var(--height);
+      flex-direction: column;
+    }
+    > .details {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      border-top: 1px solid #eee;
+      padding: 30px;
+      @media (max-width: 768px) {
+        padding: 15px;
+      }
+      > .caption {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        > .title {
+          font-weight: 600;
+        }
+        @media (max-width: 768px) {
+          flex-direction: column;
+          gap: 5px;
+        }
       }
     }
   }

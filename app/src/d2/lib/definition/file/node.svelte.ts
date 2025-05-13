@@ -6,12 +6,12 @@ import { Model } from '$d2/lib/base/model/model.svelte';
 import { data } from '$d2/lib/base/utils/property.svelte';
 import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
-export class FileNodeProperties extends NodePropertiesModel<'file'> {
+export class FileNodePropertiesModel extends NodePropertiesModel<'file'> {
   readonly filename = data(this, 'filename');
 }
 
-export class FileNodeDocumentModel extends NodeModel<'file'> {
-  readonly properties: FileNodeProperties = new FileNodeProperties({ model: this });
+export class FileNodeModel extends NodeModel<'file'> {
+  readonly properties: FileNodePropertiesModel = new FileNodePropertiesModel({ model: this });
 
   readonly type = $derived(this.data.properties.type);
 
@@ -34,7 +34,7 @@ export class FileNodeDocumentModel extends NodeModel<'file'> {
 }
 
 type FileNodeImageModelOptions = {
-  node: FileNodeDocumentModel;
+  node: FileNodeModel;
 };
 
 export class FileNodeImageModel extends Model<FileNodeImageModelOptions> {

@@ -9,10 +9,12 @@
   let { node, nodes }: { node: GalleryNodeModel; nodes: NodesModel } = $props();
 
   let title = $derived(node.properties.title);
+  let introduction = $derived(toRequired(node.properties.introduction, ''));
   let images = $derived(toRequired(node.properties.images, ''));
 </script>
 
 <Section>
   <InputRow label="Title" property={title} />
+  <InputRow label="Introduction" property={introduction} />
   <NodeRow label="Images" property={images} {nodes} />
 </Section>

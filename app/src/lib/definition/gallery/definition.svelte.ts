@@ -4,6 +4,7 @@ import { GalleryNodeModel } from './node.svelte';
 
 export type GalleryNodeProperties = {
   title: string;
+  introduction?: string;
   images?: string;
 };
 

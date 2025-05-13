@@ -2,7 +2,7 @@ import LucideFlame from '$d2/icons/lucide--flame.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { data } from '$d2/lib/base/utils/property.svelte';
-import { FileNodeDocumentModel } from '$d2/lib/definition/file/node.svelte';
+import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
 import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
@@ -23,7 +23,7 @@ export class IndexNodeModel extends NodeModel<'index'> {
 
   readonly background = mapNode.forPath({
     path: getter(() => this.path.exceptOwn(this.data.properties.background)),
-    factory: FileNodeDocumentModel,
+    factory: FileNodeModel,
   });
 
   readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded, this.background]));
