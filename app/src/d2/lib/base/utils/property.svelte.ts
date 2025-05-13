@@ -1,11 +1,15 @@
 import type { DocumentData } from '@firebase/firestore';
 import { getter, type OptionsInput } from './options';
-import type { PromiseVoidCallback } from './types';
 import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 
+export type PropertyUpdateResult<T = unknown> = {
+  before: T;
+  after: T;
+};
+
 export type PropertyDelegateOptions = {
-  didUpdate?: <T>(property: Property<T>) => void;
+  didUpdate?: <T>(property: Property<T>, result: PropertyUpdateResult<T>) => void;
 };
 
 export type PropertyOptions<T> = {
@@ -21,49 +25,57 @@ export class Property<T = unknown, O extends PropertyOptions<T> = PropertyOption
     super(opts);
   }
 
-  private didUpdate() {
-    this.options.didUpdate?.(this);
-    this.options.delegate?.didUpdate?.(this);
+  private didUpdate(result: PropertyUpdateResult<T>) {
+    this.options.didUpdate?.(this, result);
+    this.options.delegate?.didUpdate?.(this, result);
   }
 
-  update(next: T) {
-    if (this.value !== next) {
-      this.options.update(next);
-      this.didUpdate();
+  update(after: T) {
+    const before = this.value;
+    if (before !== after) {
+      this.options.update(after);
+      this.didUpdate({ before, after });
     }
   }
 
   delegate = $derived(this.options.delegate);
 }
 
-export type DocumentModelPropertiesOptions<D extends DocumentData> = {
-  model: { doc: Document<D>; save: PromiseVoidCallback };
+export type BasePropertiesModelOptions = {
+  model: {
+    didUpdate: <T>(properties: unknown, property: Property<T>, result: PropertyUpdateResult<T>) => Promise<void>;
+  };
 };
+
+export type DocumentModelPropertiesOptions<D extends DocumentData> = {
+  model: {
+    doc: Document<D>;
+  };
+} & BasePropertiesModelOptions;
 
 export class DocumentModelProperties<
   D extends DocumentData,
   O extends DocumentModelPropertiesOptions<D> = DocumentModelPropertiesOptions<D>,
 > extends Subscribable<O> {
   readonly data = $derived(this.options.model.doc.data!);
-  async didUpdate() {
-    await this.options.model.save();
+  didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
+    return this.options.model.didUpdate(this, property, result);
   }
 }
 
 export type DataModelPropertiesOptions<D extends DocumentData> = {
   model: {
     data: D;
-    save: PromiseVoidCallback;
   };
-};
+} & BasePropertiesModelOptions;
 
 export class DataModelProperties<
   D extends DocumentData,
   O extends DataModelPropertiesOptions<D> = DataModelPropertiesOptions<D>,
 > extends Subscribable<O> {
   readonly data = $derived(this.options.model.data);
-  async didUpdate() {
-    await this.options.model.save();
+  didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
+    return this.options.model.didUpdate(this, property, result);
   }
 }
 
@@ -94,7 +106,6 @@ export type TransformOptions<IS, IT, RS, RT> = {
 
 export const transform = <S, T>(source: Property<S>, { toTarget, toSource }: TransformOptions<S, T, S, T>) => {
   return new Property<T>({
-    delegate: getter(() => source.delegate),
     value: getter(() => toTarget(source.value)),
     update: (target) => source.update(toSource(target)),
   });

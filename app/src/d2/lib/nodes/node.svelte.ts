@@ -3,7 +3,7 @@ import { Model, Subscribable } from '$d2/lib/base/model/model.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { getter } from '$d2/lib/base/utils/options';
 import { getDefinition } from '../definition/app.svelte';
-import { data, DocumentModelProperties } from '../base/utils/property.svelte';
+import { data, DocumentModelProperties, Property, type PropertyUpdateResult } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData } from '$d2-shared/documents';
@@ -41,8 +41,8 @@ export class NodePropertiesModel<
 
   readonly data = $derived(this.options.model.data.properties);
 
-  async didUpdate() {
-    await this.options.model.save();
+  async didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
+    await this.options.model.didUpdate(this, property, result);
   }
 }
 
@@ -106,6 +106,10 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   async save() {
     this.data.updatedAt = new Date();
     await this.doc.save();
+  }
+
+  async didUpdate<T>(properties: unknown, property: Property<T>, result: PropertyUpdateResult<T>) {
+    await this.save();
   }
 
   upload() {
