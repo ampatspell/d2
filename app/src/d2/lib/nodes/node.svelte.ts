@@ -97,7 +97,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     path: getter(() => this.data.path),
   });
 
-  readonly definition = $derived(getDefinition().byType(this.kind)!);
+  readonly definition = $derived(getDefinition().byType(this.kind));
   readonly name = $derived(this.definition.name);
 
   abstract readonly properties: NodePropertiesModel<Type>;
@@ -135,5 +135,5 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 }
 
 export const createNodeModel = (doc: Document<NodeData>) => {
-  return getDefinition().byDocument(doc)?.model({ doc });
+  return getDefinition().byDocument(doc).model({ doc });
 };
