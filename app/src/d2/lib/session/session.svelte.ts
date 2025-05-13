@@ -45,6 +45,18 @@ export class SessionUser extends Model<SessionUserModelOptions> {
   readonly serialized = $derived(serialized(this, ['uid', 'email', 'isAdmin']));
 }
 
+export const setRole = async (uid: string, role: UserRole) => {
+  const callable = httpsCallable<FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse>(
+    firebase.functions,
+    'setRole',
+  );
+  const { data } = await callable({
+    uid,
+    role,
+  });
+  return data;
+};
+
 export type SessionModelOptions = Record<string, never>;
 
 export class SessionModel extends Model<SessionModelOptions> {
@@ -100,16 +112,8 @@ export class SessionModel extends Model<SessionModelOptions> {
     await signOut(firebase.auth);
   }
 
-  async setRole(uid: string, role: UserRole) {
-    const callable = httpsCallable<FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse>(
-      firebase.functions,
-      'setRole',
-    );
-    const { data } = await callable({
-      uid,
-      role,
-    });
-    return data;
+  setRole(uid: string, role: UserRole) {
+    return setRole(uid, role);
   }
 
   readonly serialized = $derived(serialized(this, ['isLoaded', 'user']));
