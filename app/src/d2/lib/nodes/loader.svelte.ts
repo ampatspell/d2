@@ -11,7 +11,7 @@ import { preloadModel } from '../base/fire/preload.svelte';
 
 export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
-  key: string;
+  key?: string;
   factory?: NodeModelFactory<Model>;
 };
 
@@ -120,7 +120,7 @@ export const node = {
 
 export type NodesLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
-  key: string;
+  key?: string;
   factory?: NodeModelFactory<Model>;
 };
 
@@ -174,14 +174,16 @@ export const nodesForQuery = <Model extends NodeModel = NodeModel>(
   return new NodesLoaderModel(opts);
 };
 
-export const nodesForParentId = <Model extends NodeModel = NodeModel>(_opts: {
-  parentId: string;
-  factory?: NodeModelFactory<Model>;
-}) => {
+export const nodesForParentId = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    id: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
   const opts = options(_opts);
   return nodesForQuery({
-    ref: fs.query(nodesCollection, fs.where('parent.id', '==', opts.parentId)),
-    key: `parent:${opts.parentId}`,
+    ref: fs.query(nodesCollection, fs.where('parent.id', '==', opts.id)),
+    key: `parent:${opts.id}`,
     factory: getter(() => opts.factory),
   });
 };
@@ -200,10 +202,12 @@ export const nodesForParentPath = <Model extends NodeModel = NodeModel>(
   });
 };
 
-export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(_opts: {
-  identifier: string;
-  factory?: NodeModelFactory<Model>;
-}) => {
+export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    identifier: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
   const opts = options(_opts);
   return nodesForQuery({
     ref: fs.query(nodesCollection, fs.where('parent.identifier', '==', opts.identifier)),

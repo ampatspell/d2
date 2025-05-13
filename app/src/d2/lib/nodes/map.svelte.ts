@@ -33,6 +33,27 @@ export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribabl
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'node']));
 }
 
+export const mapNodeForId = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    id: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
+  const opts = options(_opts);
+  return new MapNode<string | undefined, Model>({
+    source: getter(() => opts.id),
+    key: getter(() => `id:${opts.id}`),
+    loader: (id) => {
+      if (id) {
+        return node.forId({
+          id,
+          factory: getter(() => opts.factory),
+        });
+      }
+    },
+  });
+};
+
 export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     path: string | undefined;
@@ -54,8 +75,31 @@ export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
   });
 };
 
+export const mapNodeForIdentifier = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    identifier: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
+  const opts = options(_opts);
+  return new MapNode<string | undefined, Model>({
+    source: getter(() => opts.identifier),
+    key: getter(() => `identifier:${opts.identifier}`),
+    loader: (identifier) => {
+      if (identifier) {
+        return node.forIdentifier({
+          identifier,
+          factory: getter(() => opts.factory),
+        });
+      }
+    },
+  });
+};
+
 export const mapNode = {
+  forId: mapNodeForId,
   forPath: mapNodeForPath,
+  nodeForIdentifier: mapNodeForIdentifier,
 };
 
 export type MapNodesOptions<T, Model extends NodeModel> = {
@@ -85,13 +129,11 @@ export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribab
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'nodes']));
 }
 
-export type MapNodesForParentPathOptions<Model extends NodeModel> = {
-  path: string | undefined;
-  factory?: NodeModelFactory<Model>;
-};
-
 export const mapNodesForParentPath = <Model extends NodeModel = NodeModel>(
-  _opts: OptionsInput<MapNodesForParentPathOptions<Model>>,
+  _opts: OptionsInput<{
+    path: string | undefined;
+    factory?: NodeModelFactory<Model>;
+  }>,
 ) => {
   const opts = options(_opts);
   return new MapNodes({
@@ -108,6 +150,50 @@ export const mapNodesForParentPath = <Model extends NodeModel = NodeModel>(
   });
 };
 
+export const mapNodesForParentId = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    id: string | undefined;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
+  const opts = options(_opts);
+  return new MapNodes({
+    source: getter(() => opts.id),
+    key: getter(() => `parentId:${opts.id}`),
+    loader: (id) => {
+      if (id) {
+        return nodes.forParentId({
+          id,
+          factory: getter(() => opts.factory),
+        });
+      }
+    },
+  });
+};
+
+export const mapNodesForParentIdentifier = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{
+    identifier: string | undefined;
+    factory?: NodeModelFactory<Model>;
+  }>,
+) => {
+  const opts = options(_opts);
+  return new MapNodes({
+    source: getter(() => opts.identifier),
+    key: getter(() => `parentIdentifier:${opts.identifier}`),
+    loader: (identifier) => {
+      if (identifier) {
+        return nodes.forParentIdentifier({
+          identifier,
+          factory: getter(() => opts.factory),
+        });
+      }
+    },
+  });
+};
+
 export const mapNodes = {
   forParentPath: mapNodesForParentPath,
+  forParentId: mapNodesForParentId,
+  forParentIdentifier: mapNodesForParentIdentifier,
 };
