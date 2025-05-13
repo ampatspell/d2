@@ -1,6 +1,7 @@
 import { asIsLoadedModel, isLoaded } from '../base/fire/is-loaded.svelte';
 import { Subscribable } from '../base/model/model.svelte';
 import { mapModel } from '../base/model/models.svelte';
+import { serialized } from '../base/utils/object';
 import { getter, options, type OptionsInput } from '../base/utils/options';
 import { node, nodes, NodesLoaderModel, type NodeLoaderModel } from './loader.svelte';
 import type { NodeModel, NodeModelFactory } from './node.svelte';
@@ -8,6 +9,7 @@ import type { NodeModel, NodeModelFactory } from './node.svelte';
 export type MapNodeOptions<T, Model extends NodeModel> = {
   source: T;
   loader: (value: T) => NodeLoaderModel<Model> | undefined;
+  key?: string;
 };
 
 export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodeOptions<T, Model>> {
@@ -19,29 +21,34 @@ export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribabl
   readonly loader = $derived(this._loader.content);
   readonly node = $derived(this.loader?.node);
 
-  readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([this.node]));
-
   async load() {
-    await this._loader.load();
+    await this._loader.load((model) => model.load());
     await this.node?.load();
   }
+
+  readonly key = $derived(this.options.key);
+
+  readonly dependencies = [this._loader];
+  readonly isLoaded = $derived(isLoaded([this.node]));
+  readonly serialized = $derived(serialized(this, ['key', 'loader', 'node']));
 }
 
-export type MapNodeForPathOptions<Model extends NodeModel> = {
-  path: string | undefined;
-  factory?: NodeModelFactory<Model>;
-};
-
 export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
-  _opts: OptionsInput<MapNodeForPathOptions<Model>>,
+  _opts: OptionsInput<{
+    path: string | undefined;
+    factory?: NodeModelFactory<Model>;
+  }>,
 ) => {
   const opts = options(_opts);
   return new MapNode<string | undefined, Model>({
-    source: _opts.path,
+    source: getter(() => opts.path),
+    key: getter(() => `path:${opts.path}`),
     loader: (path) => {
       if (path) {
-        return node.forPath(path, opts.factory);
+        return node.forPath({
+          path,
+          factory: getter(() => opts.factory),
+        });
       }
     },
   });
@@ -54,6 +61,7 @@ export const mapNode = {
 export type MapNodesOptions<T, Model extends NodeModel> = {
   source: T;
   loader: (value: T) => NodesLoaderModel<Model> | undefined;
+  key?: string;
 };
 
 export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodesOptions<T, Model>> {
@@ -65,13 +73,16 @@ export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribab
   readonly loader = $derived(this._loader.content);
   readonly nodes = $derived(this.loader?.nodes || []);
 
-  readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([asIsLoadedModel(this.nodes)]));
-
   async load() {
-    await this._loader.load();
+    await this._loader.load((model) => model.load());
     await Promise.all(this.nodes.map((node) => node.load()));
   }
+
+  readonly key = $derived(this.options.key);
+
+  readonly dependencies = [this._loader];
+  readonly isLoaded = $derived(isLoaded([this.loader, asIsLoadedModel(this.nodes)]));
+  readonly serialized = $derived(serialized(this, ['key', 'loader', 'nodes']));
 }
 
 export type MapNodesForParentPathOptions<Model extends NodeModel> = {
@@ -84,10 +95,14 @@ export const mapNodesForParentPath = <Model extends NodeModel = NodeModel>(
 ) => {
   const opts = options(_opts);
   return new MapNodes({
-    source: _opts.path,
+    source: getter(() => opts.path),
+    key: getter(() => `parentPath:${opts.path}`),
     loader: (path) => {
       if (path) {
-        return nodes.forParentPath(path, opts.factory);
+        return nodes.forParentPath({
+          path,
+          factory: getter(() => opts.factory),
+        });
       }
     },
   });

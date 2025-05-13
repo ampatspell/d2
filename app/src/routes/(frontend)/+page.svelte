@@ -10,6 +10,6 @@
   let index = $derived(data.index.node);
 </script>
 
-{#if index}
+{#if index?.isLoaded}
   <Index {index} />
 {/if}

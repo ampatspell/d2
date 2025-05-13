@@ -14,11 +14,11 @@ export class FileNodeModel extends NodeModel<'file'> {
   readonly properties: FileNodePropertiesModel = new FileNodePropertiesModel({ model: this });
 
   readonly type = $derived(this.data.properties.type);
+  readonly original = $derived(this.data.properties.original);
+  readonly filename = $derived(this.data.properties.filename);
 
   readonly isRegular = $derived(this.type === 'regular');
   readonly isImage = $derived(this.type === 'image');
-
-  readonly original = $derived(this.data.properties.original);
 
   readonly asImage = $derived.by(() => {
     if (this.isImage) {

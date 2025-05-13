@@ -73,6 +73,8 @@ export class NodePathModel extends Model<NodePathModelOptions> {
     }
     return path;
   }
+
+  readonly serialized = $derived(serialized(this, ['value']));
 }
 
 export type NodeModelOptions<Type extends NodeType> = {
@@ -125,10 +127,11 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly nodeIsLoaded = [this.doc];
   readonly nodeDependencies = [this.doc];
 
-  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
+  readonly isNodeLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
+  readonly isLoaded = $derived(this.isNodeLoaded);
   readonly dependencies: HasSubscriber[] = [...this.nodeDependencies];
 
-  readonly serialized = $derived(serialized(this, ['id']));
+  readonly serialized = $derived(serialized(this, ['id', 'path']));
 }
 
 export const createNodeModel = (doc: Document<NodeData>) => {

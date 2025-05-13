@@ -4,6 +4,11 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
   return {
-    index: await node.forPath('/public', IndexNodeModel).preload(),
+    index: await node
+      .forPath({
+        path: '/public',
+        factory: IndexNodeModel,
+      })
+      .preload(),
   };
 };

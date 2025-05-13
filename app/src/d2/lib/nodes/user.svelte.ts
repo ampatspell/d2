@@ -109,7 +109,7 @@ export class NodesSettingsModel extends Subscribable<NodesSettingsModelOptions> 
 
   async load() {
     await this._query.load();
-    await this._models.load();
+    await this._models.load((user) => user.load());
   }
 
   static forCurrentUser() {
@@ -135,6 +135,8 @@ export class NodeSettingsModel extends Subscribable<NodeSettingsModelOptions> {
   async save() {
     await this.doc.save();
   }
+
+  async load() {}
 
   async setOpen(open: boolean) {
     if (open !== this.isOpen || this.isNew) {

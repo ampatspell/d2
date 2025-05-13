@@ -3,7 +3,7 @@ import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { asIsLoadedModel, isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
-import { getter } from '$d2/lib/base/utils/options';
+import { getter, options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { queryAll, queryFirst } from '../base/fire/query.svelte';
 import { createNodeModel, nodeDocumentKey, NodeModel, type NodeData, type NodeModelFactory } from './node.svelte';
@@ -54,7 +54,7 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
 
   async load() {
     await this._query.load();
-    await this.__node.load();
+    await this.__node.load((model) => model.load());
     await this._node?.load();
   }
 
@@ -70,30 +70,45 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
 }
 
 export const nodeForQuery = <Model extends NodeModel = NodeModel>(
-  ref: fs.Query,
-  key: string,
-  factory?: NodeModelFactory<Model>,
+  opts: OptionsInput<NodeLoaderModelOptions<Model>>,
 ) => {
-  return new NodeLoaderModel({ ref, key, factory });
+  return new NodeLoaderModel(opts);
 };
 
-export const nodeForId = <Model extends NodeModel = NodeModel>(id: string, factory?: NodeModelFactory<Model>) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where(fs.documentId(), '==', id)), `id:${id}`, factory);
+export const nodeForId = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{ id: string; factory?: NodeModelFactory<Model> }>,
+) => {
+  const opts = options(_opts);
+  return nodeForQuery({
+    ref: fs.query(nodesCollection, fs.where(fs.documentId(), '==', opts.id)),
+    key: `id:${opts.id}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
 export const nodeForIdentifier = <Model extends NodeModel = NodeModel>(
-  identifier: string,
-  factory?: NodeModelFactory<Model>,
+  _opts: OptionsInput<{
+    identifier: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
 ) => {
-  return nodeForQuery(
-    fs.query(nodesCollection, fs.where('identifier', '==', identifier)),
-    `identifier:${identifier}`,
-    factory,
-  );
+  const opts = options(_opts);
+  return nodeForQuery({
+    ref: fs.query(nodesCollection, fs.where('identifier', '==', opts.identifier)),
+    key: `identifier:${opts.identifier}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
-export const nodeForPath = <Model extends NodeModel = NodeModel>(path: string, factory?: NodeModelFactory<Model>) => {
-  return nodeForQuery(fs.query(nodesCollection, fs.where('path', '==', path)), `path:${path}`, factory);
+export const nodeForPath = <Model extends NodeModel = NodeModel>(
+  _opts: OptionsInput<{ path: string; factory?: NodeModelFactory<Model> }>,
+) => {
+  const opts = options(_opts);
+  return nodeForQuery({
+    ref: fs.query(nodesCollection, fs.where('path', '==', opts.path)),
+    key: `path:${opts.path}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
 export const node = {
@@ -122,9 +137,7 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 
   private readonly __nodes = mapModels({
     source: getter(() => this._loaded),
-    target: (doc) => {
-      return createNodeModel(doc);
-    },
+    target: (doc) => createNodeModel(doc),
     key: nodeDocumentKey,
   });
 
@@ -140,7 +153,7 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 
   async load() {
     await this._query.load();
-    await this.__nodes.load();
+    await this.__nodes.load((model) => model.load());
     await Promise.all(this._nodes?.map((node) => node.load()));
   }
 
@@ -156,36 +169,47 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 }
 
 export const nodesForQuery = <Model extends NodeModel = NodeModel>(
-  ref: fs.Query,
-  key: string,
-  factory?: NodeModelFactory<Model>,
+  opts: OptionsInput<NodesLoaderModelOptions<Model>>,
 ) => {
-  return new NodesLoaderModel({ ref, key, factory });
+  return new NodesLoaderModel(opts);
 };
 
-export const nodesForParentId = <Model extends NodeModel = NodeModel>(
-  parentId: string,
-  factory?: NodeModelFactory<Model>,
-) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.id', '==', parentId)), `parent:${parentId}`, factory);
+export const nodesForParentId = <Model extends NodeModel = NodeModel>(_opts: {
+  parentId: string;
+  factory?: NodeModelFactory<Model>;
+}) => {
+  const opts = options(_opts);
+  return nodesForQuery({
+    ref: fs.query(nodesCollection, fs.where('parent.id', '==', opts.parentId)),
+    key: `parent:${opts.parentId}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
 export const nodesForParentPath = <Model extends NodeModel = NodeModel>(
-  path: string,
-  factory?: NodeModelFactory<Model>,
+  _opts: OptionsInput<{
+    path: string;
+    factory?: NodeModelFactory<Model>;
+  }>,
 ) => {
-  return nodesForQuery(fs.query(nodesCollection, fs.where('parent.path', '==', path)), `path:${path}`, factory);
+  const opts = options(_opts);
+  return nodesForQuery({
+    ref: fs.query(nodesCollection, fs.where('parent.path', '==', opts.path)),
+    key: `path:${opts.path}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
-export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(
-  identifier: string,
-  factory?: NodeModelFactory<Model>,
-) => {
-  return nodesForQuery(
-    fs.query(nodesCollection, fs.where('parent.identifier', '==', identifier)),
-    `identifier:${identifier}`,
-    factory,
-  );
+export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(_opts: {
+  identifier: string;
+  factory?: NodeModelFactory<Model>;
+}) => {
+  const opts = options(_opts);
+  return nodesForQuery({
+    ref: fs.query(nodesCollection, fs.where('parent.identifier', '==', opts.identifier)),
+    key: `identifier:${opts.identifier}`,
+    factory: getter(() => opts.factory),
+  });
 };
 
 export const nodes = {

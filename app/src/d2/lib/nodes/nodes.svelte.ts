@@ -93,7 +93,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   async load() {
     await this._query.load();
-    await this._nodes.load();
+    await this._nodes.load((node) => node.load());
   }
 
   readonly isLoaded = $derived(isLoaded([this._query]));

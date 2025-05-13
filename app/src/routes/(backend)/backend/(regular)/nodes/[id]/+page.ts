@@ -3,6 +3,10 @@ import type { PageLoad } from './$types';
 
 export const load: PageLoad = async (event) => {
   return {
-    node: await node.forId(event.params.id).preload(),
+    node: await node
+      .forId({
+        id: event.params.id,
+      })
+      .preload(),
   };
 };

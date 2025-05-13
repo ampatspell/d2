@@ -148,11 +148,9 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     });
   }
 
-  async load(cb?: (target: Target) => Promise<void>) {
+  async load(cb: (target: Target) => Promise<void>) {
     const models = this.update();
-    if (cb) {
-      await Promise.all(models.map((model) => cb(model)));
-    }
+    await Promise.all(models.map((model) => cb(model)));
   }
 }
 
@@ -173,7 +171,11 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     if (source) {
       content = this._withCache((findOrCreate) => findOrCreate(source));
     }
-    this._content = untrack(() => content);
+    untrack(() => {
+      if (this._content !== content) {
+        this._content = content;
+      }
+    });
     return content;
   }
 
@@ -186,9 +188,9 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     });
   }
 
-  async load(cb?: (target: Target) => Promise<void>) {
+  async load(cb: (target: Target) => Promise<void>) {
     const target = this.update();
-    if (target && cb) {
+    if (target) {
       await cb(target);
     }
   }
