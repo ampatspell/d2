@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import Section from '$d2/components/dark/section/section.svelte';
   import Cell from '$d2/components/dark/table/cell.svelte';
@@ -25,10 +26,12 @@
       label: 'Users',
     },
   ];
+
+  let onDeselect = () => goto('/backend/settings');
 </script>
 
 {#snippet sidebar()}
-  <Table>
+  <Table {onDeselect}>
     {#each rows as row (row)}
       <Cell route={row.route} isSelected={route.startsWith(row.route)}>
         <Row value={row.label} />
