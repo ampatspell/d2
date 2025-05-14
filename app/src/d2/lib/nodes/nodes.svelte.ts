@@ -6,7 +6,13 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter, options } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeModel, nodeDocumentKey, NodeModel, type NodeBackendModelDelegate, type NodeData } from './node.svelte';
+import {
+  createNodeModel,
+  nodeDocumentKey,
+  NodeModel,
+  type NodeBackendModelDelegate,
+  type NodeData,
+} from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { NodeParentData } from '$d2-shared/documents';

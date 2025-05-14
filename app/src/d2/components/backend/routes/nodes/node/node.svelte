@@ -9,7 +9,7 @@
   let {
     node,
     nodes,
-    onWillDelete
+    onWillDelete,
   }: {
     node: NodeModel;
     nodes: NodesModel;

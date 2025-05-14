@@ -44,7 +44,7 @@
     padding: 8px;
     opacity: 0;
     background: #fff;
-    border-top-right-radius: 8px;;
+    border-top-right-radius: 8px;
     transition: 0.15s ease-in-out opacity;
     &:hover {
       opacity: 1;
