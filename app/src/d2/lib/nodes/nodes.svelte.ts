@@ -40,6 +40,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   readonly delegate: NodeBackendModelDelegate = options({
     parentFor: (node) => this.byId(node.parent?.id),
+    childrenFor: (node) => this.byParentId(node.id),
   });
 
   readonly _nodes = mapModels({

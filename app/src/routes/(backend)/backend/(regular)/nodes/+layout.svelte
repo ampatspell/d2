@@ -5,11 +5,11 @@
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import { isTruthy } from '$d2/lib/base/utils/array';
   import type { NodeModel } from '$d2/lib/nodes/node.svelte';
-    import { page } from '$app/state';
+  import { page } from '$app/state';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
-  let id = $derived(page.route.id ?? undefined);
+  let id = $derived(page.params.id);
   let nodes = $derived(data.nodes);
   let settings = $derived(data.settings);
 

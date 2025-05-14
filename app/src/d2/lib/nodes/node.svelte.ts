@@ -56,6 +56,7 @@ export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModel
 
 export type NodeBackendModelDelegate = {
   parentFor: (node: NodeModel) => NodeModel | undefined;
+  childrenFor: (node: NodeModel) => NodeModel[];
 };
 
 export type NodeBackendModelOptions<Type extends NodeType> = {
@@ -68,6 +69,7 @@ export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<No
   private readonly node = $derived(this.options.node);
 
   readonly parent = $derived(this.delegate?.parentFor(this.node));
+  readonly children = $derived(this.delegate?.childrenFor(this.node));
 }
 
 export type NodePathModelOptions = {
