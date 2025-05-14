@@ -10,6 +10,7 @@ import type { BaseNodeData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { HasSubscriber } from '../base/model/subscriber.svelte';
+import { mapModel } from '../base/model/models.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -53,6 +54,22 @@ export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModel
   return false;
 };
 
+export type NodeBackendModelDelegate = {
+  parentFor: (node: NodeModel) => NodeModel | undefined;
+};
+
+export type NodeBackendModelOptions<Type extends NodeType> = {
+  node: NodeModel<Type>;
+  delegate: NodeBackendModelDelegate | undefined;
+};
+
+export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<NodeBackendModelOptions<Type>> {
+  private readonly delegate = $derived(this.options.delegate);
+  private readonly node = $derived(this.options.node);
+
+  readonly parent = $derived(this.delegate?.parentFor(this.node));
+}
+
 export type NodePathModelOptions = {
   path: string;
 };
@@ -79,6 +96,7 @@ export class NodePathModel extends Model<NodePathModelOptions> {
 
 export type NodeModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
+  backend: NodeBackendModelDelegate | undefined;
 };
 
 export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscribable<NodeModelOptions<Type>> {
@@ -96,6 +114,13 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly path = new NodePathModel({
     path: getter(() => this.data.path),
   });
+
+  private readonly _backend = mapModel({
+    source: getter(() => this.options.backend),
+    target: (delegate) => new NodeBackendModel({ node: this, delegate }),
+  });
+
+  readonly backend = $derived(this._backend.content);
 
   readonly definition = $derived(getDefinition().byType(this.kind));
   readonly name = $derived(this.definition.name);
@@ -134,7 +159,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   }
 
   readonly nodeIsLoaded = [this.doc];
-  readonly nodeDependencies = [this.doc];
+  readonly nodeDependencies = [this.doc, this._backend];
 
   readonly isNodeLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
   readonly isLoaded = $derived(this.isNodeLoaded);
@@ -143,6 +168,6 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly serialized = $derived(serialized(this, ['id', 'path']));
 }
 
-export const createNodeModel = (doc: Document<NodeData>) => {
-  return getDefinition().byDocument(doc).model({ doc });
+export const createNodeModel = (doc: Document<NodeData>, backend: NodeBackendModelDelegate | undefined) => {
+  return getDefinition().byDocument(doc).model({ doc, backend });
 };

@@ -6,7 +6,7 @@ import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
 import { getter, options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { nodesCollection } from './nodes.svelte';
 import { queryAll, queryFirst } from '../base/fire/query.svelte';
-import { createNodeModel, nodeDocumentKey, NodeModel, type NodeData, type NodeModelFactory } from './node.svelte';
+import { createNodeModel, nodeDocumentKey, NodeModel, type NodeBackendModelDelegate, type NodeData, type NodeModelFactory } from './node.svelte';
 import { preloadModel } from '../base/fire/preload.svelte';
 
 export type NodeLoaderModelOptions<Model extends NodeModel> = {
@@ -31,7 +31,7 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
 
   private readonly __node = mapModel({
     source: getter(() => this._loaded),
-    target: (doc) => createNodeModel(doc),
+    target: (doc) => createNodeModel(doc, undefined),
     key: nodeDocumentKey,
   });
 
@@ -76,7 +76,7 @@ export const nodeForQuery = <Model extends NodeModel = NodeModel>(
 };
 
 export const nodeForId = <Model extends NodeModel = NodeModel>(
-  _opts: OptionsInput<{ id: string; factory?: NodeModelFactory<Model> }>,
+  _opts: OptionsInput<{ id: string; factory?: NodeModelFactory<Model>; }>,
 ) => {
   const opts = options(_opts);
   return nodeForQuery({
@@ -122,6 +122,7 @@ export type NodesLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
   key?: string;
   factory?: NodeModelFactory<Model>;
+  delegate?: NodeBackendModelDelegate;
 };
 
 export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<
@@ -137,7 +138,7 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 
   private readonly __nodes = mapModels({
     source: getter(() => this._loaded),
-    target: (doc) => createNodeModel(doc),
+    target: (doc) => createNodeModel(doc, this.options.delegate),
     key: nodeDocumentKey,
   });
 

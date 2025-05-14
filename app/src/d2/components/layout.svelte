@@ -39,9 +39,12 @@
 <style lang="scss">
   .admin {
     position: fixed;
-    bottom: 8px;
-    left: 8px;
+    bottom: 0;
+    left: 0;
+    padding: 8px;
     opacity: 0;
+    background: #fff;
+    border-top-right-radius: 8px;;
     transition: 0.15s ease-in-out opacity;
     &:hover {
       opacity: 1;

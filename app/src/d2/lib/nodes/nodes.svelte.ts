@@ -4,9 +4,9 @@ import { firebase } from '../base/fire/firebase.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
-import { getter } from '../base/utils/options';
+import { getter, options } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import { createNodeModel, nodeDocumentKey, NodeModel, type NodeData } from './node.svelte';
+import { createNodeModel, nodeDocumentKey, NodeModel, type NodeBackendModelDelegate, type NodeData } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { NodeParentData } from '$d2-shared/documents';
@@ -38,9 +38,13 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     ref: getter(() => this.options.query),
   });
 
+  readonly delegate: NodeBackendModelDelegate = options({
+    parentFor: (node) => this.byId(node.parent?.id),
+  });
+
   readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createNodeModel(doc),
+    target: (doc) => createNodeModel(doc, this.delegate),
     key: nodeDocumentKey,
   });
 
