@@ -60,15 +60,19 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {
-    const properties = definition.defaults();
+    const ref = fs.doc(nodesCollection);
+    const now = new Date();
+    const identifier = ref.id;
+    let path = `/${identifier}`;
+    if (parent) {
+      path = `${parent.path.value}/${identifier}`;
+    }
+
+    const properties = definition.defaults({
+      path,
+    });
+
     if (properties) {
-      const ref = fs.doc(nodesCollection);
-      const now = new Date();
-      const identifier = ref.id;
-      let path = `/${identifier}`;
-      if (parent) {
-        path = `${parent.path.value}/${identifier}`;
-      }
       const data: NodeData = {
         kind: definition.type,
         path,

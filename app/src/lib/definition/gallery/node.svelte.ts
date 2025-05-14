@@ -1,4 +1,4 @@
-import LucideFlame from '$d2/icons/lucide--flame.svelte';
+import LucideImages from '$d2/icons/lucide--images.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { data } from '$d2/lib/base/utils/property.svelte';
@@ -20,7 +20,7 @@ export class GalleryNodeModel extends NodeModel<'gallery'> {
   });
 
   readonly name = 'Gallery';
-  readonly icon = LucideFlame;
+  readonly icon = LucideImages;
 
   readonly title = $derived(this.data.properties.title);
   readonly introduction = $derived(this.data.properties.introduction);

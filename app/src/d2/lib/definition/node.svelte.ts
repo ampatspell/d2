@@ -9,6 +9,10 @@ export type NodeBackendComponent<Type extends NodeType, Node extends NodeModel<T
   nodes: NodesModel;
 }>;
 
+export type NodeDefinitionDefaultsOptions = {
+  path: string;
+};
+
 export type NodeDefinitionModelOptions<
   Type extends NodeType = NodeType,
   Node extends NodeModel<Type> = NodeModel<Type>,
@@ -16,7 +20,7 @@ export type NodeDefinitionModelOptions<
   readonly type: Type;
   readonly name: string;
   readonly node: new (...args: ConstructorParameters<typeof NodeModel<Type>>) => Node;
-  readonly defaults: (() => NodePropertiesRegistry[Type]) | undefined;
+  readonly defaults: ((opts: NodeDefinitionDefaultsOptions) => NodePropertiesRegistry[Type]) | undefined;
   readonly backend: NodeBackendComponent<Type, Node>;
 };
 
@@ -33,7 +37,7 @@ export class NodeDefinitionModel<
     return new this.options.node(...args);
   }
 
-  defaults() {
-    return this.options.defaults?.();
+  defaults(opts: NodeDefinitionDefaultsOptions) {
+    return this.options.defaults?.(opts);
   }
 }

@@ -12,8 +12,9 @@ export const gallery = () => {
   return node('gallery', {
     name: 'Gallery',
     node: GalleryNodeModel,
-    defaults: () => ({
+    defaults: ({ path }) => ({
       title: 'Gallery',
+      images: path,
     }),
     backend: Backend,
   });
