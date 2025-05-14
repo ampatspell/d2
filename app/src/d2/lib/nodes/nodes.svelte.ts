@@ -24,21 +24,19 @@ export type NodesModelOptions = {
 };
 
 export class NodesModel extends Subscribable<NodesModelOptions> {
-  readonly _query = queryAll<NodeData>({
+  private readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.query),
   });
 
-  readonly delegate: NodeBackendModelDelegate = options({
+  private readonly _delegate: NodeBackendModelDelegate = options({
     parentFor: (node) => this.byId(node.parent?.id),
     childrenFor: (node) => this.byParentId(node.id),
-    didUpdatePath: async (opts) => {
-      await Promise.all(this.all.map((node) => node.updatePaths(opts)));
-    },
+    didUpdatePath: (opts) => Promise.all(this.all.map((node) => node.updatePaths(opts))),
   });
 
-  readonly _nodes = mapModels({
+  private readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createNodeModel(doc, this.delegate),
+    target: (doc) => createNodeModel(doc, this._delegate),
     key: nodeDocumentKey,
   });
 

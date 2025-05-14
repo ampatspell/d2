@@ -87,3 +87,7 @@ export function isTruthy<T>(value?: T | undefined | null | false): value is T {
 export const filterByInstanceOf = <I, O>(array: I[], factory: { new (...args: never): O }): O[] => {
   return array.filter((item) => item instanceof factory) as unknown as O[];
 };
+
+export const uniq = <T>(array: readonly T[]) => {
+  return [...new Set(array)];
+};

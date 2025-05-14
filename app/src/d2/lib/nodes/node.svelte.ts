@@ -11,7 +11,7 @@ import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { HasSubscriber } from '../base/model/subscriber.svelte';
 import { mapModel } from '../base/model/models.svelte';
-import { isTruthy } from '../base/utils/array';
+import { isTruthy, uniq } from '../base/utils/array';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -90,7 +90,7 @@ export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModel
 export type NodeBackendModelDelegate = {
   parentFor: (node: NodeModel) => NodeModel | undefined;
   childrenFor: (node: NodeModel) => NodeModel[];
-  didUpdatePath: (opts: PropertyUpdateResult<string>) => Promise<void>;
+  didUpdatePath: (opts: PropertyUpdateResult<string>) => Promise<(NodeModel | undefined)[]>;
 };
 
 export type NodeBackendModelOptions<Type extends NodeType> = {
@@ -111,7 +111,13 @@ export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<No
   });
 
   async didUpdatePath(opts: PropertyUpdateResult<string>) {
-    await this.delegate.didUpdatePath(opts);
+    const nodes = await this.delegate.didUpdatePath(opts);
+    return nodes.filter(isTruthy);
+  }
+
+  async didUpdateParent(parent: NodeParentData) {
+    const nodes = await Promise.all(this.children.map((child) => child.didUpdateParentIdentifier(parent)));
+    return nodes.filter(isTruthy);
   }
 }
 
@@ -181,37 +187,40 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   async updatePaths(opts: PropertyUpdateResult<string>) {
     if (await this.properties.updatePaths(opts)) {
-      await this.save();
+      return this;
     }
   }
 
-  protected async didUpdateParentIdentifier(parent: NodeParentData) {
+  async didUpdateParentIdentifier(parent: NodeParentData) {
     const backend = this.backend;
     if (backend) {
       this.data.parent = parent;
       this.data.path = backend.path;
-      await this.save();
+      return this;
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private async didUpdateIdentifier(result: PropertyUpdateResult<string>) {
+  private async didUpdateIdentifier() {
     const backend = this.backend;
     if (backend) {
       const before = this.data.path;
       const after = backend.path;
       this.data.path = after;
-      await this.backend.didUpdatePath({ before, after });
-      await Promise.all(backend.children?.map((child) => child.didUpdateParentIdentifier(asParent(this)!)));
+
+      const global = await this.backend.didUpdatePath({ before, after });
+      const children = await this.backend.didUpdateParent(asParent(this)!);
+      const nodes = uniq([this, ...global, ...children]);
+      await Promise.all(nodes.map((node) => node.save()));
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async didUpdate(property: Property, result: PropertyUpdateResult) {
-    const identifier = this.properties.base.identifier;
     if (property === this.properties.base.identifier) {
-      await this.didUpdateIdentifier(identifier.asResult(result));
+      await this.didUpdateIdentifier();
+    } else {
+      await this.save();
     }
-    await this.save();
   }
 
   upload() {
