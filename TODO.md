@@ -3,8 +3,8 @@
 - [ ] backend nodes as grid
 - [ ] reorder nodes in backend grid
 - [ ] reorder and move nodes in the sidebar
-- [ ] move path and parent updates to backend
-- [ ] add support for updating nested relative paths `(data.properties.gallery in /foo/bar node)`
+- [x] move path and parent updates to backend
+- [x] add support for updating nested paths
 - [x] list users in settings
 - [x] make user admin by admin
 - [x] list unknown nodes
