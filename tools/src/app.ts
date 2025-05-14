@@ -228,6 +228,11 @@ const package_json = (app: App) => dedent`
   }
 `;
 
+const nvmrc = () => dedent`
+  22
+
+`;
+
 export type AppConfig = {
   admin: string;
   region: {
@@ -337,6 +342,7 @@ export class App {
       target,
     });
 
+    await writeString(join(target, '.nvmrc'), nvmrc());
     await writeString(join(target, 'package.json'), package_json(this));
     await writeString(join(target, 'vite.config.ts'), vite_config(this));
     await writeString(join(target, 'svelte.config.js'), svelte_config(this));
