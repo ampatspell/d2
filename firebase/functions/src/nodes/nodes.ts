@@ -1,4 +1,3 @@
-import { FunctionsNodeData } from '../../shared/nodes/registry';
 import Application from '../app';
 import { NodesFilesService } from './files';
 import { NodesPathsService } from './paths';
@@ -24,23 +23,11 @@ export class NodesService {
     );
   }
 
-  async onNodeCreated(opts: { id: string; data: FunctionsNodeData }) {
-    await this.paths.updateOwn(opts);
-  }
-
   async onNodeDeleted({ id }: { id: string }) {
     await Promise.all([
       this.files.onNodeDeleted(id),
       this.deleteChildren(id),
       this.app.users.deleteUserNodeForAllUsers(id),
     ]);
-  }
-
-  async onNodeUpdated({ id, before, after }: { id: string; before: FunctionsNodeData; after: FunctionsNodeData }) {
-    if (before.identifier !== after.identifier) {
-      await this.paths.updateOwn({ id, data: after });
-    } else if (before.path !== after.path) {
-      await this.paths.updateChildren({ id, data: after });
-    }
   }
 }

@@ -8,6 +8,7 @@ import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
 export class FileNodePropertiesModel extends NodePropertiesModel<'file'> {
   readonly filename = data(this, 'filename');
+  readonly paths = [];
 }
 
 export class FileNodeModel extends NodeModel<'file'> {

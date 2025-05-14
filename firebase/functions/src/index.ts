@@ -5,7 +5,6 @@ import Application from './app';
 import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../shared/functions';
 import { config } from './config';
 import { isUserRole } from '../shared/documents';
-import { FunctionsNodeData } from '../shared/nodes/registry';
 
 functions.setGlobalOptions({ region: config.regionFunctions });
 
@@ -40,23 +39,6 @@ export const setRole = functions.https.onCall<FunctionsSetRoleEventRequest, Prom
     });
   },
 );
-
-export const onNodeCreated = functions.firestore.onDocumentCreated('/nodes/{id}', async (event) => {
-  const id = event.params.id;
-  const data = event.data?.data();
-  if (data) {
-    await app.nodes.onNodeCreated({ id, data: data as FunctionsNodeData });
-  }
-});
-
-export const onNodeUpdated = functions.firestore.onDocumentUpdated('/nodes/{id}', async (event) => {
-  const id = event.params.id;
-  const before = event.data?.before.data() as FunctionsNodeData | undefined;
-  const after = event.data?.after.data() as FunctionsNodeData | undefined;
-  if (before && after) {
-    await app.nodes.onNodeUpdated({ id, before, after });
-  }
-});
 
 export const onNodeDeleted = functions.firestore.onDocumentDeleted('/nodes/{id}', async (event) => {
   const id = event.params.id;

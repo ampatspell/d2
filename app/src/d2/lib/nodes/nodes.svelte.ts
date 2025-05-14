@@ -7,6 +7,7 @@ import { queryAll } from '../base/fire/query.svelte';
 import { getter, options } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
 import {
+  asParent,
   createNodeModel,
   nodeDocumentKey,
   NodeModel,
@@ -15,25 +16,8 @@ import {
 } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
-import type { NodeParentData } from '$d2-shared/documents';
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
-
-const asParent = (node: NodeModel | undefined): NodeParentData | null => {
-  if (node) {
-    const {
-      id,
-      path: { value: path },
-      identifier,
-    } = node;
-    return {
-      id,
-      path,
-      identifier,
-    };
-  }
-  return null;
-};
 
 export type NodesModelOptions = {
   query: fs.Query;
@@ -47,6 +31,9 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly delegate: NodeBackendModelDelegate = options({
     parentFor: (node) => this.byId(node.parent?.id),
     childrenFor: (node) => this.byParentId(node.id),
+    didUpdatePath: async (opts) => {
+      await Promise.all(this.all.map((node) => node.updatePaths(opts)));
+    },
   });
 
   readonly _nodes = mapModels({

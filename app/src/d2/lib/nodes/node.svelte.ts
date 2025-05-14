@@ -6,11 +6,12 @@ import { getDefinition } from '../definition/app.svelte';
 import { data, DocumentModelProperties, Property, type PropertyUpdateResult } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
-import type { BaseNodeData } from '$d2-shared/documents';
+import type { BaseNodeData, NodeParentData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { HasSubscriber } from '../base/model/subscriber.svelte';
 import { mapModel } from '../base/model/models.svelte';
+import { isTruthy } from '../base/utils/array';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -18,6 +19,22 @@ export type NodeData<Type extends NodeType = NodeType> = BaseNodeData<Type, Node
 
 export type NodeModelFactory<Model extends NodeModel> = {
   new (...args: ConstructorParameters<typeof NodeModel<never>>): Model;
+};
+
+export const asParent = (node: NodeModel | undefined): NodeParentData | null => {
+  if (node) {
+    const {
+      id,
+      path: { value: path },
+      identifier,
+    } = node;
+    return {
+      id,
+      path,
+      identifier,
+    };
+  }
+  return null;
 };
 
 export const nodeDocumentKey = (doc: Document<NodeData>) => {
@@ -32,7 +49,7 @@ export class NodeBasePropertiesModel<Type extends NodeType> extends DocumentMode
   readonly identifier = data(this, 'identifier');
 }
 
-export class NodePropertiesModel<
+export abstract class NodePropertiesModel<
   Type extends NodeType,
   O extends NodePropertiesModelOptions<Type> = NodePropertiesModelOptions<Type>,
 > extends Subscribable<O> {
@@ -44,6 +61,22 @@ export class NodePropertiesModel<
 
   async didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
     await this.options.model.didUpdate(property, result);
+  }
+
+  abstract readonly paths: Property<string | undefined>[];
+
+  async updatePaths(opts: PropertyUpdateResult<string>) {
+    let updated = false;
+    this.paths.forEach((prop) => {
+      const path = prop.value;
+      if (path?.startsWith(opts.before)) {
+        const rest = path.substring(opts.before.length, path.length);
+        const after = `${opts.after}${rest}`;
+        prop.update(after);
+        updated = true;
+      }
+    });
+    return updated;
   }
 }
 
@@ -57,19 +90,29 @@ export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModel
 export type NodeBackendModelDelegate = {
   parentFor: (node: NodeModel) => NodeModel | undefined;
   childrenFor: (node: NodeModel) => NodeModel[];
+  didUpdatePath: (opts: PropertyUpdateResult<string>) => Promise<void>;
 };
 
 export type NodeBackendModelOptions<Type extends NodeType> = {
   node: NodeModel<Type>;
-  delegate: NodeBackendModelDelegate | undefined;
+  delegate: NodeBackendModelDelegate;
 };
 
 export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<NodeBackendModelOptions<Type>> {
   private readonly delegate = $derived(this.options.delegate);
   private readonly node = $derived(this.options.node);
 
-  readonly parent = $derived(this.delegate?.parentFor(this.node));
-  readonly children = $derived(this.delegate?.childrenFor(this.node));
+  readonly parent = $derived(this.delegate.parentFor(this.node));
+  readonly children = $derived(this.delegate.childrenFor(this.node));
+
+  readonly path: string = $derived.by(() => {
+    const parent = this.parent?.backend?.path;
+    return [parent, '/', this.node.identifier].filter(isTruthy).join('');
+  });
+
+  async didUpdatePath(opts: PropertyUpdateResult<string>) {
+    await this.delegate.didUpdatePath(opts);
+  }
 }
 
 export type NodePathModelOptions = {
@@ -106,6 +149,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly id = $derived(this.doc.id!);
   readonly exists = $derived(this.doc.exists);
   readonly data = $derived(this.doc.data!);
+  readonly isBusy = $derived(this.doc.isSaving || this.doc.isDeleting);
 
   readonly kind = $derived(this.data.kind);
   readonly parent = $derived(this.data.parent ?? undefined);
@@ -135,11 +179,37 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     await this.doc.save();
   }
 
+  async updatePaths(opts: PropertyUpdateResult<string>) {
+    if (await this.properties.updatePaths(opts)) {
+      await this.save();
+    }
+  }
+
+  protected async didUpdateParentIdentifier(parent: NodeParentData) {
+    const backend = this.backend;
+    if (backend) {
+      this.data.parent = parent;
+      this.data.path = backend.path;
+      await this.save();
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async didUpdateIdentifier(result: PropertyUpdateResult<string>) {
+    const backend = this.backend;
+    if (backend) {
+      const before = this.data.path;
+      const after = backend.path;
+      this.data.path = after;
+      await this.backend.didUpdatePath({ before, after });
+      await Promise.all(backend.children?.map((child) => child.didUpdateParentIdentifier(asParent(this)!)));
+    }
+  }
+
   async didUpdate(property: Property, result: PropertyUpdateResult) {
     const identifier = this.properties.base.identifier;
     if (property === this.properties.base.identifier) {
-      const cast = identifier.cast(result);
-      console.log(this + '', 'didUpdate', 'identifier', cast);
+      await this.didUpdateIdentifier(identifier.asResult(result));
     }
     await this.save();
   }

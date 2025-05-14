@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LucideCloudUpload from '$d2/icons/lucide--cloud-upload.svelte';
+  import LucideFileUp from '$d2/icons/lucide--file-up.svelte';
   import type { VoidCallback } from '$d2/lib/base/utils/types';
   import Icon from './icon.svelte';
 
@@ -12,4 +12,4 @@
   let onClick = () => onUpload?.();
 </script>
 
-<Icon icon={LucideCloudUpload} {onClick} />
+<Icon icon={LucideFileUp} {onClick} />

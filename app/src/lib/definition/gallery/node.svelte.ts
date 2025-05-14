@@ -10,6 +10,8 @@ export class GalleryNodePropertiesModel extends NodePropertiesModel<'gallery'> {
   readonly title = data(this, 'title');
   readonly introduction = data(this, 'introduction');
   readonly images = data(this, 'images');
+
+  readonly paths = $derived([this.images]);
 }
 
 export class GalleryNodeModel extends NodeModel<'gallery'> {

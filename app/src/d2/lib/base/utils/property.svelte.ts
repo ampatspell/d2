@@ -40,7 +40,7 @@ export class Property<T = any, O extends PropertyOptions<T> = PropertyOptions<T>
     }
   }
 
-  cast(result: PropertyUpdateResult<T>): PropertyUpdateResult<T> {
+  asResult(result: PropertyUpdateResult<T>): PropertyUpdateResult<T> {
     return result as PropertyUpdateResult<T>;
   }
 

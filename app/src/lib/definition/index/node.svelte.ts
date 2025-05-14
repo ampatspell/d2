@@ -7,8 +7,10 @@ import { mapNode } from '$d2/lib/nodes/map.svelte';
 import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
 export class IndexNodePropertiesModel extends NodePropertiesModel<'index'> {
-  title = data(this, 'title');
-  background = data(this, 'background');
+  readonly title = data(this, 'title');
+  readonly background = data(this, 'background');
+
+  readonly paths = [this.background];
 }
 
 export class IndexNodeModel extends NodeModel<'index'> {

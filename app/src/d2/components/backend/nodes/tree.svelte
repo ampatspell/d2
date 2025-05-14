@@ -6,7 +6,10 @@
 </script>
 
 <script lang="ts">
+  import Icon from '$d2/components/dark/icon.svelte';
+
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree.svelte';
+  import LucideCloudUpload from '$d2/icons/lucide--cloud-upload.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
@@ -43,7 +46,12 @@
   {#snippet item(model: NodeModel)}
     <div class="item">
       <div class="identifier">{model.identifier}</div>
-      <div class="kind">{model.name}</div>
+      <div class="accessories">
+        <div class="node" class:is-busy={model.isBusy}>
+          <Icon icon={LucideCloudUpload} size="small" />
+        </div>
+        <div class="kind">{model.name}</div>
+      </div>
     </div>
   {/snippet}
 </Tree>
@@ -60,9 +68,22 @@
       text-overflow: ellipsis;
       flex: 1;
     }
-    > .kind {
-      font-size: 10px;
-      color: var(--dark-faded-color-1);
+    > .accessories {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+      > .node {
+        opacity: 0;
+        transition: 0.15s ease-in-out opacity;
+        &.is-busy {
+          opacity: 0.2;
+        }
+      }
+      > .kind {
+        font-size: 10px;
+        color: var(--dark-faded-color-1);
+      }
     }
   }
 </style>
