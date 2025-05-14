@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] select multiple nodes in sidebar
 - [ ] backend nodes as grid
 - [ ] reorder nodes in backend grid
 - [ ] reorder and move nodes in the sidebar

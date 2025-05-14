@@ -16,7 +16,7 @@
     onWillDelete: VoidCallback;
   } = $props();
 
-  let title = $derived(node.identifier);
+  let title = $derived(node.path.value);
 
   let onDelete = async () => {
     onWillDelete();
