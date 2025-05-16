@@ -46,7 +46,6 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     this.mouse = down;
     const rect = this.element?.getBoundingClientRect();
     if (rect) {
-      console.log(rect);
       this.offset = {
         x: down.x - rect.left,
         y: down.y - rect.top,
