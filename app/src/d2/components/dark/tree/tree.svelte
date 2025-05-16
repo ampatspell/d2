@@ -1,42 +1,115 @@
 <script lang="ts" module>
+  import type { VoidCallback } from '$d2/lib/base/utils/types';
+
   export type TreeModelDelegate<T> = {
     children: T[];
     isOpen: boolean;
     setOpen: (open: boolean) => void;
     isSelected: boolean;
-    isFaded: boolean;
+    isFaded?: boolean;
     select: VoidCallback;
     icon: Component;
+    hasParent: (model: T) => boolean;
+  };
+
+  export type TreeDelegate<T> = {
+    isReorderable: boolean;
+    models: T[];
+    deselect: VoidCallback;
+    delegateFor: (model: T) => TreeModelDelegate<T>;
   };
 </script>
 
 <script lang="ts" generics="T">
-  import type { VoidCallback } from '$d2/lib/base/utils/types';
   import type { Component, Snippet } from 'svelte';
+  import Group from '../draggable/group.svelte';
+  import { type DraggableDelegate } from '../draggable/models.svelte';
+  import { getter, options } from '$d2/lib/base/utils/options';
+  import Draggable from '../draggable/draggable.svelte';
+  import Tree from './tree.svelte';
 
   let {
-    models,
-    delegateFor,
+    delegate: _treeDelegate,
     item,
-    deselect: _deselect,
   }: {
-    models: T[];
-    delegateFor: (model: T) => TreeModelDelegate<T>;
-    deselect: VoidCallback;
+    delegate: TreeDelegate<T>;
     item: Snippet<[{ model: T; delegate: TreeModelDelegate<T>; level: number }]>;
   } = $props();
 
-  let tree = $state<HTMLDivElement>();
+  let element = $state<HTMLDivElement>();
+  let dragging = $state<T>();
+
+  let treeDelegate = options<TreeDelegate<T>>({
+    models: getter(() => _treeDelegate.models),
+    isReorderable: getter(() => _treeDelegate.isReorderable),
+    deselect: () => _treeDelegate.deselect(),
+    delegateFor: (model) => {
+      const delegate = _treeDelegate.delegateFor(model);
+      return options<TreeModelDelegate<T>>({
+        children: getter(() => delegate.children),
+        icon: getter(() => delegate.icon),
+        isOpen: getter(() => delegate.isOpen),
+        isSelected: getter(() => delegate.isSelected),
+        isFaded: getter(() => {
+          if (dragging) {
+            return model === dragging || delegate.hasParent(dragging as T);
+          }
+          return false;
+        }),
+        select: () => delegate.select(),
+        setOpen: (open) => delegate.setOpen(open),
+        hasParent: (model) => delegate.hasParent(model),
+      });
+    },
+  });
+
   let deselect = (e: Event) => {
-    if (e.target === tree) {
-      _deselect();
+    if (e.target === element) {
+      treeDelegate.deselect();
     }
   };
+
+  let draggableDelegate = options<DraggableDelegate>({
+    isDraggable: getter(() => treeDelegate.isReorderable),
+    onDragging: (model) => (dragging = model as T | undefined),
+  });
+
+  let createDraggingTreeDelegate = (model: T) =>
+    options<TreeDelegate<T>>({
+      isReorderable: false,
+      models: [model],
+      deselect: () => treeDelegate.deselect(),
+      delegateFor: (model) => {
+        let delegate = treeDelegate.delegateFor(model);
+        return options<TreeModelDelegate<T>>({
+          children: getter(() => delegate.children),
+          icon: getter(() => delegate.icon),
+          isOpen: delegate.isOpen,
+          isSelected: false,
+          isFaded: false,
+          select: () => {},
+          setOpen: () => {},
+          hasParent: () => false,
+        });
+      },
+    });
 </script>
 
 {#snippet group(model: T, level: number)}
-  {@const delegate = delegateFor(model)}
-  {@render item({ model, delegate, level })}
+  {@const delegate = treeDelegate.delegateFor(model)}
+  <Draggable {model}>
+    {@render item({ model, delegate, level })}
+    {#snippet dragging()}
+      {@const delegate = createDraggingTreeDelegate(model)}
+      <div class="dragging" style:--width="320px">
+        <Tree {delegate}>
+          {#snippet item({ model, delegate, level })}
+            {@render item({ model, delegate, level })}
+          {/snippet}
+        </Tree>
+      </div>
+    {/snippet}
+  </Draggable>
   {#if delegate.isOpen}
     {@render array(delegate.children, level + 1)}
   {/if}
@@ -48,11 +121,13 @@
   {/each}
 {/snippet}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="tree" bind:this={tree} onclick={deselect}>
-  {@render array(models, 0)}
-</div>
+<Group delegate={draggableDelegate}>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="tree" bind:this={element} onclick={deselect}>
+    {@render array(treeDelegate.models, 0)}
+  </div>
+</Group>
 
 <style lang="scss">
   .tree {
@@ -60,5 +135,8 @@
     display: flex;
     flex-direction: column;
     user-select: none;
+    .dragging {
+      width: var(--width);
+    }
   }
 </style>
