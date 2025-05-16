@@ -28,6 +28,7 @@
   import Draggable from '../draggable/draggable.svelte';
   import Tree from './tree.svelte';
 
+  // eslint-disable-next-line svelte/no-unused-props
   let {
     delegate: _treeDelegate,
     item,

@@ -2,7 +2,11 @@ import type { TreeDelegate, TreeModelDelegate } from '$d2/components/dark/tree/t
 import { Model } from '$d2/lib/base/model/model.svelte';
 import type { NodeModel } from '$d2/lib/nodes/node.svelte';
 import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
-import type { NodesTreeSettings } from './tree.svelte';
+
+export type NodesTreeSettings = {
+  isOpen: (id: string) => boolean;
+  setOpen: (id: string, open: boolean) => void;
+};
 
 export type NodesTreeDelegateOptions = {
   nodes: NodesModel;

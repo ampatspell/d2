@@ -1,17 +1,10 @@
-<script lang="ts" module>
-  export type NodesTreeSettings = {
-    isOpen: (id: string) => boolean;
-    setOpen: (id: string, open: boolean) => void;
-  };
-</script>
-
 <script lang="ts">
   import Tree from '$d2/components/dark/tree/tree.svelte';
   import { getter } from '$d2/lib/base/utils/options';
   import { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import Item from './item.svelte';
-  import { NodesTreeDelegate } from './models.svelte';
+  import { NodesTreeDelegate, type NodesTreeSettings } from './models.svelte';
 
   let {
     nodes,
