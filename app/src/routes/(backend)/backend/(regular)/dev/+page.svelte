@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DraggableArray from "./draggable/draggable-array.svelte";
-  import DraggableModel from "./draggable/draggable-model.svelte";
+  import DraggableArray from './draggable/draggable-array.svelte';
+  import DraggableModel from './draggable/draggable-model.svelte';
 
   class Entry {
     name = $state<string>()!;
@@ -15,7 +15,7 @@
   let add = (entry: Entry) => {
     entries.push(entry);
     return entry;
-  }
+  };
 
   let index = add(new Entry('index', undefined));
   {
@@ -23,7 +23,7 @@
   }
   let gallery = add(new Entry('gallery', undefined));
   {
-    for(let i = 0; i < 5; i++) {
+    for (let i = 0; i < 5; i++) {
       add(new Entry(`image-${i + 1}`, gallery));
     }
   }
@@ -34,10 +34,12 @@
     <DraggableArray>
       {#each entries as entry (entry)}
         <DraggableModel model={entry}>
-          <div class="entry">
-            <div class="name">{entry.name}</div>
-            <div class="parent">{entry.parent?.name ?? 'none'}</div>
-          </div>
+          {#snippet children({ type })}
+            <div class="entry" class:dragging={type === 'dragging'}>
+              <div class="name">{entry.name}</div>
+              <div class="parent">{entry.parent?.name ?? 'none'}</div>
+            </div>
+          {/snippet}
         </DraggableModel>
       {/each}
     </DraggableArray>
@@ -57,10 +59,13 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(255,0,0,0.1);
+        background: rgba(255, 0, 0, 0.1);
         padding: 5px;
         width: 75px;
         height: 75px;
+        &.dragging {
+          opacity: 0.5;
+        }
       }
     }
   }

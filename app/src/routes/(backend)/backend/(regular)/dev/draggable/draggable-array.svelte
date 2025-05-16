@@ -1,7 +1,7 @@
 <script lang="ts" module>
-  import { Model } from "$d2/lib/base/model/model.svelte";
-  import { createContext } from "$d2/lib/base/utils/context";
-    import type { OptionsInput } from "$d2/lib/base/utils/options";
+  import { Model } from '$d2/lib/base/model/model.svelte';
+  import { createContext } from '$d2/lib/base/utils/context';
+  import type { OptionsInput } from '$d2/lib/base/utils/options';
 
   export type DraggableContextOptions = {
     parent: DraggableContext | undefined;
@@ -15,17 +15,15 @@
     const context = new DraggableContext(opts);
     setDraggableContext(context);
     return context;
-  }
-
-  export {
-    getDraggableContext,
   };
+
+  export { getDraggableContext };
 </script>
 
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import type { Snippet } from 'svelte';
 
-  let { children }: { children: Snippet; } = $props();
+  let { children }: { children: Snippet } = $props();
 
   let parent = getDraggableContext(false);
   let context = createDraggableContext({ parent });

@@ -1,60 +1,71 @@
-<script lang="ts" module>
-  export class DraggableState {
-    phase = $state<'preflight' | 'dragging'>('preflight');
-
-    onMouseDown(e: MouseEvent) {}
-    onMouseMove(e: MouseEvent) {}
-    onMouseUp(e: MouseEvent) {}
-  }
-</script>
-
 <script lang="ts">
-  import type { Snippet } from "svelte";
-  import { getDraggableContext } from "./draggable-array.svelte";
+  import type { Snippet } from 'svelte';
+  import { getDraggableContext } from './draggable-array.svelte';
+  import { getter } from '$d2/lib/base/utils/options';
+  import { DraggableState } from './models.svelte';
 
   let {
     model,
-    children
+    children,
   }: {
     model: unknown;
-    children: Snippet;
+    children: Snippet<[{ type: 'regular' | 'dragging' | 'overlay' }]>;
   } = $props();
 
   let context = getDraggableContext();
-
-  let state = $state<DraggableState>();
+  let draggable = $state<DraggableState>();
+  let element = $state<HTMLDivElement>();
 
   let onmousedown = (e: MouseEvent) => {
     e.preventDefault();
-    state = new DraggableState();
-    state.onMouseDown(e);
-  }
+    draggable = new DraggableState({
+      element: getter(() => element),
+    });
+    draggable.onMouseDown(e);
+  };
 
   let onmousemove = (e: MouseEvent) => {
-    if(state) {
+    if (draggable) {
       e.preventDefault();
-      state.onMouseMove(e);
+      draggable.onMouseMove(e);
     }
-  }
+  };
 
   let onmouseup = (e: MouseEvent) => {
-    if(state) {
+    if (draggable) {
       e.preventDefault();
-      state.onMouseUp(e);
-      state = undefined;
+      draggable.onMouseUp();
+      draggable = undefined;
     }
-  }
+  };
 </script>
 
 <svelte:window {onmousemove} {onmouseup} />
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="draggable-model" {onmousedown}>
-  {@render children()}
+<div class="draggable-model" bind:this={element} {onmousedown}>
+  {@render children({ type: draggable?.isDragging ? 'dragging' : 'regular' })}
+  {#if draggable?.isDragging}
+    <div class="dragging" style:--x="{draggable.dragging.x}px" style:--y="{draggable.dragging.y}px">
+      {@render children({ type: 'overlay' })}
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">
+  @use 'sass:color';
   .draggable-model {
-    display: contents;
+    position: relative;
+    > .dragging {
+      z-index: 1;
+      position: fixed;
+      top: 0;
+      left: 0;
+      transform: translate(var(--x), var(--y));
+      background: #fff;
+      box-shadow:
+        0 5px 10px color.adjust(#000, $alpha: -0.95),
+        0 20px 40px color.adjust(#000, $alpha: -0.95);
+    }
   }
 </style>
