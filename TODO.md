@@ -1,5 +1,7 @@
 ## TODO
 
+- [ ] password protected pages
+- [ ] disable list for some of parents
 - [ ] select multiple nodes in sidebar
 - [ ] backend nodes as grid
 - [ ] reorder nodes in backend grid
