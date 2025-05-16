@@ -8,6 +8,7 @@
 <script lang="ts">
   import Draggable from '$d2/components/dark/draggable/draggable.svelte';
   import Group from '$d2/components/dark/draggable/group.svelte';
+  import type { DraggableDelegate } from '$d2/components/dark/draggable/models.svelte';
   import Tree, { type TreeModelDelegate } from '$d2/components/dark/tree/tree.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { NodeModel } from '$d2/lib/nodes/node.svelte';
@@ -30,24 +31,39 @@
 
   let models = $derived(nodes.byParentId(null));
 
-  let createDelegateFor = (opts: { hasSelection: boolean }) => (model: NodeModel) => {
+  let dragging = $state<NodeModel>();
+
+    let isDragging = (model: NodeModel) => {
+    if (dragging && model.backend) {
+      return model.backend.isOrHasParent(dragging);
+    }
+    return false;
+  };
+
+  let createTreeDelegateFor = (opts: { hasSelection: boolean }) => (model: NodeModel) => {
     return options<TreeModelDelegate<NodeModel>>({
       children: getter(() => nodes.byParentId(model.id)),
       isOpen: getter(() => settings.isOpen(model.id)),
-      isSelected: getter(() => opts.hasSelection && selected?.id === model.id),
+      isSelected: getter(() => model !== dragging && opts.hasSelection && selected?.id === model.id),
+      isFaded: getter(() => opts.hasSelection && isDragging(model)),
       select: () => onSelect(model),
       icon: getter(() => model.icon),
       setOpen: (isOpen) => settings.setOpen(model.id, isOpen),
     });
   };
 
-  let delegateFor = createDelegateFor({ hasSelection: true });
-  let delegateForDragging = createDelegateFor({ hasSelection: false });
+  let delegateFor = createTreeDelegateFor({ hasSelection: true });
+  let delegateForDragging = createTreeDelegateFor({ hasSelection: false });
+
+  let draggableDelegate = options<DraggableDelegate>({
+    isDraggable: getter(() => isReorderable ?? false),
+    onDragging: (model) => (dragging = model as NodeModel | undefined),
+  });
 
   let deselect = () => onSelect(undefined);
 </script>
 
-<Group isDraggable={isReorderable ?? false}>
+<Group delegate={draggableDelegate}>
   <Tree {models} {delegateFor} {deselect}>
     {#snippet item({ model, delegate, level })}
       <Draggable {model}>

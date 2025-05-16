@@ -105,6 +105,24 @@ export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<No
   readonly parent = $derived(this.delegate.parentFor(this.node));
   readonly children = $derived(this.delegate.childrenFor(this.node));
 
+  readonly nodes: NodeModel[] = $derived.by(() => {
+    return [
+      this.node,
+      ...this.children.reduce<NodeModel[]>((all, child) => {
+        const recursive = child.backend?.nodes ?? [];
+        return [...all, ...recursive];
+      }, []),
+    ];
+  });
+
+  hasParent(node: NodeModel): boolean {
+    return this.parent?.backend?.isOrHasParent(node) ?? false;
+  }
+
+  isOrHasParent(node: NodeModel) {
+    return this.node === node || this.hasParent(node);
+  }
+
   readonly path: string = $derived.by(() => {
     const parent = this.parent?.backend?.path;
     return [parent, '/', this.node.identifier].filter(isTruthy).join('');

@@ -3,6 +3,11 @@ import { createContext } from '$d2/lib/base/utils/context';
 import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { Point } from '$d2/lib/base/utils/types';
 
+export type DraggableDelegate = {
+  isDraggable: boolean;
+  onDragging: (model: unknown | undefined) => void;
+};
+
 const eventToClientPoint = (e: MouseEvent): Point => {
   const x = e.clientX;
   const y = e.clientY;
@@ -23,6 +28,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
   readonly context = $derived(this.options.context);
   readonly draggable = $derived(this.options.draggable);
   readonly element = $derived(this.draggable.element);
+  readonly model = $derived(this.draggable.model);
 
   private phase = $state<'preflight' | 'dragging'>('preflight');
   readonly isDragging = $derived(this.phase === 'dragging');
@@ -60,6 +66,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     if (this.phase === 'preflight') {
       if (distance(this.down!, point) > 5) {
         this.phase = 'dragging';
+        this.context.onDragStart(this);
       }
     }
   }
@@ -76,11 +83,13 @@ export class DraggingModel extends Model<DraggingModelOptions> {
 }
 
 export type DraggableContextOptions = {
-  isDraggable?: boolean;
+  delegate: DraggableDelegate;
 };
 
 export class DraggableContext extends Model<DraggableContextOptions> {
-  readonly isDraggable: boolean = $derived(this.options.isDraggable ?? true);
+  readonly delegate = $derived(this.options.delegate);
+  readonly isDraggable: boolean = $derived(this.delegate.isDraggable);
+
   private dragging = $state<DraggingModel>();
 
   draggingFor(draggable: DraggableModel) {
@@ -102,8 +111,20 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   }
 
   onMouseUp(e: MouseEvent) {
-    this.dragging?.onMouseUp(e);
-    this.dragging = undefined;
+    const dragging = this.dragging;
+    if (dragging) {
+      dragging.onMouseUp(e);
+      this.onDragEnd();
+      this.dragging = undefined;
+    }
+  }
+
+  onDragStart(dragging: DraggingModel) {
+    this.delegate.onDragging(dragging.model);
+  }
+
+  onDragEnd() {
+    this.delegate.onDragging(undefined);
   }
 }
 

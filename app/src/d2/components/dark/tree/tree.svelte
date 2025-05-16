@@ -4,6 +4,7 @@
     isOpen: boolean;
     setOpen: (open: boolean) => void;
     isSelected: boolean;
+    isFaded: boolean;
     select: VoidCallback;
     icon: Component;
   };

@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { createDraggableContext } from './models.svelte';
+  import { createDraggableContext, type DraggableDelegate } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
 
-  let { isDraggable, children }: { isDraggable: boolean; children: Snippet } = $props();
+  let { delegate, children }: { delegate: DraggableDelegate; children: Snippet } = $props();
 
   let context = createDraggableContext({
-    isDraggable: getter(() => isDraggable),
+    delegate: getter(() => delegate),
   });
 
   let onmousemove = (e: MouseEvent) => context.onMouseMove(e);
