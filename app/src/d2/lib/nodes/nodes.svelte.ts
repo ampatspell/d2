@@ -17,7 +17,7 @@ import {
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 
-const nextPosition = (nodes: NodeModel[]) => {
+export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
     return Math.max(...nodes.map((child) => child.position ?? 0)) + 1;
   }

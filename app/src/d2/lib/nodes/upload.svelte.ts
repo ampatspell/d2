@@ -6,7 +6,7 @@ import { firebase } from '../base/fire/firebase.svelte';
 import { removeObject } from '../base/utils/array';
 import { Subscribable } from '../base/model/model.svelte';
 import type { NodeModel } from './node.svelte';
-import { nodesCollection } from './nodes.svelte';
+import { nextPosition, nodesCollection } from './nodes.svelte';
 
 export type UploadFileStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
 
@@ -33,6 +33,7 @@ export class UploadFileModel {
   readonly id = $derived.by(() => fs.doc(nodesCollection).path);
   readonly path = $derived.by(() => `${this.id}/original`);
   readonly ref = $derived.by(() => storage.ref(firebase.storage, this.path));
+  readonly position = $derived.by(() => this.options.upload.positionFor(this));
 
   remove() {
     if (this.status === 'idle') {
@@ -48,6 +49,7 @@ export class UploadFileModel {
       customMetadata: {
         filename: this.name,
         parent: this.options.upload.id,
+        position: String(this.position),
       },
     });
 
@@ -86,7 +88,7 @@ export type UploadFilesModelOptions = {
 
 export class UploadFilesModel extends Subscribable<UploadFilesModelOptions> {
   files = $state<UploadFileModel[]>([]);
-  readonly primitive = $derived.by(() => this.files.map((model) => model.data));
+  readonly primitive = $derived(this.files.map((model) => model.data));
 
   onFiles(files: File[]) {
     this.files = files.map((file) => new UploadFileModel({ file, upload: this }));
@@ -103,6 +105,11 @@ export class UploadFilesModel extends Subscribable<UploadFilesModelOptions> {
   readonly node = $derived(this.options.node);
   readonly id = $derived(this.node.id);
   readonly path = $derived(this.node.path.value);
+  readonly position = $derived(nextPosition(this.node.backend?.children ?? []));
+
+  positionFor(file: UploadFileModel) {
+    return this.position + this.files.indexOf(file);
+  }
 
   async onUpload() {
     if (this.isBusy) {
