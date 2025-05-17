@@ -10,8 +10,6 @@
     delegate: getter(() => delegate),
   });
 
-  let over = $derived(context.over);
-
   let onmousemove = (e: MouseEvent) => context.onMouseMove(e);
   let onmouseup = (e: MouseEvent) => context.onMouseUp(e);
 </script>
@@ -22,7 +20,7 @@
   {@render children()}
 </div>
 
-{#each over as model (model)}
+{#each context.over as model (model)}
   <div
     class="over"
     style:--x="{model.rect?.x}px"
