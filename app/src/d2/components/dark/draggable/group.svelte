@@ -12,9 +12,10 @@
 
   let onmousemove = (e: MouseEvent) => context.onMouseMove(e);
   let onmouseup = (e: MouseEvent) => context.onMouseUp(e);
+  let onkeyup = (e: KeyboardEvent) => context.onKeyUp(e);
 </script>
 
-<svelte:window {onmousemove} {onmouseup} />
+<svelte:window {onmousemove} {onmouseup} {onkeyup} />
 
 <div class="group">
   {@render children()}

@@ -203,6 +203,16 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     }
   }
 
+  onKeyUp(e: KeyboardEvent) {
+    const dragging = this.dragging;
+    if (dragging) {
+      if (e.key === 'Escape') {
+        this.delegate.onDragging(undefined);
+        this.dragging = undefined;
+      }
+    }
+  }
+
   onDragStart(dragging: DraggingModel) {
     this.delegate.onDragging(dragging.model);
   }
