@@ -5,6 +5,9 @@ import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { Point } from '$d2/lib/base/utils/types';
 import { untrack } from 'svelte';
 
+export type Over = 'item' | 'before' | 'after';
+export type Direction = 'horizontal' | 'vertical';
+
 export type DraggableDelegate = {
   isDraggable: boolean;
   onDragging: (model: unknown | undefined) => void;
@@ -77,18 +80,28 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     e.preventDefault();
   }
 
-  isOver(model: DraggableModel) {
+  over(model: DraggableModel): Over | undefined {
     const mouse = this.mouse;
     const rect = model.rect;
     if (mouse && rect) {
       const calc = (p: 'x' | 'y', s: 'width' | 'height') => {
-        return mouse[p] > rect[p] && mouse[p] < rect[p] + rect[s];
+        return mouse[p] > rect[p] && mouse[p] <= rect[p] + rect[s];
       };
       const x = calc('x', 'width');
       const y = calc('y', 'height');
-      return x && y;
+      if (x && y) {
+        const offset = 10;
+        const position = mouse.y - rect.y;
+        if (position < offset) {
+          return 'before';
+        }
+        if (position > rect.height - offset) {
+          return 'after';
+        }
+        return 'item';
+      }
     }
-    return false;
+    return undefined;
   }
 
   static onMouseDown(context: DraggableContext, draggable: DraggableModel, e: MouseEvent) {
@@ -96,6 +109,39 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     model.onMouseDown(e);
     return model;
   }
+}
+
+export type DraggableModelOptions = {
+  context: DraggableContext;
+  element: HTMLDivElement | undefined;
+  model: unknown;
+};
+
+export class DraggableModel extends Model<DraggableModelOptions> {
+  readonly context = $derived(this.options.context);
+  readonly element = $derived(this.options.element);
+  readonly model = $derived(this.options.model);
+
+  readonly rect = $derived.by(() => {
+    const element = this?.element;
+    if (element) {
+      const { top, left, width, height } = element.getBoundingClientRect();
+      return {
+        x: left,
+        y: top,
+        width,
+        height,
+      };
+    }
+  });
+
+  readonly over = $derived.by(() => this.context.dragging?.over(this));
+
+  onMouseDown(e: MouseEvent) {
+    this.context.onMouseDown(this, e);
+  }
+
+  readonly dragging = $derived(this.context.draggingFor(this));
 }
 
 export type DraggableContextOptions = {
@@ -110,7 +156,10 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   dragging = $state<DraggingModel>();
 
   readonly over = $derived.by(() => {
-    return this.registered.filter((model) => model.isOver);
+    if (this.dragging?.isDragging) {
+      return this.registered.filter((model) => !!model.over);
+    }
+    return [];
   });
 
   draggingFor(draggable: DraggableModel) {
@@ -129,7 +178,6 @@ export class DraggableContext extends Model<DraggableContextOptions> {
 
   onMouseDown(draggable: DraggableModel, e: MouseEvent) {
     if (this.isDraggable) {
-      e.preventDefault();
       this.dragging = DraggingModel.onMouseDown(this, draggable, e);
     }
   }
@@ -165,36 +213,3 @@ export const createDraggableContext = (opts: OptionsInput<DraggableContextOption
 };
 
 export { getDraggableContext };
-
-export type DraggableModelOptions = {
-  context: DraggableContext;
-  element: HTMLDivElement | undefined;
-  model: unknown;
-};
-
-export class DraggableModel extends Model<DraggableModelOptions> {
-  readonly context = $derived(this.options.context);
-  readonly element = $derived(this.options.element);
-  readonly model = $derived(this.options.model);
-
-  readonly rect = $derived.by(() => {
-    const element = this?.element;
-    if (element) {
-      const { top, left, width, height } = element.getBoundingClientRect();
-      return {
-        x: left,
-        y: top,
-        width,
-        height,
-      };
-    }
-  });
-
-  readonly isOver = $derived.by(() => this.context.dragging?.isOver(this) ?? false);
-
-  onMouseDown(e: MouseEvent) {
-    this.context.onMouseDown(this, e);
-  }
-
-  readonly dragging = $derived(this.context.draggingFor(this));
-}
