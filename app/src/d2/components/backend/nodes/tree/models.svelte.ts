@@ -41,8 +41,18 @@ export class NodesTreeDelegate extends Model<NodesTreeDelegateOptions> implement
     return new NodesTreeModelDelegate({ model, delegate: this });
   }
 
+  isOpen(model: NodeModel) {
+    return this.settings.isOpen(model.id);
+  }
+
+  setOpen(model: NodeModel, isOpen: boolean) {
+    this.settings.setOpen(model.id, isOpen);
+  }
+
   onReorder(opts: { source: NodeModel; over: Over; target: NodeModel }) {
-    console.log(opts.source.path.value, opts.over, opts.target.path.value);
+    const { source, over, target } = opts;
+    const o = (model: NodeModel) => (this.isOpen(model) ? `(open)` : `(closed)`);
+    console.log(source.path.value, over, target.path.value, o(target));
   }
 }
 
@@ -56,11 +66,10 @@ export class NodesTreeModelDelegate
   implements TreeModelDelegate<NodeModel>
 {
   private readonly delegate = $derived(this.options.delegate);
-  private readonly settings = $derived(this.delegate.settings);
   private readonly model = $derived(this.options.model);
 
   readonly children = $derived(this.delegate.nodes.byParentId(this.model.id));
-  readonly isOpen = $derived(this.settings.isOpen(this.model.id));
+  readonly isOpen = $derived(this.delegate.isOpen(this.model));
   readonly isSelected = $derived(this.delegate.selected === this.model);
   readonly icon = $derived(this.model.icon);
 
@@ -69,6 +78,6 @@ export class NodesTreeModelDelegate
   }
 
   setOpen(isOpen: boolean) {
-    this.settings.setOpen(this.model.id, isOpen);
+    this.delegate.setOpen(this.model, isOpen);
   }
 }

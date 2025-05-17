@@ -7,7 +7,7 @@
 
 {#if model.over}
   <div
-    class={classes('over', model.over)}
+    class={classes('marker', model.over)}
     style:--x="{model.rect?.x}px"
     style:--y="{model.rect?.y}px"
     style:--width="{model.rect?.width}px"
@@ -16,7 +16,7 @@
 {/if}
 
 <style lang="scss">
-  .over {
+  .marker {
     position: fixed;
     top: 0;
     left: 0;
@@ -35,7 +35,7 @@
     &.after {
       transform: translate(calc(var(--x) + var(--offset)), calc(var(--y) + var(--height) - calc(var(--marker) / 2)));
     }
-    &.item {
+    &.over {
       --height-offset: 1px;
       transform: translate(calc(var(--x) + var(--offset)), calc(var(--y) + var(--offset)));
       width: calc(var(--width) - calc(2 * var(--offset)));

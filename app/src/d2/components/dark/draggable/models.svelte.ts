@@ -5,7 +5,7 @@ import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { Point } from '$d2/lib/base/utils/types';
 import { untrack } from 'svelte';
 
-export type Over = 'item' | 'before' | 'after';
+export type Over = 'over' | 'before' | 'after';
 export type Direction = 'horizontal' | 'vertical';
 
 export type DraggableDelegate = {
@@ -104,7 +104,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
         if (position > rect.height - offset) {
           return 'after';
         }
-        return 'item';
+        return 'over';
       }
     }
     return undefined;
