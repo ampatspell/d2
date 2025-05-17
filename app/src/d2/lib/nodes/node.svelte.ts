@@ -177,6 +177,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   readonly kind = $derived(this.data.kind);
   readonly parent = $derived(this.data.parent ?? undefined);
+  readonly position = $derived(this.data.position);
   readonly identifier = $derived(this.data.identifier);
   readonly createdAt = $derived(this.data.createdAt);
   readonly updatedAt = $derived(this.data.updatedAt);

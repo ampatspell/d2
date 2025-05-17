@@ -18,7 +18,7 @@
 
 <Item {delegate} {level}>
   <div class="item">
-    <div class="identifier">{model.identifier}</div>
+    <div class="identifier">{model.identifier} ({model.position})</div>
     <div class="accessories">
       <div class="node" class:is-busy={model.isBusy}>
         <Icon icon={LucideCloudUpload} size="small" />

@@ -25,6 +25,7 @@ export type BaseNodeData<Type extends string, NodePropertiesRegistry extends { [
   kind: Type;
   path: string;
   identifier: string;
+  position: number;
   properties: NodePropertiesRegistry[Type];
   parent: NodeParentData | null;
   createdAt: Date;

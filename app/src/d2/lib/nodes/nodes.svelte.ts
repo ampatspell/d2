@@ -17,6 +17,13 @@ import {
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 
+const nextPosition = (nodes: NodeModel[]) => {
+  if (nodes.length) {
+    return Math.max(...nodes.map((child) => child.position ?? 0)) + 1;
+  }
+  return 0;
+};
+
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
 
 export type NodesModelOptions = {
@@ -38,9 +45,10 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     source: getter(() => this._query.content),
     target: (doc) => createNodeModel(doc, this._delegate),
     key: nodeDocumentKey,
+    sort: [{ value: (node) => node.position, direction: 'asc' }],
   });
 
-  readonly all = $derived(this._nodes.content);
+  readonly all = $derived(this._nodes.sorted);
 
   byParentId(id: string | null) {
     if (id === null) {
@@ -63,9 +71,16 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     const ref = fs.doc(nodesCollection);
     const now = new Date();
     const identifier = ref.id;
+
     let path = `/${identifier}`;
+    let position = 0;
     if (parent) {
       path = `${parent.path.value}/${identifier}`;
+      if (parent.backend) {
+        position = nextPosition(parent.backend.children);
+      }
+    } else {
+      position = nextPosition(this.byParentId(null));
     }
 
     const properties = definition.defaults({
@@ -78,6 +93,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
         path,
         identifier,
         parent: asParent(parent),
+        position,
         properties,
         createdAt: now,
         updatedAt: now,
