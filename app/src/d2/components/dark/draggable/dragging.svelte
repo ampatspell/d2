@@ -27,6 +27,7 @@
     top: 0;
     left: 0;
     transform: translate(var(--x), var(--y));
+    border-radius: 4px;
     background: #fff;
     box-shadow:
       0 5px 10px color.adjust(#000, $alpha: -0.95),
