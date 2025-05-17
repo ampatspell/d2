@@ -82,7 +82,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
   }
 
   over(model: DraggableModel): Over | undefined {
-    if(!this.draggable.canDrop(model)) {
+    if (!this.draggable.canDrop(model)) {
       return undefined;
     }
 

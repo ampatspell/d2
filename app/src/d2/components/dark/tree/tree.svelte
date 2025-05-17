@@ -41,7 +41,7 @@
   let dragging = $state<T>();
 
   let disabled = $derived.by(() => {
-    if(dragging) {
+    if (dragging) {
       return [dragging, ..._treeDelegate.children(dragging)];
     }
     return [];
