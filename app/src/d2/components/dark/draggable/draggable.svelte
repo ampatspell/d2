@@ -22,6 +22,8 @@
     model: getter(() => model),
   });
 
+  $effect(() => context.register(draggable));
+
   let onmousedown = (e: MouseEvent) => draggable.onMouseDown(e);
 </script>
 

@@ -1,7 +1,9 @@
 import { Model } from '$d2/lib/base/model/model.svelte';
+import { addObject, removeObject } from '$d2/lib/base/utils/array';
 import { createContext } from '$d2/lib/base/utils/context';
 import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { Point } from '$d2/lib/base/utils/types';
+import { untrack } from 'svelte';
 
 export type DraggableDelegate = {
   isDraggable: boolean;
@@ -27,7 +29,7 @@ export type DraggingModelOptions = {
 export class DraggingModel extends Model<DraggingModelOptions> {
   readonly context = $derived(this.options.context);
   readonly draggable = $derived(this.options.draggable);
-  readonly element = $derived(this.draggable.element);
+  readonly rect = $derived(this.draggable.rect);
   readonly model = $derived(this.draggable.model);
 
   private phase = $state<'preflight' | 'dragging'>('preflight');
@@ -50,11 +52,11 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     const down = eventToClientPoint(e);
     this.down = down;
     this.mouse = down;
-    const rect = this.element?.getBoundingClientRect();
+    const rect = this.rect;
     if (rect) {
       this.offset = {
-        x: down.x - rect.left,
-        y: down.y - rect.top,
+        x: down.x - rect.x,
+        y: down.y - rect.y,
       };
     }
   }
@@ -75,6 +77,18 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     e.preventDefault();
   }
 
+  isOver(model: DraggableModel) {
+    const mouse = this.mouse;
+    const rect = model.rect;
+    if (mouse && rect) {
+      const calc = (m: 'x' | 'y', r: 'width' | 'height') => mouse[m] > rect[m] && mouse[m] < rect[m] + rect[r];
+      const x = calc('x', 'width');
+      const y = calc('y', 'height');
+      return x && y;
+    }
+    return false;
+  }
+
   static onMouseDown(context: DraggableContext, draggable: DraggableModel, e: MouseEvent) {
     const model = new this({ context, draggable });
     model.onMouseDown(e);
@@ -90,13 +104,25 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   readonly delegate = $derived(this.options.delegate);
   readonly isDraggable: boolean = $derived(this.delegate.isDraggable);
 
-  private dragging = $state<DraggingModel>();
+  private registered = $state<DraggableModel[]>([]);
+  dragging = $state<DraggingModel>();
+
+  readonly over = $derived.by(() => {
+    return this.registered.filter((model) => model.isOver);
+  });
 
   draggingFor(draggable: DraggableModel) {
     const dragging = this.dragging;
     if (dragging?.draggable === draggable && dragging.isDragging) {
       return dragging;
     }
+  }
+
+  register(draggable: DraggableModel) {
+    untrack(() => addObject(this.registered, draggable));
+    return () => {
+      untrack(() => removeObject(this.registered, draggable));
+    };
   }
 
   onMouseDown(draggable: DraggableModel, e: MouseEvent) {
@@ -107,7 +133,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   }
 
   onMouseMove(e: MouseEvent) {
-    this?.dragging?.onMouseMove(e);
+    this.dragging?.onMouseMove(e);
   }
 
   onMouseUp(e: MouseEvent) {
@@ -148,6 +174,21 @@ export class DraggableModel extends Model<DraggableModelOptions> {
   readonly context = $derived(this.options.context);
   readonly element = $derived(this.options.element);
   readonly model = $derived(this.options.model);
+
+  readonly rect = $derived.by(() => {
+    const element = this?.element;
+    if (element) {
+      const { top, left, width, height } = element.getBoundingClientRect();
+      return {
+        x: left,
+        y: top,
+        width,
+        height,
+      };
+    }
+  });
+
+  readonly isOver = $derived.by(() => this.context.dragging?.isOver(this) ?? false);
 
   onMouseDown(e: MouseEvent) {
     this.context.onMouseDown(this, e);
