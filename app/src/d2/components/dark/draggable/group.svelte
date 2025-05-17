@@ -18,10 +18,9 @@
 
 <div class="group">
   {@render children()}
-
-  {#each context.over as model (model)}
-    <Over {model} />
-  {/each}
+  {#if context.over}
+    <Over model={context.over} />
+  {/if}
 </div>
 
 <style lang="scss">

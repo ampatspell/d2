@@ -17,13 +17,14 @@
     deselect: VoidCallback;
     children: (model: T) => T[];
     delegateFor: (model: T) => TreeModelDelegate<T>;
+    onReorder: (opts: { source: T; over: Over; target: T }) => void;
   };
 </script>
 
 <script lang="ts" generics="T">
   import type { Component, Snippet } from 'svelte';
   import Group from '../draggable/group.svelte';
-  import { type DraggableDelegate } from '../draggable/models.svelte';
+  import { type DraggableDelegate, type Over } from '../draggable/models.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import Draggable from '../draggable/draggable.svelte';
   import Tree from './tree.svelte';
@@ -52,6 +53,7 @@
     isReorderable: getter(() => _treeDelegate.isReorderable),
     deselect: () => _treeDelegate.deselect(),
     children: (model) => _treeDelegate.children(model),
+    onReorder: (opts) => _treeDelegate.onReorder(opts),
     delegateFor: (model) => {
       const delegate = _treeDelegate.delegateFor(model);
       return options<TreeModelDelegate<T>>({
@@ -76,6 +78,13 @@
     isDraggable: getter(() => treeDelegate.isReorderable),
     onDragging: (model) => (dragging = model as T | undefined),
     isValidTarget: (model) => !disabled.includes(model as T),
+    onDrop: (opts) => {
+      _treeDelegate.onReorder({
+        source: opts.source as T,
+        over: opts.over,
+        target: opts.target as T,
+      });
+    },
   });
 
   let createDraggingTreeDelegate = (model: T) =>
@@ -84,6 +93,7 @@
       models: [model],
       deselect: () => treeDelegate.deselect(),
       children: (model) => treeDelegate.children(model),
+      onReorder: () => {},
       delegateFor: (model) => {
         let delegate = treeDelegate.delegateFor(model);
         return options<TreeModelDelegate<T>>({

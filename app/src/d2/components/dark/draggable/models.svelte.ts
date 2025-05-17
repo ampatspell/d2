@@ -10,8 +10,9 @@ export type Direction = 'horizontal' | 'vertical';
 
 export type DraggableDelegate = {
   isDraggable: boolean;
-  onDragging: (model: unknown | undefined) => void;
   isValidTarget: (model: unknown) => boolean;
+  onDragging: (model: unknown | undefined) => void;
+  onDrop: (opts: { source: unknown; over: Over; target: unknown }) => void;
 };
 
 const eventToClientPoint = (e: MouseEvent): Point => {
@@ -165,9 +166,8 @@ export class DraggableContext extends Model<DraggableContextOptions> {
 
   readonly over = $derived.by(() => {
     if (this.dragging?.isDragging) {
-      return this.registered.filter((model) => !!model.over);
+      return this.registered.find((model) => !!model.over);
     }
-    return [];
   });
 
   draggingFor(draggable: DraggableModel) {
@@ -198,7 +198,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     const dragging = this.dragging;
     if (dragging) {
       dragging.onMouseUp(e);
-      this.onDragEnd();
+      this.onDragEnd(dragging);
       this.dragging = undefined;
     }
   }
@@ -207,7 +207,24 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     this.delegate.onDragging(dragging.model);
   }
 
-  onDragEnd() {
+  onDrop(dragging: DraggingModel) {
+    const model = this.over;
+    if (model) {
+      const over = model.over;
+      if (over) {
+        const source = dragging.model;
+        const target = model.model;
+        this.delegate.onDrop({
+          source,
+          over,
+          target,
+        });
+      }
+    }
+  }
+
+  onDragEnd(dragging: DraggingModel) {
+    this.onDrop(dragging);
     this.delegate.onDragging(undefined);
   }
 }

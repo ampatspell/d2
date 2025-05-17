@@ -1,3 +1,4 @@
+import type { Over } from '$d2/components/dark/draggable/models.svelte';
 import type { TreeDelegate, TreeModelDelegate } from '$d2/components/dark/tree/tree.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import type { NodeModel } from '$d2/lib/nodes/node.svelte';
@@ -38,6 +39,10 @@ export class NodesTreeDelegate extends Model<NodesTreeDelegateOptions> implement
 
   delegateFor(model: NodeModel) {
     return new NodesTreeModelDelegate({ model, delegate: this });
+  }
+
+  onReorder(opts: { source: NodeModel; over: Over; target: NodeModel }) {
+    console.log(opts.source.path.value, opts.over, opts.target.path.value);
   }
 }
 

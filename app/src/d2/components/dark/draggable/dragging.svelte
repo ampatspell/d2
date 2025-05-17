@@ -14,7 +14,7 @@
 
 {#if draggable.dragging}
   {@const point = draggable.dragging.point}
-  <div class="dragging" transition:fade={{ duration: 100 }} style:--x="{point.x}px" style:--y="{point.y}px">
+  <div class="dragging" transition:fade={{ duration: 150 }} style:--x="{point.x}px" style:--y="{point.y}px">
     {@render children()}
   </div>
 {/if}
