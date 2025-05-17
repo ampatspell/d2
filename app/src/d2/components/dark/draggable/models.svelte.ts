@@ -130,7 +130,11 @@ export class DraggableModel extends Model<DraggableModelOptions> {
   readonly element = $derived(this.options.element);
   readonly model = $derived(this.options.model);
 
+  private run = $state(0);
+
   readonly rect = $derived.by(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    this.run;
     const element = this?.element;
     if (element) {
       const { top, left, width, height } = element.getBoundingClientRect();
@@ -145,6 +149,10 @@ export class DraggableModel extends Model<DraggableModelOptions> {
 
   readonly dragging = $derived(this.context.draggingFor(this));
   readonly over = $derived.by(() => this.context.dragging?.over(this));
+
+  onPrepare() {
+    this.run++;
+  }
 
   onMouseDown(e: MouseEvent) {
     this.context.onMouseDown(this, e);
@@ -186,8 +194,13 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     };
   }
 
+  onPrepare() {
+    this.registered.map((model) => model.onPrepare());
+  }
+
   onMouseDown(draggable: DraggableModel, e: MouseEvent) {
     if (this.isDraggable) {
+      this.onPrepare();
       this.dragging = DraggingModel.onMouseDown(this, draggable, e);
     }
   }
