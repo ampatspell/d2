@@ -241,6 +241,11 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     }
   }
 
+  async setParent(parent: NodeModel) {
+    this.data.parent = asParent(parent);
+    await this.didUpdateIdentifier();
+  }
+
   upload() {
     return new UploadFilesModel({ node: this });
   }

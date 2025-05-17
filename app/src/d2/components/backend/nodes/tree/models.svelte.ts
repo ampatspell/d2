@@ -1,5 +1,4 @@
-import type { Over } from '$d2/components/dark/draggable/models.svelte';
-import type { TreeDelegate, TreeModelDelegate } from '$d2/components/dark/tree/tree.svelte';
+import type { TreeDelegate, TreeModelDelegate, TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import type { NodeModel } from '$d2/lib/nodes/node.svelte';
 import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
@@ -49,10 +48,14 @@ export class NodesTreeDelegate extends Model<NodesTreeDelegateOptions> implement
     this.settings.setOpen(model.id, isOpen);
   }
 
-  onReorder(opts: { source: NodeModel; over: Over; target: NodeModel }) {
-    const { source, over, target } = opts;
+  async onReorder(opts: TreeOnReorder<NodeModel>) {
+    const { source, position: over, target } = opts;
     const o = (model: NodeModel) => (this.isOpen(model) ? `(open)` : `(closed)`);
-    console.log(source.path.value, over, target.path.value, o(target));
+    if (over === 'over') {
+      await source.setParent(target);
+    } else {
+      console.log(source.path.value, over, target.path.value, o(target));
+    }
   }
 }
 

@@ -15,7 +15,9 @@
   } = $props();
 
   let context = getDraggableContext();
+
   let element = $state<HTMLDivElement>();
+
   let draggable = new DraggableModel({
     context: getter(() => context),
     element: getter(() => element),

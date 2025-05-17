@@ -11,20 +11,22 @@
     icon: Component;
   };
 
+  export type TreeOnReorder<T> = DraggableOnDrop<T>;
+
   export type TreeDelegate<T> = {
     isReorderable: boolean;
     models: T[];
     deselect: VoidCallback;
     children: (model: T) => T[];
     delegateFor: (model: T) => TreeModelDelegate<T>;
-    onReorder: (opts: { source: T; over: Over; target: T }) => void;
+    onReorder: (opts: TreeOnReorder<T>) => void;
   };
 </script>
 
 <script lang="ts" generics="T">
   import type { Component, Snippet } from 'svelte';
   import Group from '../draggable/group.svelte';
-  import { type DraggableDelegate, type Over } from '../draggable/models.svelte';
+  import { type DraggableDelegate, type DraggableOnDrop } from '../draggable/models.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import Draggable from '../draggable/draggable.svelte';
   import Tree from './tree.svelte';
@@ -81,7 +83,7 @@
     onDrop: (opts) => {
       _treeDelegate.onReorder({
         source: opts.source as T,
-        over: opts.over,
+        position: opts.position,
         target: opts.target as T,
       });
     },

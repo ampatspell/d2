@@ -5,14 +5,16 @@ import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { Point } from '$d2/lib/base/utils/types';
 import { untrack } from 'svelte';
 
-export type Over = 'over' | 'before' | 'after';
+export type OverPosition = 'over' | 'before' | 'after';
 export type Direction = 'horizontal' | 'vertical';
+
+export type DraggableOnDrop<T> = { source: T; position: OverPosition; target: T };
 
 export type DraggableDelegate = {
   isDraggable: boolean;
   isValidTarget: (model: unknown) => boolean;
   onDragging: (model: unknown | undefined) => void;
-  onDrop: (opts: { source: unknown; over: Over; target: unknown }) => void;
+  onDrop: (opts: DraggableOnDrop<unknown>) => void;
 };
 
 const eventToClientPoint = (e: MouseEvent): Point => {
@@ -82,7 +84,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     e.preventDefault();
   }
 
-  over(model: DraggableModel): Over | undefined {
+  over(model: DraggableModel): OverPosition | undefined {
     if (!this.draggable.canDrop(model)) {
       return undefined;
     }
@@ -226,7 +228,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
         const target = model.model;
         this.delegate.onDrop({
           source,
-          over,
+          position: over,
           target,
         });
       }
