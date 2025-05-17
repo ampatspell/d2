@@ -24,6 +24,10 @@ export class NodesTreeDelegate extends Model<NodesTreeDelegateOptions> implement
   readonly models = $derived(this.nodes.byParentId(null));
   readonly isReorderable = $derived(this.options.isReorderable ?? false);
 
+  children(model: NodeModel) {
+    return model.backend?.children ?? [];
+  }
+
   onSelect(model: NodeModel | undefined) {
     this.options.onSelect(model);
   }
@@ -54,10 +58,6 @@ export class NodesTreeModelDelegate
   readonly isOpen = $derived(this.settings.isOpen(this.model.id));
   readonly isSelected = $derived(this.delegate.selected === this.model);
   readonly icon = $derived(this.model.icon);
-
-  hasParent(parent: NodeModel) {
-    return this.model.backend?.hasParent(parent) ?? false;
-  }
 
   select() {
     this.delegate.onSelect(this.model);

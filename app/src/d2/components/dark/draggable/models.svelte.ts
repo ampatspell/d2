@@ -11,6 +11,7 @@ export type Direction = 'horizontal' | 'vertical';
 export type DraggableDelegate = {
   isDraggable: boolean;
   onDragging: (model: unknown | undefined) => void;
+  isValidTarget: (model: unknown) => boolean;
 };
 
 const eventToClientPoint = (e: MouseEvent): Point => {
@@ -81,6 +82,10 @@ export class DraggingModel extends Model<DraggingModelOptions> {
   }
 
   over(model: DraggableModel): Over | undefined {
+    if(!this.draggable.canDrop(model)) {
+      return undefined;
+    }
+
     const mouse = this.mouse;
     const rect = model.rect;
     if (mouse && rect) {
@@ -135,13 +140,16 @@ export class DraggableModel extends Model<DraggableModelOptions> {
     }
   });
 
+  readonly dragging = $derived(this.context.draggingFor(this));
   readonly over = $derived.by(() => this.context.dragging?.over(this));
 
   onMouseDown(e: MouseEvent) {
     this.context.onMouseDown(this, e);
   }
 
-  readonly dragging = $derived(this.context.draggingFor(this));
+  canDrop(draggable: DraggableModel) {
+    return this.context.delegate.isValidTarget(draggable.model);
+  }
 }
 
 export type DraggableContextOptions = {

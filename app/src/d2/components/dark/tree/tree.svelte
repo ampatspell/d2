@@ -9,13 +9,13 @@
     isFaded?: boolean;
     select: VoidCallback;
     icon: Component;
-    hasParent: (model: T) => boolean;
   };
 
   export type TreeDelegate<T> = {
     isReorderable: boolean;
     models: T[];
     deselect: VoidCallback;
+    children: (model: T) => T[];
     delegateFor: (model: T) => TreeModelDelegate<T>;
   };
 </script>
@@ -40,10 +40,18 @@
   let element = $state<HTMLDivElement>();
   let dragging = $state<T>();
 
+  let disabled = $derived.by(() => {
+    if(dragging) {
+      return [dragging, ..._treeDelegate.children(dragging)];
+    }
+    return [];
+  });
+
   let treeDelegate = options<TreeDelegate<T>>({
     models: getter(() => _treeDelegate.models),
     isReorderable: getter(() => _treeDelegate.isReorderable),
     deselect: () => _treeDelegate.deselect(),
+    children: (model) => _treeDelegate.children(model),
     delegateFor: (model) => {
       const delegate = _treeDelegate.delegateFor(model);
       return options<TreeModelDelegate<T>>({
@@ -51,15 +59,9 @@
         icon: getter(() => delegate.icon),
         isOpen: getter(() => delegate.isOpen),
         isSelected: getter(() => delegate.isSelected),
-        isFaded: getter(() => {
-          if (dragging) {
-            return model === dragging || delegate.hasParent(dragging as T);
-          }
-          return false;
-        }),
+        isFaded: getter(() => disabled.includes(model)),
         select: () => delegate.select(),
         setOpen: (open) => delegate.setOpen(open),
-        hasParent: (model) => delegate.hasParent(model),
       });
     },
   });
@@ -73,6 +75,7 @@
   let draggableDelegate = options<DraggableDelegate>({
     isDraggable: getter(() => treeDelegate.isReorderable),
     onDragging: (model) => (dragging = model as T | undefined),
+    isValidTarget: (model) => !disabled.includes(model as T),
   });
 
   let createDraggingTreeDelegate = (model: T) =>
@@ -80,6 +83,7 @@
       isReorderable: false,
       models: [model],
       deselect: () => treeDelegate.deselect(),
+      children: (model) => treeDelegate.children(model),
       delegateFor: (model) => {
         let delegate = treeDelegate.delegateFor(model);
         return options<TreeModelDelegate<T>>({
@@ -90,7 +94,6 @@
           isFaded: false,
           select: () => {},
           setOpen: () => {},
-          hasParent: () => false,
         });
       },
     });
