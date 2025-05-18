@@ -26,7 +26,11 @@
 
   $effect(() => context.register(draggable));
 
-  let onmousedown = (e: MouseEvent) => draggable.onMouseDown(e);
+  let onmousedown = (e: MouseEvent) => {
+    if(e.button === 0) {
+      draggable.onMouseDown(e);
+    }
+  };
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
