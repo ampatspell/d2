@@ -45,7 +45,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     source: getter(() => this._query.content),
     target: (doc) => createNodeModel(doc, this._delegate),
     key: nodeDocumentKey,
-    sort: [{ value: (node) => node.position, direction: 'asc' }],
+    sort: [{ value: (node) => node.position }],
   });
 
   readonly all = $derived(this._nodes.sorted);
