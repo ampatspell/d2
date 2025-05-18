@@ -16,6 +16,8 @@ import {
 } from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
+import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
+import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -65,6 +67,36 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     if (path) {
       return this.all.find((node) => node.path.value === path);
     }
+  }
+
+  async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
+    console.log(opts.source.path.value, opts.position, opts.target.path.value);
+
+    const { source, position, settings } = opts;
+    let target: NodeModel | undefined  = opts.target;
+
+    if(position === 'over') {
+      const nodes = this.byParentId(target.id);
+      const position = nextPosition(nodes);
+      await source.updateParent(target, position);
+    } else {
+      const isOpen = settings.isOpen(target.id) && this.byParentId(target.id).length > 0;
+      if(!isOpen) {
+        target = this.byId(target.parent?.id);
+      }
+      const nodes = this.byParentId(target?.id ?? null);
+      if(position === 'before') {
+        await Promise.all(nodes.map(async (node, idx) => {
+          await node.updateParent(target, idx + 1);
+        }));
+        await source.updateParent(target, 0);
+      } else if(position === 'after') {
+        const position = nextPosition(nodes);
+        await source.updateParent(target, position);
+      }
+    }
+
+    // reorder previous parent
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {

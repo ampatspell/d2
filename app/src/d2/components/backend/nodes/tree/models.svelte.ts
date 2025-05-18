@@ -49,13 +49,10 @@ export class NodesTreeDelegate extends Model<NodesTreeDelegateOptions> implement
   }
 
   async onReorder(opts: TreeOnReorder<NodeModel>) {
-    const { source, position: over, target } = opts;
-    const o = (model: NodeModel) => (this.isOpen(model) ? `(open)` : `(closed)`);
-    if (over === 'over') {
-      await source.setParent(target);
-    } else {
-      console.log(source.path.value, over, target.path.value, o(target));
-    }
+    await this.nodes.reorder({
+      ...opts,
+      settings: this.settings,
+    });
   }
 }
 

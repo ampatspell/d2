@@ -27,7 +27,7 @@
   $effect(() => context.register(draggable));
 
   let onmousedown = (e: MouseEvent) => {
-    if(e.button === 0) {
+    if (e.button === 0) {
       draggable.onMouseDown(e);
     }
   };
