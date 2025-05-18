@@ -243,7 +243,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   }
 
   async updateParent(parent: NodeModel | undefined, position: number) {
-    if(this.parent?.id !== parent?.id) {
+    if (this.parent?.id !== parent?.id) {
       this.data.parent = asParent(parent);
       this.data.position = position;
       await this.didUpdateIdentifier();

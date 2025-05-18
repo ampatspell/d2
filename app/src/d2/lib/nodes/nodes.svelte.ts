@@ -73,24 +73,26 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     console.log(opts.source.path.value, opts.position, opts.target.path.value);
 
     const { source, position, settings } = opts;
-    let target: NodeModel | undefined  = opts.target;
+    let target: NodeModel | undefined = opts.target;
 
-    if(position === 'over') {
+    if (position === 'over') {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
       await source.updateParent(target, position);
     } else {
       const isOpen = settings.isOpen(target.id) && this.byParentId(target.id).length > 0;
-      if(!isOpen) {
+      if (!isOpen) {
         target = this.byId(target.parent?.id);
       }
       const nodes = this.byParentId(target?.id ?? null);
-      if(position === 'before') {
-        await Promise.all(nodes.map(async (node, idx) => {
-          await node.updateParent(target, idx + 1);
-        }));
+      if (position === 'before') {
+        await Promise.all(
+          nodes.map(async (node, idx) => {
+            await node.updateParent(target, idx + 1);
+          }),
+        );
         await source.updateParent(target, 0);
-      } else if(position === 'after') {
+      } else if (position === 'after') {
         const position = nextPosition(nodes);
         await source.updateParent(target, position);
       }
