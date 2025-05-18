@@ -10,16 +10,22 @@ describe('files', function () {
   storage(this);
   firestore(this);
 
-  it('NOW handles image upload', async () => {
+  it('handles image upload', async () => {
     const app = getTestApp(this);
     const storage = getStorageHelper(this);
     const firestore = getFirestoreHelper(this);
 
     await firestore.recursiveDelete('nodes');
 
+    await app.firestore.collection('nodes').doc('parent-id').set({
+      path: '/parent',
+      identifier: 'parent',
+    });
+
     const file = await storage.uploadFile('film-0647-018.png', 'nodes/image-id/original', {
       filename: 'film-0647-018.png',
       parent: 'parent-id',
+      position: '1',
     });
 
     await app.files.onStorageObjectFinalized(file);
@@ -30,7 +36,13 @@ describe('files', function () {
     assert.deepStrictEqual(data, {
       kind: 'file',
       identifier: 'film-0647-018',
-      parent: 'parent-id',
+      parent: {
+        id: 'parent-id',
+        identifier: 'parent',
+        path: '/parent',
+      },
+      path: "/parent/film-0647-018",
+      position: 1,
       properties: {
         type: 'image',
         filename: 'film-0647-018.png',
@@ -73,6 +85,7 @@ describe('files', function () {
         },
       },
       createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
     });
   });
 });
