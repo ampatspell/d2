@@ -2,7 +2,7 @@
   import type { Snippet } from 'svelte';
   import { DraggableModel, getDraggableContext } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
-  import Dragging from './dragging.svelte';
+  import Dragging from './-dragging.svelte';
 
   let {
     model,

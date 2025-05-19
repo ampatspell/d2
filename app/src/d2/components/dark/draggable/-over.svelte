@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { DraggableModel } from './models.svelte';
   import { classes } from '$d2/lib/base/utils/classes';
+  import type { DraggableModel } from './models.svelte';
 
   let { model }: { model: DraggableModel } = $props();
 </script>

@@ -2,7 +2,7 @@
   import type { Snippet } from 'svelte';
   import { createDraggableContext, type DraggableGroupDelegate } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
-  import Over from './over.svelte';
+  import Over from './-over.svelte';
 
   let { delegate, children }: { delegate: DraggableGroupDelegate; children: Snippet } = $props();
 

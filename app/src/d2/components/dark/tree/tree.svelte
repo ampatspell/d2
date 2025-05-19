@@ -27,9 +27,9 @@
   import type { Component, Snippet } from 'svelte';
   import type { DraggableGroupDelegate, DraggableOnDrop } from '../draggable/models.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
-  import Draggable from '../draggable/draggable.svelte';
   import Tree from './tree.svelte';
-  import DraggableGroup from '../draggable/group.svelte';
+  import DraggableGroup from '../draggable/draggable-group.svelte';
+  import Draggable from '../draggable/draggable.svelte';
 
   // eslint-disable-next-line svelte/no-unused-props
   let {
