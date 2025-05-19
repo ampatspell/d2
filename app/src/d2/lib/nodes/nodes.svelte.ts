@@ -17,7 +17,7 @@ import {
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
-import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
+import { isTruthy, uniq } from '../base/utils/array';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -69,36 +69,40 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     }
   }
 
-  async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
+  async reorder(opts: TreeOnReorder<NodeModel>) {
     console.log(opts.source.path.value, opts.position, opts.target.path.value);
 
-    const { source, position, settings } = opts;
-    let target: NodeModel | undefined = opts.target;
+    const { source, target, position } = opts;
+    const saves = [];
+
+    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
+      nodes.forEach((node, idx) => {
+        const position = omit >= idx ? idx + 1 : idx;
+        saves.push(node.scheduleUpdate().position(position).build());
+      });
+    };
 
     if (position === 'over') {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
-      await source.updateParent(target, position);
+      saves.push(source.scheduleUpdate().parent(target).position(position).build());
     } else {
-      const isOpen = settings.isOpen(target.id) && this.byParentId(target.id).length > 0;
-      if (!isOpen) {
-        target = this.byId(target.parent?.id);
-      }
-      const nodes = this.byParentId(target?.id ?? null);
+      const parent = this.byId(target.parent?.id);
+      const nodes = this.byParentId(parent?.id ?? null);
+      let pos: number;
       if (position === 'before') {
-        await Promise.all(
-          nodes.map(async (node, idx) => {
-            await node.updateParent(target, idx + 1);
-          }),
-        );
-        await source.updateParent(target, 0);
-      } else if (position === 'after') {
-        const position = nextPosition(nodes);
-        await source.updateParent(target, position);
+        pos = target.position - 1;
+      } else {
+        pos = target.position + 1;
       }
+      reorder(nodes, pos);
+      saves.push(source.scheduleUpdate().parent(parent).position(pos).build());
     }
 
-    // reorder previous parent
+    const previous = this.byParentId(source.parent?.id ?? null);
+    reorder(previous);
+
+    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {

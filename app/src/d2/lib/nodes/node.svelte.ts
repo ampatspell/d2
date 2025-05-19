@@ -242,12 +242,33 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     }
   }
 
-  async updateParent(parent: NodeModel | undefined, position: number) {
-    if (this.parent?.id !== parent?.id) {
-      this.data.parent = asParent(parent);
-      this.data.position = position;
-      await this.didUpdateIdentifier();
-    }
+  scheduleUpdate() {
+    let updated = false;
+    const hash = {
+      parent: (parent: NodeModel | undefined) => {
+        if (this.parent?.id !== parent?.id) {
+          this.data.parent = asParent(parent);
+          updated = true;
+        }
+        return hash;
+      },
+      position: (position: number) => {
+        if (position !== undefined && this.data.position !== position) {
+          this.data.position = position;
+          updated = true;
+        }
+        return hash;
+      },
+      build: () => {
+        if (updated) {
+          return {
+            node: this,
+            save: () => this.didUpdateIdentifier(),
+          };
+        }
+      },
+    };
+    return hash;
   }
 
   upload() {
