@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { DraggableModel, getDraggableContext } from './models.svelte';
+  import { DraggableModel, getDraggableSectionContext } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
   import Dragging from './dragging.svelte';
 
@@ -14,7 +14,7 @@
     dragging: Snippet;
   } = $props();
 
-  let context = getDraggableContext();
+  let context = getDraggableSectionContext();
 
   let element = $state<HTMLDivElement>();
 

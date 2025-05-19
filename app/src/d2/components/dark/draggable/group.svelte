@@ -19,8 +19,8 @@
 
 <div class="group">
   {@render children()}
-  {#if context.over}
-    <Over model={context.over} />
+  {#if context.draggable}
+    <Over model={context.draggable} />
   {/if}
 </div>
 

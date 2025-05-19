@@ -8,7 +8,7 @@ import { untrack } from 'svelte';
 export type OverPosition = 'over' | 'before' | 'after';
 export type Direction = 'horizontal' | 'vertical';
 
-export type DraggableOnDrop<T> = { source: T; position: OverPosition; target: T };
+export type DraggableOnDrop<T> = { position: OverPosition; source: T; target: T; context: T | undefined };
 
 export type DraggableDelegate = {
   isDraggable: boolean;
@@ -29,7 +29,7 @@ const distance = (a: Point, b: Point) => {
 };
 
 export type DraggingModelOptions = {
-  context: DraggableContext;
+  context: DraggableSectionContext;
   draggable: DraggableModel;
 };
 
@@ -84,13 +84,17 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     e.preventDefault();
   }
 
-  over(model: DraggableModel): OverPosition | undefined {
-    if (!this.draggable.canDrop(model)) {
+  over(draggable: DraggableModel): OverPosition | undefined {
+    if (draggable.model === this.context.model || draggable.model === this.model) {
+      return undefined;
+    }
+
+    if (!this.draggable.canDrop(draggable)) {
       return undefined;
     }
 
     const mouse = this.mouse;
-    const rect = model.rect;
+    const rect = draggable.rect;
     if (mouse && rect) {
       const calc = (p: 'x' | 'y', s: 'width' | 'height') => {
         return mouse[p] > rect[p] && mouse[p] <= rect[p] + rect[s];
@@ -109,10 +113,11 @@ export class DraggingModel extends Model<DraggingModelOptions> {
         return 'over';
       }
     }
+
     return undefined;
   }
 
-  static onMouseDown(context: DraggableContext, draggable: DraggableModel, e: MouseEvent) {
+  static onMouseDown(context: DraggableSectionContext, draggable: DraggableModel, e: MouseEvent) {
     const model = new this({ context, draggable });
     model.onMouseDown(e);
     return model;
@@ -120,7 +125,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
 }
 
 export type DraggableModelOptions = {
-  context: DraggableContext;
+  context: DraggableSectionContext;
   element: HTMLDivElement | undefined;
   model: unknown;
 };
@@ -159,7 +164,7 @@ export class DraggableModel extends Model<DraggableModelOptions> {
   }
 
   canDrop(draggable: DraggableModel) {
-    return this.context.delegate.isValidTarget(draggable.model);
+    return this.context.isValidTarget(draggable.model);
   }
 }
 
@@ -174,7 +179,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   private registered = $state<DraggableModel[]>([]);
   dragging = $state<DraggingModel>();
 
-  readonly over = $derived.by(() => {
+  readonly draggable = $derived.by(() => {
     if (this.dragging?.isDragging) {
       return this.registered.find((model) => !!model.over);
     }
@@ -194,14 +199,18 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     };
   }
 
+  isValidTarget(model: unknown) {
+    return this.delegate.isValidTarget(model);
+  }
+
   onPrepare() {
     this.registered.map((model) => model.onPrepare());
   }
 
-  onMouseDown(draggable: DraggableModel, e: MouseEvent) {
+  onMouseDown(context: DraggableSectionContext, draggable: DraggableModel, e: MouseEvent) {
     if (this.isDraggable) {
       this.onPrepare();
-      this.dragging = DraggingModel.onMouseDown(this, draggable, e);
+      this.dragging = DraggingModel.onMouseDown(context, draggable, e);
     }
   }
 
@@ -233,16 +242,18 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   }
 
   onDrop(dragging: DraggingModel) {
-    const model = this.over;
-    if (model) {
-      const over = model.over;
-      if (over) {
+    const draggable = this.draggable;
+    if (draggable) {
+      const position = draggable.over;
+      if (position) {
         const source = dragging.model;
-        const target = model.model;
+        const target = draggable.model;
+        const context = draggable.context.model;
         this.delegate.onDrop({
+          position,
           source,
-          position: over,
           target,
+          context,
         });
       }
     }
@@ -263,3 +274,45 @@ export const createDraggableContext = (opts: OptionsInput<DraggableContextOption
 };
 
 export { getDraggableContext };
+
+export type DraggableSectionContextOptions = {
+  context: DraggableContext;
+  model: unknown;
+};
+
+export class DraggableSectionContext extends Model<DraggableSectionContextOptions> {
+  readonly context = $derived(this.options.context);
+  readonly model = $derived(this.options.model);
+  readonly dragging = $derived(this.context.dragging);
+
+  register(draggable: DraggableModel) {
+    return this.context.register(draggable);
+  }
+
+  onMouseDown(draggable: DraggableModel, e: MouseEvent) {
+    return this.context.onMouseDown(this, draggable, e);
+  }
+
+  onDragStart(dragging: DraggingModel) {
+    return this.context.onDragStart(dragging);
+  }
+
+  isValidTarget(model: unknown) {
+    return this.context.isValidTarget(model);
+  }
+
+  draggingFor(draggable: DraggableModel) {
+    return this.context.draggingFor(draggable);
+  }
+}
+
+const { get: getDraggableSectionContext, set: setDraggableSectionContext } =
+  createContext<DraggableSectionContext>('draggable-section');
+
+export { getDraggableSectionContext };
+
+export const createDraggableSectionContext = (opts: OptionsInput<DraggableSectionContextOptions>) => {
+  const context = new DraggableSectionContext(opts);
+  setDraggableSectionContext(context);
+  return context;
+};

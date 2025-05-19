@@ -18,6 +18,7 @@ import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import { isTruthy, uniq } from '../base/utils/array';
+import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -69,10 +70,11 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     }
   }
 
-  async reorder(opts: TreeOnReorder<NodeModel>) {
-    console.log(opts.source.path.value, opts.position, opts.target.path.value);
+  async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
+    console.log(opts.source?.path.value, opts.position, opts.target?.path.value, opts.context?.path.value);
 
-    const { source, target, position } = opts;
+    const { position, source, target, context, settings } = opts;
+
     const saves = [];
 
     const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
@@ -86,17 +88,17 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
       saves.push(source.scheduleUpdate().parent(target).position(position).build());
+      settings.setOpen(target.id, true);
     } else {
-      const parent = this.byId(target.parent?.id);
-      const nodes = this.byParentId(parent?.id ?? null);
-      let pos: number;
+      let pos;
       if (position === 'before') {
         pos = target.position - 1;
       } else {
         pos = target.position + 1;
       }
+      const nodes = this.byParentId(context?.id ?? null);
       reorder(nodes, pos);
-      saves.push(source.scheduleUpdate().parent(parent).position(pos).build());
+      saves.push(source.scheduleUpdate().parent(context).position(pos).build());
     }
 
     const previous = this.byParentId(source.parent?.id ?? null);

@@ -25,11 +25,12 @@
 
 <script lang="ts" generics="T">
   import type { Component, Snippet } from 'svelte';
-  import Group from '../draggable/group.svelte';
-  import { type DraggableDelegate, type DraggableOnDrop } from '../draggable/models.svelte';
+  import type { DraggableDelegate, DraggableOnDrop } from '../draggable/models.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import Draggable from '../draggable/draggable.svelte';
+  import DraggableSection from '../draggable/section.svelte';
   import Tree from './tree.svelte';
+  import DraggableGroup from '../draggable/group.svelte';
 
   // eslint-disable-next-line svelte/no-unused-props
   let {
@@ -85,6 +86,7 @@
         source: opts.source as T,
         position: opts.position,
         target: opts.target as T,
+        context: opts.context as T | undefined,
       });
     },
   });
@@ -126,9 +128,11 @@
       </div>
     {/snippet}
   </Draggable>
-  {#if delegate.isOpen}
-    {@render array(delegate.children, level + 1)}
-  {/if}
+  <DraggableSection {model}>
+    {#if delegate.isOpen}
+      {@render array(delegate.children, level + 1)}
+    {/if}
+  </DraggableSection>
 {/snippet}
 
 {#snippet array(models: T[], level: number)}
@@ -137,13 +141,15 @@
   {/each}
 {/snippet}
 
-<Group delegate={draggableDelegate}>
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="tree" bind:this={element} onclick={deselect}>
-    {@render array(treeDelegate.models, 0)}
-  </div>
-</Group>
+<DraggableGroup delegate={draggableDelegate}>
+  <DraggableSection model={undefined}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="tree" bind:this={element} onclick={deselect}>
+      {@render array(treeDelegate.models, 0)}
+    </div>
+  </DraggableSection>
+</DraggableGroup>
 
 <style lang="scss">
   .tree {
