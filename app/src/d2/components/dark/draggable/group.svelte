@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { createDraggableContext, type DraggableDelegate } from './models.svelte';
+  import { createDraggableContext, type DraggableGroupDelegate } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
   import Over from './over.svelte';
 
-  let { delegate, children }: { delegate: DraggableDelegate; children: Snippet } = $props();
+  let { delegate, children }: { delegate: DraggableGroupDelegate; children: Snippet } = $props();
 
   let context = createDraggableContext({
     delegate: getter(() => delegate),

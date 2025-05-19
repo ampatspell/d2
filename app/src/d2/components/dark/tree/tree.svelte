@@ -25,10 +25,9 @@
 
 <script lang="ts" generics="T">
   import type { Component, Snippet } from 'svelte';
-  import type { DraggableDelegate, DraggableOnDrop } from '../draggable/models.svelte';
+  import type { DraggableGroupDelegate, DraggableOnDrop } from '../draggable/models.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import Draggable from '../draggable/draggable.svelte';
-  import DraggableSection from '../draggable/section.svelte';
   import Tree from './tree.svelte';
   import DraggableGroup from '../draggable/group.svelte';
 
@@ -77,7 +76,7 @@
     }
   };
 
-  let draggableDelegate = options<DraggableDelegate>({
+  let draggableDelegate = options<DraggableGroupDelegate>({
     isDraggable: getter(() => treeDelegate.isReorderable),
     onDragging: (model) => (dragging = model as T | undefined),
     isValidTarget: (model) => !disabled.includes(model as T),
@@ -86,7 +85,6 @@
         source: opts.source as T,
         position: opts.position,
         target: opts.target as T,
-        context: opts.context as T | undefined,
       });
     },
   });
@@ -105,7 +103,7 @@
           icon: getter(() => delegate.icon),
           isOpen: delegate.isOpen,
           isSelected: false,
-          isFaded: false,
+          isFaded: true,
           select: () => {},
           setOpen: () => {},
         });
@@ -115,8 +113,11 @@
 
 {#snippet group(model: T, level: number)}
   {@const delegate = treeDelegate.delegateFor(model)}
-  <Draggable {model}>
+  <Draggable {model} {level}>
     {@render item({ model, delegate, level })}
+    {#if delegate.isOpen}
+      {@render array(delegate.children, level + 1)}
+    {/if}
     {#snippet dragging()}
       {@const delegate = createDraggingTreeDelegate(model)}
       <div class="dragging" style:--width="320px">
@@ -128,11 +129,6 @@
       </div>
     {/snippet}
   </Draggable>
-  <DraggableSection {model}>
-    {#if delegate.isOpen}
-      {@render array(delegate.children, level + 1)}
-    {/if}
-  </DraggableSection>
 {/snippet}
 
 {#snippet array(models: T[], level: number)}
@@ -142,13 +138,11 @@
 {/snippet}
 
 <DraggableGroup delegate={draggableDelegate}>
-  <DraggableSection model={undefined}>
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="tree" bind:this={element} onclick={deselect}>
-      {@render array(treeDelegate.models, 0)}
-    </div>
-  </DraggableSection>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="tree" bind:this={element} onclick={deselect}>
+    {@render array(treeDelegate.models, 0)}
+  </div>
 </DraggableGroup>
 
 <style lang="scss">

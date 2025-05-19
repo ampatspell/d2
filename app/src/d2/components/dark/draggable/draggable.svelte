@@ -1,20 +1,22 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import { DraggableModel, getDraggableSectionContext } from './models.svelte';
+  import { DraggableModel, getDraggableContext } from './models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
   import Dragging from './dragging.svelte';
 
   let {
     model,
+    level,
     children,
     dragging,
   }: {
     model: unknown;
+    level?: number;
     children: Snippet;
     dragging: Snippet;
   } = $props();
 
-  let context = getDraggableSectionContext();
+  let context = getDraggableContext();
 
   let element = $state<HTMLDivElement>();
 
@@ -22,6 +24,7 @@
     context: getter(() => context),
     element: getter(() => element),
     model: getter(() => model),
+    level: getter(() => level),
   });
 
   $effect(() => context.register(draggable));

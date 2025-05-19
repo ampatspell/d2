@@ -8,9 +8,9 @@ import { untrack } from 'svelte';
 export type OverPosition = 'over' | 'before' | 'after';
 export type Direction = 'horizontal' | 'vertical';
 
-export type DraggableOnDrop<T> = { position: OverPosition; source: T; target: T; context: T | undefined };
+export type DraggableOnDrop<T> = { position: OverPosition; source: T; target: T };
 
-export type DraggableDelegate = {
+export type DraggableGroupDelegate = {
   isDraggable: boolean;
   isValidTarget: (model: unknown) => boolean;
   onDragging: (model: unknown | undefined) => void;
@@ -29,13 +29,12 @@ const distance = (a: Point, b: Point) => {
 };
 
 export type DraggingModelOptions = {
-  context: DraggableSectionContext;
   draggable: DraggableModel;
 };
 
 export class DraggingModel extends Model<DraggingModelOptions> {
-  readonly context = $derived(this.options.context);
   readonly draggable = $derived(this.options.draggable);
+  readonly context = $derived(this.draggable.context);
   readonly rect = $derived(this.draggable.rect);
   readonly model = $derived(this.draggable.model);
 
@@ -56,6 +55,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
   });
 
   onMouseDown(e: MouseEvent) {
+    e.stopPropagation();
     const down = eventToClientPoint(e);
     this.down = down;
     this.mouse = down;
@@ -75,7 +75,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     if (this.phase === 'preflight') {
       if (distance(this.down!, point) > 5) {
         this.phase = 'dragging';
-        this.context.onDragStart(this);
+        this.draggable.onDragStart(this);
       }
     }
   }
@@ -85,10 +85,6 @@ export class DraggingModel extends Model<DraggingModelOptions> {
   }
 
   over(draggable: DraggableModel): OverPosition | undefined {
-    if (draggable.model === this.context.model || draggable.model === this.model) {
-      return undefined;
-    }
-
     if (!this.draggable.canDrop(draggable)) {
       return undefined;
     }
@@ -117,23 +113,25 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     return undefined;
   }
 
-  static onMouseDown(context: DraggableSectionContext, draggable: DraggableModel, e: MouseEvent) {
-    const model = new this({ context, draggable });
+  static onMouseDown(draggable: DraggableModel, e: MouseEvent) {
+    const model = new this({ draggable });
     model.onMouseDown(e);
     return model;
   }
 }
 
 export type DraggableModelOptions = {
-  context: DraggableSectionContext;
+  context: DraggableContext;
   element: HTMLDivElement | undefined;
   model: unknown;
+  level?: number;
 };
 
 export class DraggableModel extends Model<DraggableModelOptions> {
   readonly context = $derived(this.options.context);
   readonly element = $derived(this.options.element);
   readonly model = $derived(this.options.model);
+  readonly level = $derived(this.options.level);
 
   private run = $state(0);
 
@@ -163,13 +161,17 @@ export class DraggableModel extends Model<DraggableModelOptions> {
     this.context.onMouseDown(this, e);
   }
 
+  onDragStart(dragging: DraggingModel) {
+    this.context.onDragStart(dragging);
+  }
+
   canDrop(draggable: DraggableModel) {
     return this.context.isValidTarget(draggable.model);
   }
 }
 
 export type DraggableContextOptions = {
-  delegate: DraggableDelegate;
+  delegate: DraggableGroupDelegate;
 };
 
 export class DraggableContext extends Model<DraggableContextOptions> {
@@ -181,7 +183,9 @@ export class DraggableContext extends Model<DraggableContextOptions> {
 
   readonly draggable = $derived.by(() => {
     if (this.dragging?.isDragging) {
-      return this.registered.find((model) => !!model.over);
+      const over = this.registered.filter((model) => !!model.over);
+      const level = Math.max(...over.map((model) => model.level ?? 0));
+      return over.find((model) => model.level === level);
     }
   });
 
@@ -207,10 +211,10 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     this.registered.map((model) => model.onPrepare());
   }
 
-  onMouseDown(context: DraggableSectionContext, draggable: DraggableModel, e: MouseEvent) {
+  onMouseDown(draggable: DraggableModel, e: MouseEvent) {
     if (this.isDraggable) {
       this.onPrepare();
-      this.dragging = DraggingModel.onMouseDown(context, draggable, e);
+      this.dragging = DraggingModel.onMouseDown(draggable, e);
     }
   }
 
@@ -248,12 +252,10 @@ export class DraggableContext extends Model<DraggableContextOptions> {
       if (position) {
         const source = dragging.model;
         const target = draggable.model;
-        const context = draggable.context.model;
         this.delegate.onDrop({
           position,
           source,
           target,
-          context,
         });
       }
     }
@@ -274,45 +276,3 @@ export const createDraggableContext = (opts: OptionsInput<DraggableContextOption
 };
 
 export { getDraggableContext };
-
-export type DraggableSectionContextOptions = {
-  context: DraggableContext;
-  model: unknown;
-};
-
-export class DraggableSectionContext extends Model<DraggableSectionContextOptions> {
-  readonly context = $derived(this.options.context);
-  readonly model = $derived(this.options.model);
-  readonly dragging = $derived(this.context.dragging);
-
-  register(draggable: DraggableModel) {
-    return this.context.register(draggable);
-  }
-
-  onMouseDown(draggable: DraggableModel, e: MouseEvent) {
-    return this.context.onMouseDown(this, draggable, e);
-  }
-
-  onDragStart(dragging: DraggingModel) {
-    return this.context.onDragStart(dragging);
-  }
-
-  isValidTarget(model: unknown) {
-    return this.context.isValidTarget(model);
-  }
-
-  draggingFor(draggable: DraggableModel) {
-    return this.context.draggingFor(draggable);
-  }
-}
-
-const { get: getDraggableSectionContext, set: setDraggableSectionContext } =
-  createContext<DraggableSectionContext>('draggable-section');
-
-export { getDraggableSectionContext };
-
-export const createDraggableSectionContext = (opts: OptionsInput<DraggableSectionContextOptions>) => {
-  const context = new DraggableSectionContext(opts);
-  setDraggableSectionContext(context);
-  return context;
-};

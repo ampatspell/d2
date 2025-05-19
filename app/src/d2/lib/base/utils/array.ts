@@ -28,7 +28,11 @@ export function sortedBy<T>(arr: T[], descriptors: SortDescriptors<T>): T[] {
   return sorted;
 }
 
-export function lastObject<T>(arr: readonly T[]) {
+export function firstObject<T>(arr: readonly T[]): T | undefined {
+  return arr && arr[0];
+}
+
+export function lastObject<T>(arr: readonly T[]): T | undefined {
   return arr[arr.length - 1];
 }
 
