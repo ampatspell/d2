@@ -26,6 +26,7 @@
   let size = $derived(context.size);
 
   let draggableDelegate = options<DraggableGroupDelegate>({
+    direction: 'horizontal',
     isDraggable: getter(() => gridDelegate.isDraggable),
     onDrop: (opts) => gridDelegate.onDrop(opts as DraggableOnDrop<T>),
   });

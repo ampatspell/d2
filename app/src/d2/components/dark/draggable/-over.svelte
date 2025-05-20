@@ -9,7 +9,7 @@
 
 {#if model.over}
   <div
-    class={classes('marker', model.over)}
+    class={['marker', model.direction, model.over]}
     style:--x="{model.rect?.x}px"
     style:--y="{model.rect?.y}px"
     style:--width="{model.rect?.width}px"
@@ -26,27 +26,42 @@
     background: var(--dark-accent-color-1);
     border-radius: 4px;
     transition: 0.1s ease-in-out all;
+    --marker: 4px;
     --offset: 2px;
-    &.before,
-    &.after {
-      --marker: 4px;
-      width: calc(var(--width) - calc(2 * var(--offset)) - var(--marker) - var(--level));
-      height: var(--marker);
+    &.horizontal {
+      &.before,
+      &.after {
+        height: var(--height);
+        width: var(--marker);
+      }
+      &.before {
+        transform: translate(var(--x), var(--y));
+      }
+      &.after {
+        transform: translate(var(--x) + var(--width), var(--y));
+      }
     }
-    &.before {
-      transform: translate(calc(var(--x) + var(--offset) + var(--level)), calc(var(--y) - calc(var(--marker) / 2)));
-    }
-    &.after {
-      transform: translate(
-        calc(var(--x) + var(--offset) + var(--level)),
-        calc(var(--y) + var(--height) - calc(var(--marker) / 2))
-      );
-    }
-    &.over {
-      --height-offset: 1px;
-      transform: translate(calc(var(--x) + var(--offset) + var(--level)), calc(var(--y) + var(--offset)));
-      width: calc(var(--width) - calc(2 * var(--offset)) - var(--level));
-      height: calc(var(--height) - calc(2 * var(--offset)) - var(--height-offset));
+    &.vertical {
+      &.before,
+      &.after {
+        width: calc(var(--width) - calc(2 * var(--offset)) - var(--marker) - var(--level));
+        height: var(--marker);
+      }
+      &.before {
+        transform: translate(calc(var(--x) + var(--offset) + var(--level)), calc(var(--y) - calc(var(--marker) / 2)));
+      }
+      &.after {
+        transform: translate(
+          calc(var(--x) + var(--offset) + var(--level)),
+          calc(var(--y) + var(--height) - calc(var(--marker) / 2))
+        );
+      }
+      &.over {
+        --height-offset: 1px;
+        transform: translate(calc(var(--x) + var(--offset) + var(--level)), calc(var(--y) + var(--offset)));
+        width: calc(var(--width) - calc(2 * var(--offset)) - var(--level));
+        height: calc(var(--height) - calc(2 * var(--offset)) - var(--height-offset));
+      }
     }
   }
 </style>

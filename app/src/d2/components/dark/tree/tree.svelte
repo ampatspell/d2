@@ -77,6 +77,7 @@
   };
 
   let draggableDelegate = options<DraggableGroupDelegate>({
+    direction: 'vertical',
     isDraggable: getter(() => treeDelegate.isReorderable),
     onDragging: (model) => {
       dragging = model as T | undefined;

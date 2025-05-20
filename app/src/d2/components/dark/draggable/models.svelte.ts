@@ -15,6 +15,7 @@ export type DraggableGroupDelegate = {
   isValidTarget?: (model: unknown) => boolean;
   onDragging?: (model: unknown | undefined) => void;
   onDrop: (opts: DraggableOnDrop<unknown>) => void;
+  direction: Direction;
 };
 
 const eventToClientPoint = (e: MouseEvent): Point => {
@@ -35,6 +36,7 @@ export type DraggingModelOptions = {
 export class DraggingModel extends Model<DraggingModelOptions> {
   readonly draggable = $derived(this.options.draggable);
   readonly context = $derived(this.draggable.context);
+  readonly direction = $derived(this.context.direction);
   readonly rect = $derived(this.draggable.rect);
   readonly model = $derived(this.draggable.model);
 
@@ -89,6 +91,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
       return undefined;
     }
 
+    const direction = this.direction;
     const mouse = this.mouse;
     const rect = draggable.rect;
     if (mouse && rect) {
@@ -98,15 +101,26 @@ export class DraggingModel extends Model<DraggingModelOptions> {
       const x = calc('x', 'width');
       const y = calc('y', 'height');
       if (x && y) {
-        const offset = 10;
-        const position = mouse.y - rect.y;
-        if (position < offset) {
-          return 'before';
+        if (direction === 'vertical') {
+          const offset = 10;
+          const position = mouse.y - rect.y;
+          if (position < offset) {
+            return 'before';
+          }
+          if (position > rect.height - offset) {
+            return 'after';
+          }
+          return 'over';
         }
-        if (position > rect.height - offset) {
+      } else if (direction === 'horizontal') {
+        const position = mouse.x - rect.x;
+        if (position < rect.x + rect.width / 2) {
+          console.log('before', (draggable.model as any).path.value);
+          return 'before';
+        } else {
+          console.log('after', (draggable.model as any).path.value);
           return 'after';
         }
-        return 'over';
       }
     }
 
@@ -129,6 +143,7 @@ export type DraggableModelOptions = {
 
 export class DraggableModel extends Model<DraggableModelOptions> {
   readonly context = $derived(this.options.context);
+  readonly direction = $derived(this.context.direction);
   readonly element = $derived(this.options.element);
   readonly model = $derived(this.options.model);
   readonly level = $derived(this.options.level ?? 0);
@@ -177,6 +192,7 @@ export type DraggableContextOptions = {
 export class DraggableContext extends Model<DraggableContextOptions> {
   readonly delegate = $derived(this.options.delegate);
   readonly isDraggable: boolean = $derived(this.delegate.isDraggable);
+  readonly direction = $derived(this.delegate.direction);
 
   private registered = $state<DraggableModel[]>([]);
   dragging = $state<DraggingModel>();
