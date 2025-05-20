@@ -6,6 +6,7 @@
 - [ ] backend nodes as grid
 - [ ] reorder nodes in backend grid
 - [ ] multiple selection in grid
+- [ ] keyboard navigation in sidebar
 - [x] reorder and move nodes in the sidebar
 - [x] move path and parent updates to backend
 - [x] add support for updating nested paths
