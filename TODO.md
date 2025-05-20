@@ -5,7 +5,8 @@
 - [ ] select multiple nodes in sidebar
 - [ ] backend nodes as grid
 - [ ] reorder nodes in backend grid
-- [ ] reorder and move nodes in the sidebar
+- [ ] multiple selection in grid
+- [x] reorder and move nodes in the sidebar
 - [x] move path and parent updates to backend
 - [x] add support for updating nested paths
 - [x] list users in settings
