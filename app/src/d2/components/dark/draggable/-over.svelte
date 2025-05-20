@@ -1,6 +1,5 @@
 <script lang="ts">
   import { classes } from '$d2/lib/base/utils/classes';
-  import { fade } from 'svelte/transition';
   import type { DraggableModel } from './models.svelte';
 
   let { model }: { model: DraggableModel } = $props();
@@ -9,17 +8,14 @@
 </script>
 
 {#if model.over}
-  {#key model}
-    <div
-      class={classes('marker', model.over)}
-      style:--x="{model.rect?.x}px"
-      style:--y="{model.rect?.y}px"
-      style:--width="{model.rect?.width}px"
-      style:--height="{model.rect?.height}px"
-      style:--level="{level}px"
-      transition:fade={{ duration: 150 }}
-    ></div>
-  {/key}
+  <div
+    class={classes('marker', model.over)}
+    style:--x="{model.rect?.x}px"
+    style:--y="{model.rect?.y}px"
+    style:--width="{model.rect?.width}px"
+    style:--height="{model.rect?.height}px"
+    style:--level="{level}px"
+  ></div>
 {/if}
 
 <style lang="scss">
@@ -29,6 +25,7 @@
     left: 0;
     background: var(--dark-accent-color-1);
     border-radius: 4px;
+    transition: 0.1s ease-in-out all;
     --offset: 2px;
     &.before,
     &.after {

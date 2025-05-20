@@ -93,7 +93,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     const rect = draggable.rect;
     if (mouse && rect) {
       const calc = (p: 'x' | 'y', s: 'width' | 'height') => {
-        return mouse[p] > rect[p] && mouse[p] < rect[p] + rect[s];
+        return mouse[p] >= rect[p] && mouse[p] <= rect[p] + rect[s];
       };
       const x = calc('x', 'width');
       const y = calc('y', 'height');
