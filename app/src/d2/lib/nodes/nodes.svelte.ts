@@ -94,18 +94,16 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       if (position === 'before') {
         delta = -1;
       } else {
-        delta = 1;
+        delta = 0;
       }
       const parent = this.byId(target.parent?.id);
-      const nodes = this.byParentId(parent?.id ?? null);
       const nextPosition = target.position + delta;
+      const nodes = this.byParentId(parent?.id ?? null);
       reorder(nodes, nextPosition);
       saves.push(source.scheduleUpdate().parent(parent).position(nextPosition).build());
     }
 
-    const previous = this.byParentId(source.parent?.id ?? null);
-    reorder(previous);
-
+    reorder(this.byParentId(source.parent?.id ?? null));
     await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
   }
 

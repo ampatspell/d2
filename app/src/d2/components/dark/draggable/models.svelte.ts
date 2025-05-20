@@ -93,7 +93,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     const rect = draggable.rect;
     if (mouse && rect) {
       const calc = (p: 'x' | 'y', s: 'width' | 'height') => {
-        return mouse[p] > rect[p] && mouse[p] <= rect[p] + rect[s];
+        return mouse[p] > rect[p] && mouse[p] < rect[p] + rect[s];
       };
       const x = calc('x', 'width');
       const y = calc('y', 'height');
@@ -131,7 +131,7 @@ export class DraggableModel extends Model<DraggableModelOptions> {
   readonly context = $derived(this.options.context);
   readonly element = $derived(this.options.element);
   readonly model = $derived(this.options.model);
-  readonly level = $derived(this.options.level);
+  readonly level = $derived(this.options.level ?? 0);
 
   private run = $state(0);
 
