@@ -18,6 +18,7 @@ import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
+import { isTruthy, uniq } from '../base/utils/array';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -72,51 +73,40 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
     console.log(opts.source?.path.value, opts.position, opts.target?.path.value);
 
-    // const { position, source, target, context, settings } = opts;
+    const { position, source, target, settings } = opts;
 
-    // const saves = [];
+    const saves = [];
 
-    // const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
-    //   nodes.forEach((node, idx) => {
-    //     const position = omit >= idx ? idx + 1 : idx;
-    //     saves.push(node.scheduleUpdate().position(position).build());
-    //   });
-    // };
+    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
+      nodes.forEach((node, idx) => {
+        const position = omit >= idx ? idx + 1 : idx;
+        saves.push(node.scheduleUpdate().position(position).build());
+      });
+    };
 
-    // if (position === 'over') {
-    //   const nodes = this.byParentId(target.id);
-    //   const position = nextPosition(nodes);
-    //   saves.push(source.scheduleUpdate().parent(target).position(position).build());
-    //   settings.setOpen(target.id, true);
-    // } else {
+    if(position === 'over') {
+        const nodes = this.byParentId(target.id);
+        const position = nextPosition(nodes);
+        saves.push(source.scheduleUpdate().parent(target).position(position).build());
+        settings.setOpen(target.id, true);
+    } else {
+      let delta: number;
+      if(position === 'before') {
+        delta = - 1;
+      } else {
+        delta = 1;
+      }
+      const parent = this.byId(target.parent?.id);
+      const nodes = this.byParentId(parent?.id ?? null);
+      const nextPosition = target.position + delta;
+      reorder(nodes, nextPosition);
+      saves.push(source.scheduleUpdate().parent(parent).position(nextPosition).build());
+    }
 
-    //   const open = settings.isOpen(target.id) && this.byParentId(target.id).length > 0;
+    const previous = this.byParentId(source.parent?.id ?? null);
+    reorder(previous);
 
-    //   let parent: NodeModel | undefined;
-    //   let pos: number;
-
-    //   if(position === 'after') {
-    //     if(open) {
-    //       parent = target;
-    //       pos = 0;
-    //     } else {
-    //       parent = context;
-    //       pos = target.position + 1;
-    //     }
-    //   } else {
-    //     console.log('before');
-    //     return;
-    //   }
-
-    //   const nodes = this.byParentId(parent?.id ?? null);
-    //   reorder(nodes, pos);
-    //   saves.push(source.scheduleUpdate().parent(parent).position(pos).build());
-    // }
-
-    // const previous = this.byParentId(source.parent?.id ?? null);
-    // reorder(previous);
-
-    // await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
+    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {
