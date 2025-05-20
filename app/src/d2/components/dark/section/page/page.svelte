@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import type { Component, Snippet } from 'svelte';
   import Overflow from '../../overflow.svelte';
   import Placeholder from '../placeholder.svelte';
   import LucideChevronLeft from '$d2/icons/lucide--chevron-left.svelte';
@@ -8,11 +8,13 @@
   let {
     title,
     back,
+    icon,
     actions,
     children,
   }: {
     title?: string;
     back?: string;
+    icon?: Component;
     actions?: Snippet;
     children?: Snippet;
   } = $props();
@@ -23,6 +25,9 @@
     <div class="section left">
       {#if back}
         <Icon icon={LucideChevronLeft} route={back} />
+      {/if}
+      {#if icon}
+        <Icon {icon} />
       {/if}
       <div class="title">{title}</div>
     </div>

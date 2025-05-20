@@ -36,7 +36,7 @@
   let hasChildren = $derived(children.length > 0);
 </script>
 
-<Page {title}>
+<Page {title} icon={node.icon}>
   {#snippet actions()}
     {#if hasChildren}
       <Icon icon={LucideLayoutGrid} route="/backend/nodes/{node.id}/grid" />

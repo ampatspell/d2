@@ -8,6 +8,6 @@
   let title = $derived(node.path.value);
 </script>
 
-<Page {title} back="/backend/nodes/{node.id}">
+<Page {title} icon={node.icon} back="/backend/nodes/{node.id}">
   {node}
 </Page>

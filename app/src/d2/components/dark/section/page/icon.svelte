@@ -21,18 +21,20 @@
 {/snippet}
 
 {#if route}
-  <a class="icon" href={route} bind:this={element}>
+  <a class="icon has-action" href={route} bind:this={element}>
     {@render content()}
   </a>
 {:else}
-  <div class="icon" bind:this={element}>
+  <div class={['icon', !!onClick && 'has-action']} bind:this={element}>
     {@render content()}
   </div>
 {/if}
 
 <style lang="scss">
   .icon {
-    cursor: pointer;
     user-select: none;
+    &.has-action {
+      cursor: pointer;
+    }
   }
 </style>
