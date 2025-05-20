@@ -2,18 +2,19 @@ import { Model } from '$d2/lib/base/model/model.svelte';
 import { createContext } from '$d2/lib/base/utils/context';
 import type { OptionsInput } from '$d2/lib/base/utils/options';
 import type { VoidCallback } from '$d2/lib/base/utils/types';
-import type { Component } from 'svelte';
+import type { DraggableOnDrop } from '../draggable/models.svelte';
 
-export type GridModelDelegate<T> = {
+export type GridModelDelegate = {
   isSelected: boolean;
   select: VoidCallback;
-  icon: Component;
 };
 
 export type GridDelegate<T> = {
+  isDraggable: boolean;
   models: T[];
   deselect: VoidCallback;
-  delegateFor: (model: T) => GridModelDelegate<T>;
+  delegateFor: (model: T) => GridModelDelegate;
+  onDrop: (opts: DraggableOnDrop<T>) => void;
 };
 
 export type GridContextOptions = {

@@ -3,23 +3,27 @@
   import Grid from '$d2/components/dark/grid/grid.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { GridDelegate, GridModelDelegate } from '$d2/components/dark/grid/models.svelte';
+  import Item from './item.svelte';
+  import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
-  let { nodes }: { nodes: NodeModel[] } = $props();
+  let { models, nodes }: { models: NodeModel[]; nodes: NodesModel } = $props();
 
   let delegate = options<GridDelegate<NodeModel>>({
-    models: getter(() => nodes),
-    delegateFor: (node) =>
-      options<GridModelDelegate<NodeModel>>({
-        icon: getter(() => node.icon),
+    isDraggable: true,
+    models: getter(() => models),
+    delegateFor: (node) => {
+      return options<GridModelDelegate>({
         isSelected: false,
         select: () => {},
-      }),
+      });
+    },
     deselect: () => {},
+    onDrop: (opts) => nodes.reorder(opts),
   });
 </script>
 
 <Grid {delegate}>
-  {#snippet item({ model, delegate })}
-    <div class="model">{model}</div>
+  {#snippet item({ model })}
+    <Item {model} />
   {/snippet}
 </Grid>

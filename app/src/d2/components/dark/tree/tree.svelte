@@ -158,6 +158,7 @@
     user-select: none;
     .dragging {
       width: var(--width);
+      background: #fff;
     }
   }
 </style>

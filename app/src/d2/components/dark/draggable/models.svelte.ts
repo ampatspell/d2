@@ -12,8 +12,8 @@ export type DraggableOnDrop<T> = { position: OverPosition; source: T; target: T 
 
 export type DraggableGroupDelegate = {
   isDraggable: boolean;
-  isValidTarget: (model: unknown) => boolean;
-  onDragging: (model: unknown | undefined) => void;
+  isValidTarget?: (model: unknown) => boolean;
+  onDragging?: (model: unknown | undefined) => void;
   onDrop: (opts: DraggableOnDrop<unknown>) => void;
 };
 
@@ -204,7 +204,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   }
 
   isValidTarget(model: unknown) {
-    return this.delegate.isValidTarget(model);
+    return this.delegate.isValidTarget?.(model) ?? true;
   }
 
   onPrepare() {
@@ -235,14 +235,14 @@ export class DraggableContext extends Model<DraggableContextOptions> {
     const dragging = this.dragging;
     if (dragging) {
       if (e.key === 'Escape') {
-        this.delegate.onDragging(undefined);
+        this.delegate.onDragging?.(undefined);
         this.dragging = undefined;
       }
     }
   }
 
   onDragStart(dragging: DraggingModel) {
-    this.delegate.onDragging(dragging.model);
+    this.delegate.onDragging?.(dragging.model);
   }
 
   onDrop(dragging: DraggingModel) {
@@ -263,7 +263,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
 
   onDragEnd(dragging: DraggingModel) {
     this.onDrop(dragging);
-    this.delegate.onDragging(undefined);
+    this.delegate.onDragging?.(undefined);
   }
 }
 

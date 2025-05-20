@@ -7,12 +7,12 @@
   let { node, nodes }: { node: NodeModel; nodes: NodesModel } = $props();
 
   let title = $derived(node.path.value);
-  let children = $derived(nodes.byParentId(node.id));
+  let models = $derived(nodes.byParentId(node.id));
 </script>
 
 <Page {title} icon={node.icon} back="/backend/nodes/{node.id}">
   <div class="grid">
-    <Grid nodes={children} />
+    <Grid {models} {nodes} />
   </div>
 </Page>
 

@@ -13,7 +13,7 @@
     model: unknown;
     level?: number;
     children: Snippet;
-    dragging: Snippet;
+    dragging?: Snippet;
   } = $props();
 
   let context = getDraggableContext();
@@ -40,6 +40,6 @@
 <div class="draggable" bind:this={element} {onmousedown}>
   {@render children()}
   <Dragging {draggable}>
-    {@render dragging()}
+    {@render (dragging ?? children)()}
   </Dragging>
 </div>
