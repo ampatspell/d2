@@ -84,15 +84,15 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       });
     };
 
-    if(position === 'over') {
-        const nodes = this.byParentId(target.id);
-        const position = nextPosition(nodes);
-        saves.push(source.scheduleUpdate().parent(target).position(position).build());
-        settings.setOpen(target.id, true);
+    if (position === 'over') {
+      const nodes = this.byParentId(target.id);
+      const position = nextPosition(nodes);
+      saves.push(source.scheduleUpdate().parent(target).position(position).build());
+      settings.setOpen(target.id, true);
     } else {
       let delta: number;
-      if(position === 'before') {
-        delta = - 1;
+      if (position === 'before') {
+        delta = -1;
       } else {
         delta = 1;
       }
