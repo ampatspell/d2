@@ -71,8 +71,6 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   }
 
   async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
-    console.log(opts.source?.path.value, opts.position, opts.target?.path.value);
-
     const { position, source, target, settings } = opts;
 
     const saves = [];
@@ -80,14 +78,14 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
       nodes.forEach((node, idx) => {
         const position = omit >= idx ? idx + 1 : idx;
-        saves.push(node.scheduleUpdate().position(position).build());
+        saves.push(node.buildReorder().position(position).build());
       });
     };
 
     if (position === 'over') {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
-      saves.push(source.scheduleUpdate().parent(target).position(position).build());
+      saves.push(source.buildReorder().parent(target).position(position).build());
       settings.setOpen(target.id, true);
     } else {
       let delta: number;
@@ -100,7 +98,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const nextPosition = target.position + delta;
       const nodes = this.byParentId(parent?.id ?? null);
       reorder(nodes, nextPosition);
-      saves.push(source.scheduleUpdate().parent(parent).position(nextPosition).build());
+      saves.push(source.buildReorder().parent(parent).position(nextPosition).build());
     }
 
     reorder(this.byParentId(source.parent?.id ?? null));

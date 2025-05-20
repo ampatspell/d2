@@ -242,7 +242,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     }
   }
 
-  scheduleUpdate() {
+  buildReorder() {
     let updated = false;
     const hash = {
       parent: (parent: NodeModel | undefined) => {
