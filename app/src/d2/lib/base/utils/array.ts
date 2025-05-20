@@ -28,7 +28,11 @@ export function sortedBy<T>(arr: T[], descriptors: SortDescriptors<T>): T[] {
   return sorted;
 }
 
-export function lastObject<T>(arr: readonly T[]) {
+export function firstObject<T>(arr: readonly T[]): T | undefined {
+  return arr && arr[0];
+}
+
+export function lastObject<T>(arr: readonly T[]): T | undefined {
   return arr[arr.length - 1];
 }
 
@@ -88,6 +92,11 @@ export const filterByInstanceOf = <I, O>(array: I[], factory: { new (...args: ne
   return array.filter((item) => item instanceof factory) as unknown as O[];
 };
 
-export const uniq = <T>(array: readonly T[]) => {
-  return [...new Set(array)];
+export const uniq = <T>(array: readonly T[], cb?: (item: T) => unknown) => {
+  if (cb) {
+    const keys = [...new Set(array.map((m) => cb(m)))];
+    return keys.map((key) => array.find((item) => cb(item) === key)!);
+  } else {
+    return [...new Set(array)];
+  }
 };

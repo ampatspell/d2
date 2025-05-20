@@ -10,7 +10,7 @@
   import Add from '../../nodes/add/add.svelte';
   import Upload from '../../nodes/upload.svelte';
   import Fold from '../../nodes/fold.svelte';
-  import Tree from '../../nodes/tree.svelte';
+  import Tree from '../../nodes/tree/tree.svelte';
 
   let {
     id,
@@ -38,7 +38,7 @@
   {/snippet}
   {#snippet sidebar()}
     <Overflow overflow="y">
-      <Tree {nodes} {selected} {settings} {onSelect} />
+      <Tree {nodes} {selected} {settings} {onSelect} isReorderable={true} />
     </Overflow>
   {/snippet}
 </Section>

@@ -1,16 +1,11 @@
 import Application from '../app';
 import { NodesFilesService } from './files';
-import { NodesPathsService } from './paths';
 
 export class NodesService {
   constructor(private readonly app: Application) {}
 
   get files() {
     return new NodesFilesService(this.app);
-  }
-
-  get paths() {
-    return new NodesPathsService(this.app);
   }
 
   private async deleteChildren(nodeId: string) {
