@@ -78,7 +78,12 @@
 
   let draggableDelegate = options<DraggableGroupDelegate>({
     isDraggable: getter(() => treeDelegate.isReorderable),
-    onDragging: (model) => (dragging = model as T | undefined),
+    onDragging: (model) => {
+      dragging = model as T | undefined;
+      if (dragging) {
+        _treeDelegate.delegateFor(dragging).select();
+      }
+    },
     isValidTarget: (model) => !disabled.includes(model as T),
     onDrop: (opts) => {
       _treeDelegate.onReorder({
