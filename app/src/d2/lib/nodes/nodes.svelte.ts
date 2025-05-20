@@ -70,9 +70,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     }
   }
 
-  async reorder(opts: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
-    const { position, source, target, settings } = opts;
-
+  async reorder({ position, source, target, settings }: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
     const saves = [];
 
     const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
@@ -88,20 +86,16 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       saves.push(source.buildReorder().parent(target).position(position).build());
       settings.setOpen(target.id, true);
     } else {
-      let delta: number;
-      if (position === 'before') {
-        delta = -1;
-      } else {
-        delta = 0;
-      }
-      const parent = this.byId(target.parent?.id);
+      const delta = position === 'before' ? -1 : 0;
       const nextPosition = target.position + delta;
+      const parent = this.byId(target.parent?.id);
       const nodes = this.byParentId(parent?.id ?? null);
       reorder(nodes, nextPosition);
       saves.push(source.buildReorder().parent(parent).position(nextPosition).build());
     }
 
     reorder(this.byParentId(source.parent?.id ?? null));
+
     await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
   }
 
