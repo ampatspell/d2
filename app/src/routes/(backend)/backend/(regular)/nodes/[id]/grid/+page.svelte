@@ -1,16 +1,15 @@
 <script lang="ts">
-  import Node from '$d2/components/backend/routes/nodes/node/node.svelte';
+  import Grid from '$d2/components/backend/routes/nodes/node/grid/grid.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
-
-  let nodes = $derived(data.nodes);
   let node = $derived(data.node);
+  let nodes = $derived(data.nodes);
 </script>
 
 {#if node}
-  <Node {node} {nodes} />
+  <Grid {node} {nodes} />
 {:else}
   <Placeholder label="Node not found" />
 {/if}

@@ -2,13 +2,17 @@
   import type { Snippet } from 'svelte';
   import Overflow from '../../overflow.svelte';
   import Placeholder from '../placeholder.svelte';
+  import LucideChevronLeft from '$d2/icons/lucide--chevron-left.svelte';
+  import Icon from './icon.svelte';
 
   let {
     title,
+    back,
     actions,
     children,
   }: {
     title?: string;
+    back?: string;
     actions?: Snippet;
     children?: Snippet;
   } = $props();
@@ -17,6 +21,9 @@
 <div class="page">
   <div class="header">
     <div class="section left">
+      {#if back}
+        <Icon icon={LucideChevronLeft} route={back} />
+      {/if}
       <div class="title">{title}</div>
     </div>
     {#if actions}
