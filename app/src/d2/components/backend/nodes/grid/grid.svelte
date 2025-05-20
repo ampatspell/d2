@@ -11,7 +11,7 @@
   let delegate = options<GridDelegate<NodeModel>>({
     isDraggable: true,
     models: getter(() => models),
-    delegateFor: (node) => {
+    delegateFor: () => {
       return options<GridModelDelegate>({
         isSelected: false,
         select: () => {},
