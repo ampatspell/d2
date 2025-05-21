@@ -46,6 +46,7 @@ export class UploadFileModel {
 
     const task = storage.uploadBytesResumable(ref, data, {
       contentType,
+      cacheControl: 'public, max-age=31536000',
       customMetadata: {
         filename: this.name,
         parent: this.options.upload.id,

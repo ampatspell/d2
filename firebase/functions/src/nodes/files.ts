@@ -7,13 +7,13 @@ import { FunctionsNodeData } from '../../shared/nodes/registry';
 import type { NodeParentData } from '../../shared/documents';
 
 const isNumber = (value: unknown) => {
-  if(typeof value === 'number') {
-    if(!isNaN(value) && value !== Infinity) {
+  if (typeof value === 'number') {
+    if (!isNaN(value) && value !== Infinity) {
       return true;
     }
   }
   return false;
-}
+};
 
 type NodeFileData = {
   name: string;

@@ -41,7 +41,7 @@ describe('files', function () {
         identifier: 'parent',
         path: '/parent',
       },
-      path: "/parent/film-0647-018",
+      path: '/parent/film-0647-018',
       position: 1,
       properties: {
         type: 'image',
