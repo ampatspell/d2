@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Grid from '$d2/components/backend/routes/nodes/node/grid/grid.svelte';
+  import Grid from '$d2/components/backend/routes/nodes/node/grid.svelte';
   import Placeholder from '$d2/components/dark/section/placeholder.svelte';
   import type { PageData } from './$types';
 
