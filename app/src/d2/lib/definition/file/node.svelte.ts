@@ -10,7 +10,11 @@ export class FileNodePropertiesModel extends NodePropertiesModel<'file'> {
   readonly paths = [];
 }
 
-export class FileNodeDetailsModel extends NodeDetailsModel<'file'> {}
+export class FileNodeDetailsModel extends NodeDetailsModel<'file'> {
+  async load() {}
+  readonly isLoaded = true;
+  readonly dependencies = [];
+}
 
 export class FileNodeModel extends NodeModel<'file'> {
   readonly properties: FileNodePropertiesModel = new FileNodePropertiesModel({ model: this });

@@ -7,7 +7,11 @@ export class UnknownNodePropertiesModel extends NodePropertiesModel<any> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class UnknownNodeDetailsModel extends NodeDetailsModel<any> {}
+export class UnknownNodeDetailsModel extends NodeDetailsModel<any> {
+  async load() {}
+  readonly isLoaded = true;
+  readonly dependencies = [];
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class UnknownNodeModel extends NodeModel<any> {

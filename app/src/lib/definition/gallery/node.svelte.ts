@@ -18,13 +18,13 @@ export class GalleryNodeDetailsModel extends NodeDetailsModel<'gallery'> {
   readonly _images = mapNodes.forParentPath({
     path: getter(() => this.path.exceptParents(this.data.properties.images)),
     factory: FileNodeModel,
-    partial: false,
+    partial: true,
   });
 
   readonly images = $derived(this._images.nodes);
 
-  dependencies = [this._images];
-  isLoaded = $derived(isLoaded([this._images]));
+  readonly dependencies = [this._images];
+  readonly isLoaded = $derived(isLoaded([this._images]));
 
   async load() {
     await this._images.load();
@@ -32,13 +32,8 @@ export class GalleryNodeDetailsModel extends NodeDetailsModel<'gallery'> {
 }
 
 export class GalleryNodeModel extends NodeModel<'gallery'> {
-  readonly properties: GalleryNodePropertiesModel = new GalleryNodePropertiesModel({
-    model: this,
-  });
-
-  readonly details: GalleryNodeDetailsModel = new GalleryNodeDetailsModel({
-    model: this,
-  });
+  readonly properties: GalleryNodePropertiesModel = new GalleryNodePropertiesModel({ model: this });
+  readonly details: GalleryNodeDetailsModel = new GalleryNodeDetailsModel({ model: this });
 
   readonly name = 'Gallery';
   readonly icon = LucideImages;

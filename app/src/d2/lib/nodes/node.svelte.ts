@@ -141,6 +141,22 @@ export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<No
   }
 }
 
+export type NodeDetailsModelOptions<Type extends NodeType> = {
+  model: NodeModel<Type>;
+};
+
+export abstract class NodeDetailsModel<
+  Type extends NodeType = NodeType,
+  O extends NodeDetailsModelOptions<Type> = NodeDetailsModelOptions<Type>,
+> extends Subscribable<O> {
+  readonly model = $derived(this.options.model);
+  readonly path = $derived(this.model.path);
+  readonly data = $derived(this.model.data);
+
+  abstract load(): Promise<void>;
+  abstract isLoaded: boolean;
+}
+
 export type NodePathModelOptions = {
   path: string;
 };
@@ -163,24 +179,6 @@ export class NodePathModel extends Model<NodePathModelOptions> {
   }
 
   readonly serialized = $derived(serialized(this, ['value']));
-}
-
-export type NodeDetailsModelOptions<Type extends NodeType> = {
-  model: NodeModel<Type>;
-};
-
-export class NodeDetailsModel<
-  Type extends NodeType = NodeType,
-  O extends NodeDetailsModelOptions<Type> = NodeDetailsModelOptions<Type>,
-> extends Subscribable<O> {
-  readonly model = $derived(this.options.model);
-  readonly path = $derived(this.model.path);
-  readonly data = $derived(this.model.data);
-
-  async load() {}
-
-  isLoaded = true;
-  dependencies: HasSubscriber[] = [];
 }
 
 export type NodeModelOptions<Type extends NodeType> = {

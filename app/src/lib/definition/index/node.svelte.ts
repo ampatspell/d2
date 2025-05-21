@@ -30,13 +30,8 @@ export class IndexNodeDetailsModel extends NodeDetailsModel<'index'> {
 }
 
 export class IndexNodeModel extends NodeModel<'index'> {
-  readonly properties: IndexNodePropertiesModel = new IndexNodePropertiesModel({
-    model: this,
-  });
-
-  readonly details: IndexNodeDetailsModel = new IndexNodeDetailsModel({
-    model: this,
-  });
+  readonly properties: IndexNodePropertiesModel = new IndexNodePropertiesModel({ model: this });
+  readonly details: IndexNodeDetailsModel = new IndexNodeDetailsModel({ model: this });
 
   readonly name = 'Index';
   readonly icon = LucideFlame;
