@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { classes } from '$d2/lib/base/utils/classes';
   import type { DraggableModel } from './models.svelte';
 
   let { model }: { model: DraggableModel } = $props();
@@ -20,28 +19,29 @@
 
 <style lang="scss">
   .marker {
+    --marker: 4px;
     position: fixed;
     top: 0;
     left: 0;
     background: var(--dark-accent-color-1);
-    border-radius: 4px;
+    border-radius: var(--marker);
     transition: 0.1s ease-in-out all;
-    --marker: 4px;
-    --offset: 2px;
     &.horizontal {
+      --offset: 5px;
       &.before,
       &.after {
         height: var(--height);
         width: var(--marker);
       }
       &.before {
-        transform: translate(var(--x), var(--y));
+        transform: translate(calc(var(--x) - var(--offset)), var(--y));
       }
       &.after {
-        transform: translate(var(--x) + var(--width), var(--y));
+        transform: translate(calc(var(--x) + var(--width) + var(--offset) - var(--marker)), var(--y));
       }
     }
     &.vertical {
+      --offset: 2px;
       &.before,
       &.after {
         width: calc(var(--width) - calc(2 * var(--offset)) - var(--marker) - var(--level));

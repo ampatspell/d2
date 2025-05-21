@@ -27,7 +27,7 @@ export type GridContextOptions = {
 export class GridContext extends Model<GridContextOptions> {
   readonly models = $derived(this.options.models);
   readonly width = $derived(this.options.width);
-  readonly gap = 5;
+  readonly gap = 6;
 
   readonly columns = $derived.by(() => {
     const width = this.width;

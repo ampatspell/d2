@@ -111,15 +111,15 @@ export class DraggingModel extends Model<DraggingModelOptions> {
             return 'after';
           }
           return 'over';
-        }
-      } else if (direction === 'horizontal') {
-        const position = mouse.x - rect.x;
-        if (position < rect.x + rect.width / 2) {
-          console.log('before', (draggable.model as any).path.value);
-          return 'before';
-        } else {
-          console.log('after', (draggable.model as any).path.value);
-          return 'after';
+        } else if (direction === 'horizontal') {
+          if (draggable !== this.draggable) {
+            const position = mouse.x - rect.x;
+            if (position < rect.width / 2) {
+              return 'before';
+            } else {
+              return 'after';
+            }
+          }
         }
       }
     }
