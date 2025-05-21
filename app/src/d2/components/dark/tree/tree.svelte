@@ -77,6 +77,7 @@
   };
 
   let draggableDelegate = options<DraggableGroupDelegate>({
+    direction: 'vertical',
     isDraggable: getter(() => treeDelegate.isReorderable),
     onDragging: (model) => {
       dragging = model as T | undefined;
@@ -158,6 +159,7 @@
     user-select: none;
     .dragging {
       width: var(--width);
+      background: #fff;
     }
   }
 </style>

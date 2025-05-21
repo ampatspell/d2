@@ -70,7 +70,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     }
   }
 
-  async reorder({ position, source, target, settings }: TreeOnReorder<NodeModel> & { settings: NodesTreeSettings }) {
+  async reorder({ position, source, target, settings }: TreeOnReorder<NodeModel> & { settings?: NodesTreeSettings }) {
     const parents = [source.parent?.id, target.parent?.id];
 
     const saves = [];
@@ -86,7 +86,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
       saves.push(source.buildReorder().parent(target).position(position).build());
-      settings.setOpen(target.id, true);
+      settings?.setOpen(target.id, true);
     } else {
       const delta = position === 'before' ? -0.5 : 0.5;
       const nextPosition = target.position + delta;
