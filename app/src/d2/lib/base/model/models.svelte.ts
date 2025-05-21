@@ -108,6 +108,8 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
       });
     });
   }
+
+  readonly dependencies = [];
 }
 
 export type MapModelsOptions<Source, Target> = {

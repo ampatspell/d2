@@ -39,6 +39,7 @@ export const mapNodeForId = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     id: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -50,6 +51,7 @@ export const mapNodeForId = <Model extends NodeModel = NodeModel>(
         return node.forId({
           id,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },
@@ -60,6 +62,7 @@ export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     path: string | undefined;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -71,6 +74,7 @@ export const mapNodeForPath = <Model extends NodeModel = NodeModel>(
         return node.forPath({
           path,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },
@@ -81,6 +85,7 @@ export const mapNodeForIdentifier = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     identifier: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -92,6 +97,7 @@ export const mapNodeForIdentifier = <Model extends NodeModel = NodeModel>(
         return node.forIdentifier({
           identifier,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },
@@ -137,6 +143,7 @@ export const mapNodesForParentPath = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     path: string | undefined;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -148,6 +155,7 @@ export const mapNodesForParentPath = <Model extends NodeModel = NodeModel>(
         return nodes.forParentPath({
           path,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },
@@ -158,6 +166,7 @@ export const mapNodesForParentId = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     id: string | undefined;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -169,6 +178,7 @@ export const mapNodesForParentId = <Model extends NodeModel = NodeModel>(
         return nodes.forParentId({
           id,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },
@@ -179,6 +189,7 @@ export const mapNodesForParentIdentifier = <Model extends NodeModel = NodeModel>
   _opts: OptionsInput<{
     identifier: string | undefined;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -190,6 +201,7 @@ export const mapNodesForParentIdentifier = <Model extends NodeModel = NodeModel>
         return nodes.forParentIdentifier({
           identifier,
           factory: getter(() => opts.factory),
+          partial: getter(() => opts.partial),
         });
       }
     },

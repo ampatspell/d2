@@ -121,4 +121,6 @@ export class UploadFilesModel extends Subscribable<UploadFilesModelOptions> {
 
     await Promise.all(this.files.map((file) => file.onUpload(limit)));
   }
+
+  readonly dependencies = [];
 }

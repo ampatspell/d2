@@ -55,4 +55,6 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
     }
     return this._subscribeActive();
   }
+
+  dependencies = [];
 }

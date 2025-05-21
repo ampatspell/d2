@@ -144,4 +144,6 @@ export class NodeSettingsModel extends Subscribable<NodeSettingsModelOptions> {
       await this.save();
     }
   }
+
+  readonly dependencies = [];
 }

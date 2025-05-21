@@ -26,5 +26,5 @@ export abstract class Subscribable<O> extends Model<O> implements HasSubscriber 
   /**
    * Dependencies must be stable
    */
-  readonly dependencies: HasSubscriber[] = [];
+  abstract dependencies: HasSubscriber[];
 }

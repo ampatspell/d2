@@ -3,7 +3,7 @@
 
   let { index }: { index: IndexNodeModel } = $props();
 
-  let background = $derived(index.background.node?.asImage);
+  let background = $derived(index.details.background);
   let url = $derived(background?.thumbnails['2048x2048'].url);
 </script>
 

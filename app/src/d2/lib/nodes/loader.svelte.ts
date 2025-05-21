@@ -20,9 +20,12 @@ export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
   key?: string;
   factory?: NodeModelFactory<Model>;
+  partial?: boolean;
 };
 
 export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<NodeLoaderModelOptions<Model>> {
+  private readonly partial = $derived(this.options.partial ?? false);
+
   private readonly _query = queryFirst<NodeData>({
     ref: getter(() => this.options.ref),
   });
@@ -38,7 +41,7 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
 
   private readonly __node = mapModel({
     source: getter(() => this._loaded),
-    target: (doc) => createNodeModel(doc, undefined),
+    target: (doc) => createNodeModel(doc, this.partial, undefined),
     key: nodeDocumentKey,
   });
 
@@ -83,13 +86,14 @@ export const nodeForQuery = <Model extends NodeModel = NodeModel>(
 };
 
 export const nodeForId = <Model extends NodeModel = NodeModel>(
-  _opts: OptionsInput<{ id: string; factory?: NodeModelFactory<Model> }>,
+  _opts: OptionsInput<{ id: string; partial?: boolean; factory?: NodeModelFactory<Model> }>,
 ) => {
   const opts = options(_opts);
   return nodeForQuery({
     ref: fs.query(nodesCollection, fs.where(fs.documentId(), '==', opts.id)),
     key: `id:${opts.id}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 
@@ -97,6 +101,7 @@ export const nodeForIdentifier = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     identifier: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -104,17 +109,19 @@ export const nodeForIdentifier = <Model extends NodeModel = NodeModel>(
     ref: fs.query(nodesCollection, fs.where('identifier', '==', opts.identifier)),
     key: `identifier:${opts.identifier}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 
 export const nodeForPath = <Model extends NodeModel = NodeModel>(
-  _opts: OptionsInput<{ path: string; factory?: NodeModelFactory<Model> }>,
+  _opts: OptionsInput<{ path: string; partial?: boolean; factory?: NodeModelFactory<Model> }>,
 ) => {
   const opts = options(_opts);
   return nodeForQuery({
     ref: fs.query(nodesCollection, fs.where('path', '==', opts.path)),
     key: `path:${opts.path}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 
@@ -130,11 +137,14 @@ export type NodesLoaderModelOptions<Model extends NodeModel> = {
   key?: string;
   factory?: NodeModelFactory<Model>;
   delegate?: NodeBackendModelDelegate;
+  partial?: boolean;
 };
 
 export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<
   NodesLoaderModelOptions<Model>
 > {
+  private readonly partial = $derived(this.options.partial ?? false);
+
   private readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.ref),
   });
@@ -145,7 +155,7 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 
   private readonly __nodes = mapModels({
     source: getter(() => this._loaded),
-    target: (doc) => createNodeModel(doc, this.options.delegate),
+    target: (doc) => createNodeModel(doc, this.partial, this.options.delegate),
     key: nodeDocumentKey,
   });
 
@@ -186,6 +196,7 @@ export const nodesForParentId = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     id: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -193,6 +204,7 @@ export const nodesForParentId = <Model extends NodeModel = NodeModel>(
     ref: fs.query(nodesCollection, fs.where('parent.id', '==', opts.id)),
     key: `parent:${opts.id}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 
@@ -200,6 +212,7 @@ export const nodesForParentPath = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     path: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -207,6 +220,7 @@ export const nodesForParentPath = <Model extends NodeModel = NodeModel>(
     ref: fs.query(nodesCollection, fs.where('parent.path', '==', opts.path)),
     key: `path:${opts.path}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 
@@ -214,6 +228,7 @@ export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(
   _opts: OptionsInput<{
     identifier: string;
     factory?: NodeModelFactory<Model>;
+    partial?: boolean;
   }>,
 ) => {
   const opts = options(_opts);
@@ -221,6 +236,7 @@ export const nodesForParentIdentifier = <Model extends NodeModel = NodeModel>(
     ref: fs.query(nodesCollection, fs.where('parent.identifier', '==', opts.identifier)),
     key: `identifier:${opts.identifier}`,
     factory: getter(() => opts.factory),
+    partial: getter(() => opts.partial),
   });
 };
 

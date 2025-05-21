@@ -46,7 +46,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   private readonly _nodes = mapModels({
     source: getter(() => this._query.content),
-    target: (doc) => createNodeModel(doc, this._delegate),
+    target: (doc) => createNodeModel(doc, true, this._delegate),
     key: nodeDocumentKey,
     sort: [{ value: (node) => node.position }],
   });

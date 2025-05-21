@@ -1,18 +1,20 @@
 import type { ImageFileNodeProperties } from '$d2-shared/nodes/file';
 import LucideFileImage from '$d2/icons/lucide--file-image.svelte';
 import LucideFile from '$d2/icons/lucide--file.svelte';
-import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import { data } from '$d2/lib/base/utils/property.svelte';
-import { NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
+import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 
 export class FileNodePropertiesModel extends NodePropertiesModel<'file'> {
   readonly filename = data(this, 'filename');
   readonly paths = [];
 }
 
+export class FileNodeDetailsModel extends NodeDetailsModel<'file'> {}
+
 export class FileNodeModel extends NodeModel<'file'> {
   readonly properties: FileNodePropertiesModel = new FileNodePropertiesModel({ model: this });
+  readonly details: FileNodeDetailsModel = new FileNodeDetailsModel({ model: this });
 
   readonly type = $derived(this.data.properties.type);
   readonly original = $derived(this.data.properties.original);
@@ -29,9 +31,6 @@ export class FileNodeModel extends NodeModel<'file'> {
 
   readonly name = 'File';
   readonly icon = $derived(this.isImage ? LucideFileImage : LucideFile);
-
-  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
-  readonly dependencies = [...this.nodeDependencies];
 }
 
 type FileNodeImageModelOptions = {

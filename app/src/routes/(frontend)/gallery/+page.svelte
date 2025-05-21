@@ -14,7 +14,7 @@
   let gallery = $derived(data.loader.node);
   let title = $derived(gallery?.title);
   let introduction = $derived(gallery?.introduction);
-  let files = $derived(gallery?.images);
+  let files = $derived(gallery?.details.images);
 
   let selected = $state<FileNodeModel>();
   let onSelect = (node: FileNodeModel) => {

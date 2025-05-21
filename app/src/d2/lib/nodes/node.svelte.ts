@@ -8,7 +8,7 @@ import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData, NodeParentData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
-import { isLoaded } from '../base/fire/is-loaded.svelte';
+import { isLoaded, type IsLoadedModels } from '../base/fire/is-loaded.svelte';
 import type { HasSubscriber } from '../base/model/subscriber.svelte';
 import { mapModel } from '../base/model/models.svelte';
 import { isTruthy, uniq } from '../base/utils/array';
@@ -78,6 +78,8 @@ export abstract class NodePropertiesModel<
     });
     return updated;
   }
+
+  dependencies: HasSubscriber[] = [];
 }
 
 export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModelFactory<Model>): this is Model => {
@@ -163,9 +165,28 @@ export class NodePathModel extends Model<NodePathModelOptions> {
   readonly serialized = $derived(serialized(this, ['value']));
 }
 
+export type NodeDetailsModelOptions<Type extends NodeType> = {
+  model: NodeModel<Type>;
+};
+
+export class NodeDetailsModel<
+  Type extends NodeType = NodeType,
+  O extends NodeDetailsModelOptions<Type> = NodeDetailsModelOptions<Type>,
+> extends Subscribable<O> {
+  readonly model = $derived(this.options.model);
+  readonly path = $derived(this.model.path);
+  readonly data = $derived(this.model.data);
+
+  async load() {}
+
+  isLoaded = true;
+  dependencies: HasSubscriber[] = [];
+}
+
 export type NodeModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;
   backend: NodeBackendModelDelegate | undefined;
+  partial: boolean;
 };
 
 export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscribable<NodeModelOptions<Type>> {
@@ -182,6 +203,8 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly createdAt = $derived(this.data.createdAt);
   readonly updatedAt = $derived(this.data.updatedAt);
 
+  readonly isPartial = $derived(this.options.partial);
+
   readonly path = new NodePathModel({
     path: getter(() => this.data.path),
   });
@@ -197,6 +220,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   readonly name = $derived(this.definition.name);
 
   abstract readonly properties: NodePropertiesModel<Type>;
+  abstract readonly details: NodeDetailsModel<Type>;
   abstract readonly icon: Component;
 
   async save() {
@@ -277,6 +301,9 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   async load() {
     await this.doc.load();
+    if (!this.isPartial) {
+      await this.details.load();
+    }
   }
 
   async delete() {
@@ -287,16 +314,36 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     return is(this, factory);
   }
 
-  readonly nodeIsLoaded = [this.doc];
-  readonly nodeDependencies = [this.doc, this._backend];
+  get nodeIsLoadedModels(): IsLoadedModels {
+    const base = [this.doc];
+    if (this.isPartial) {
+      return base;
+    } else {
+      return [...base, this.details];
+    }
+  }
 
-  readonly isNodeLoaded = $derived(isLoaded([...this.nodeIsLoaded]));
-  readonly isLoaded = $derived(this.isNodeLoaded);
-  readonly dependencies: HasSubscriber[] = [...this.nodeDependencies];
+  get nodeDependencies(): HasSubscriber[] {
+    const base = [this.doc, this._backend];
+    if (this.isPartial) {
+      return base;
+    }
+    return [...base, this.details];
+  }
+
+  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoadedModels]));
+
+  get dependencies(): HasSubscriber[] {
+    return [...this.nodeDependencies];
+  }
 
   readonly serialized = $derived(serialized(this, ['id', 'path']));
 }
 
-export const createNodeModel = (doc: Document<NodeData>, backend: NodeBackendModelDelegate | undefined) => {
-  return getDefinition().byDocument(doc).model({ doc, backend });
+export const createNodeModel = (
+  doc: Document<NodeData>,
+  partial: boolean,
+  backend: NodeBackendModelDelegate | undefined,
+) => {
+  return getDefinition().byDocument(doc).model({ doc, partial, backend });
 };

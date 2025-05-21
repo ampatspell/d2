@@ -2,6 +2,7 @@ import type { DocumentData } from '@firebase/firestore';
 import { getter, type OptionsInput } from './options';
 import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
+import type { HasSubscriber } from '../model/subscriber.svelte';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {
@@ -67,6 +68,8 @@ export class DocumentModelProperties<
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
     return this.options.model.didUpdate(property, result);
   }
+
+  dependencies: HasSubscriber[] = [];
 }
 
 export type DataModelPropertiesOptions<D extends DocumentData> = {
@@ -83,6 +86,8 @@ export class DataModelProperties<
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
     return this.options.model.didUpdate(property, result);
   }
+
+  dependencies: HasSubscriber[] = [];
 }
 
 export type PropertyDelegateWithData<D> = { data: D } & PropertyDelegateOptions;
