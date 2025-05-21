@@ -25,12 +25,21 @@
 
   let size = $derived(context.size);
 
+  let dragging = $state<unknown>();
+
   let draggableDelegate = options<DraggableGroupDelegate>({
     direction: 'horizontal',
+    onDragging: (model) => (dragging = model),
     isDraggable: getter(() => gridDelegate.isDraggable),
     onDrop: (opts) => gridDelegate.onDrop(opts as DraggableOnDrop<T>),
   });
 </script>
+
+{#snippet _item(model: T, isDragging: boolean)}
+  <div class={['item', !isDragging && model === dragging && 'faded']} style:--size="{context.item}px">
+    {@render item({ model })}
+  </div>
+{/snippet}
 
 <div class="grid" style:--gap="{context.gap}px" bind:this={element} bind:clientWidth={width}>
   {#if gridDelegate.models.length}
@@ -39,9 +48,10 @@
         <div class="content" style:--width="{size.width}px" style:--height="{size.height}px">
           {#each context.models as model (model)}
             <Draggable {model}>
-              <div class="item" style:--size="{context.item}px">
-                {@render item({ model })}
-              </div>
+              {@render _item(model, false)}
+              {#snippet dragging()}
+                {@render _item(model, true)}
+              {/snippet}
             </Draggable>
           {/each}
         </div>
@@ -67,6 +77,10 @@
       .item {
         width: var(--size);
         height: var(--size);
+        transition: 0.15s ease-in-out opacity;
+        &.faded {
+          opacity: 0.25;
+        }
       }
     }
   }
