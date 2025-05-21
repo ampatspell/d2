@@ -85,7 +85,9 @@ export class FilesService {
         await file.save(data, {
           resumable: false,
           contentType,
-          public: true,
+          metadata: {
+            cacheControl: 'public, max-age=31536000',
+          }
         });
 
         const url = await getDownloadURL(file);
