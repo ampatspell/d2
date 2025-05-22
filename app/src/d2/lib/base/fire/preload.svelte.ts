@@ -9,17 +9,14 @@ export type PreloadModel = Subscribable<unknown> & {
   load: () => Promise<void>;
 };
 
-const later = async (delay: number) => {
-  await new Promise((resolve) => setTimeout(resolve, delay));
-};
-
-export const preloadModel = <T extends PreloadModel>(model: T): Promise<T> => {
+export const preloadModel = <T extends PreloadModel>(model: T, subscribeInBrowser: boolean = false): Promise<T> => {
   const deferred = new Deferred<T, unknown>();
 
-  if (browser) {
+  // TODO: I'm not sure that subscribe really makes sense here. If for the most part ssr is preferred, load() is anyway is needed
+  if (browser && subscribeInBrowser) {
     const cancel = $effect.root(() => {
       const tick = async () => {
-        await later(50); // TODO next tick, microtask or whatever doesn't cross isLoaded -> !isLoaded fence
+        await Promise.resolve();
         if (model.isLoaded) {
           cancel();
           deferred.resolve(model);
