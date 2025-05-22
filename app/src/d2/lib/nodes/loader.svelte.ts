@@ -4,7 +4,7 @@ import { asIsLoadedModel, isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
 import { getter, options, type OptionsInput } from '$d2/lib/base/utils/options';
-import { nodesCollection } from './nodes.svelte';
+import { nodesCollection, nodesSortDescriptors } from './nodes.svelte';
 import { queryAll, queryFirst } from '../base/fire/query.svelte';
 import {
   createNodeModel,
@@ -157,9 +157,10 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
     source: getter(() => this._loaded),
     target: (doc) => createNodeModel(doc, this.partial, this.options.delegate),
     key: nodeDocumentKey,
+    sort: nodesSortDescriptors,
   });
 
-  private readonly _nodes = $derived(this.__nodes.content);
+  private readonly _nodes = $derived(this.__nodes.sorted);
 
   readonly nodes = $derived.by(() => {
     const factory = this.options.factory;

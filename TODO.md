@@ -1,5 +1,7 @@
 ## TODO
 
+- [ ] uploads create "placeholder" nodes which are then replaced by file nodes on the backend
+- [ ] list orphaned nodes
 - [ ] password protected pages
 - [ ] disable list for some of parents
 - [ ] select multiple nodes in sidebar

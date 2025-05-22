@@ -18,7 +18,7 @@ import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
-import { isTruthy, uniq } from '../base/utils/array';
+import { isTruthy, uniq, type SortDescriptors } from '../base/utils/array';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -28,6 +28,8 @@ export const nextPosition = (nodes: NodeModel[]) => {
 };
 
 export const nodesCollection = fs.collection(firebase.firestore, 'nodes');
+
+export const nodesSortDescriptors: SortDescriptors<NodeModel> = [{ value: (node) => node.position }];
 
 export type NodesModelOptions = {
   query: fs.Query;
@@ -48,7 +50,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     source: getter(() => this._query.content),
     target: (doc) => createNodeModel(doc, true, this._delegate),
     key: nodeDocumentKey,
-    sort: [{ value: (node) => node.position }],
+    sort: nodesSortDescriptors,
   });
 
   readonly all = $derived(this._nodes.sorted);
