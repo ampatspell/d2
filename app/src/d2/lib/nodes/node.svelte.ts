@@ -329,10 +329,10 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     return [...base, this.details];
   }
 
-  readonly isLoaded = $derived(isLoaded([...this.nodeIsLoadedModels]));
+  readonly isLoaded = $derived(isLoaded(this.nodeIsLoadedModels));
 
   get dependencies(): HasSubscriber[] {
-    return [...this.nodeDependencies];
+    return this.nodeDependencies;
   }
 
   readonly serialized = $derived(serialized(this, ['id', 'path']));

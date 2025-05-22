@@ -9,15 +9,18 @@ export type PreloadModel = Subscribable<unknown> & {
   load: () => Promise<void>;
 };
 
+const later = async (delay: number) => {
+  await new Promise((resolve) => setTimeout(resolve, delay));
+};
+
 export const preloadModel = <T extends PreloadModel>(model: T): Promise<T> => {
   const deferred = new Deferred<T, unknown>();
 
   if (browser) {
     const cancel = $effect.root(() => {
       const tick = async () => {
-        await Promise.resolve();
+        await later(50); // TODO next tick, microtask or whatever doesn't cross isLoaded -> !isLoaded fence
         if (model.isLoaded) {
-          await Promise.resolve();
           cancel();
           deferred.resolve(model);
         }
