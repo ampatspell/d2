@@ -1,14 +1,14 @@
 ## TODO
 
 - [ ] uploads create "placeholder" nodes which are then replaced by file nodes on the backend
+- [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
 - [ ] password protected pages
-- [ ] disable list for some of parents
 - [ ] select multiple nodes in sidebar
-- [ ] backend nodes as grid
-- [ ] reorder nodes in backend grid
 - [ ] multiple selection in grid
 - [ ] keyboard navigation in sidebar
+- [x] backend nodes as grid
+- [x] reorder nodes in backend grid
 - [x] reorder and move nodes in the sidebar
 - [x] move path and parent updates to backend
 - [x] add support for updating nested paths
