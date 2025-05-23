@@ -4,7 +4,7 @@
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
-  let node = $derived(data.loader.node);
+  let node = $derived(data.node);
   let nodes = $derived(data.nodes);
 </script>
 
