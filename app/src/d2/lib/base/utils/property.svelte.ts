@@ -163,8 +163,6 @@ export const optionalIntegerToString = (source: Property<number | undefined>): P
     toTarget: (value) => _integerToString(value),
   });
 
-export const integerToString = (source: Property<number | undefined>, fallback: number) => toRequired(source, fallback);
-
 export const toOptional = <T>(source: Property<T>, fallback: T) =>
   transform<T, T | undefined>(source, {
     toSource: (value) => value ?? fallback,

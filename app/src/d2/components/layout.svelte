@@ -32,7 +32,7 @@
 
 {#if isAdmin && !isBackend}
   <div class="admin">
-    <Icon icon={LucideFlame} route="/backend" />
+    <Icon icon={LucideFlame} route="/backend/nodes" />
   </div>
 {/if}
 

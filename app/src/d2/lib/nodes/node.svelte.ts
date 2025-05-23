@@ -63,7 +63,7 @@ export abstract class NodePropertiesModel<
     await this.options.model.didUpdate(property, result);
   }
 
-  abstract readonly paths: Property<string | undefined>[];
+  abstract readonly paths: (Property<string | undefined> | Property<string>)[];
 
   async updatePaths(opts: PropertyUpdateResult<string>) {
     let updated = false;
