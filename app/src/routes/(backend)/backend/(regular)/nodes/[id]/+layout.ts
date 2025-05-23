@@ -7,6 +7,6 @@ export const load = async (event) => {
   const details = node?.details;
   return {
     node,
-    details: details && await preloadModel(details),
+    details: details && (await preloadModel(details)),
   };
 };
