@@ -7,9 +7,11 @@
   let { data }: { data: PageData } = $props();
 
   let nodes = $derived(data.nodes);
-  let node = $derived(data.loader.node);
+  let node = $derived(data.node);
+  let details = $derived(data.details);
 
-  $effect(() => subscribe(data.loader));
+  $effect(() => subscribe(node));
+  $effect(() => subscribe(details));
 </script>
 
 {#if node}
