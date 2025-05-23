@@ -19,6 +19,7 @@ import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
 import { isTruthy, uniq, type SortDescriptors } from '../base/utils/array';
+import { node } from './loader.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -64,6 +65,10 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   byId(id: string | undefined) {
     return this.all.find((node) => node.id === id);
+  }
+
+  byIdLoader(id: string) {
+    return node.forId({ id, delegate: this._delegate });
   }
 
   byPath(path: string | undefined) {

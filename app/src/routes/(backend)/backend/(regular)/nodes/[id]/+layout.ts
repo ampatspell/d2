@@ -1,8 +1,7 @@
-import { node } from '$d2/lib/nodes/loader.svelte';
-
 export const load = async (event) => {
+  const { nodes } = await event.parent();
   const id = event.params.id;
   return {
-    loader: await node.forId({ id }).preload(),
+    loader: await nodes.byIdLoader(id).preload(),
   };
 };
