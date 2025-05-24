@@ -25,12 +25,16 @@ export type DocumentsLoadOptions = {
   force?: boolean;
 };
 
-const getDocsBySource = (ref: Query, source: DocumentLoadSource | undefined = 'cached') => {
+const getDocsBySource = async (ref: Query, source: DocumentLoadSource | undefined = 'cached') => {
   if (!browser) {
     source = undefined;
   }
   if (source === 'cached') {
-    return getDocsFromCache(ref);
+    const cached = await getDocsFromCache(ref);
+    if(cached.empty) {
+      return getDocsFromServer(ref);
+    }
+    return cached;
   } else if (source === 'remote') {
     return getDocsFromServer(ref);
   } else if (source === undefined) {

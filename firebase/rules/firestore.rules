@@ -9,6 +9,10 @@ service cloud.firestore {
     return isAuthenticated() && request.auth.token.role == 'admin';
   }
 
+  function isCurrentUser(uid) {
+    return isAuthenticated() && request.auth.uid == uid;
+  }
+
   match /databases/{database}/documents {
     match /subscriptions/{email} {
       allow read: if isCurrentUserAdmin();
@@ -17,6 +21,14 @@ service cloud.firestore {
     match /nodes/{node} {
       allow read: if true;
       allow write: if isCurrentUserAdmin();
+    }
+    match /users/{user} {
+      allow read: if isCurrentUser(user) || isCurrentUserAdmin();
+      allow write: if isCurrentUserAdmin();
+      match /nodes/{node} {
+        allow read: if isCurrentUser(user) || isCurrentUserAdmin();
+        allow write: if isCurrentUserAdmin();
+      }
     }
   }
 }

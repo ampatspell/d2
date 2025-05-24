@@ -32,7 +32,13 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
     }
   }
 
+  declare path: string | undefined;
+
   _onError(error: unknown) {
+    const path = this.path;
+    if(path) {
+      console.error(path, error);
+    }
     this.isLoading = false;
     this.error = error;
     this.metadata = undefined;
