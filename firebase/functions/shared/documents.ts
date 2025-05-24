@@ -31,3 +31,12 @@ export type BaseNodeData<Type extends string, NodePropertiesRegistry extends { [
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SubscriptionData = {
+  createdAt: Date;
+  updatedAt: Date;
+  kinds: string[];
+  fullName: string | null;
+  email: string;
+  isEmailVerified: boolean;
+};

@@ -3,6 +3,7 @@
   import Row from '$d2/components/dark/inspector/row.svelte';
   import Section from '$d2/components/dark/inspector/section.svelte';
   import ValueRow from '$d2/components/dark/inspector/value-row.svelte';
+  import Json from '$d2/components/dark/json.svelte';
   import type { UnknownNodeModel } from './node.svelte';
 
   let { node }: { node: UnknownNodeModel } = $props();
@@ -12,13 +13,7 @@
   <ValueRow label="ID" value={node.id} />
   <Row>
     <Column label="Document" flex={true}>
-      <div class="data">{JSON.stringify(node.data, null, 2)}</div>
+      <Json data={node.data} />
     </Column>
   </Row>
 </Section>
-
-<style lang="scss">
-  .data {
-    white-space: pre-wrap;
-  }
-</style>

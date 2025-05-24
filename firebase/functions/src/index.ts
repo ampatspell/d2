@@ -2,7 +2,12 @@ import { initializeApp } from 'firebase-admin/app';
 import * as functions from 'firebase-functions/v2';
 import * as logger from 'firebase-functions/logger';
 import Application from './app';
-import { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '../shared/functions';
+import type {
+  FunctionsCreateSubscriptionRequest,
+  FunctionsCreateSubscriptionResponse,
+  FunctionsSetRoleEventRequest,
+  FunctionsSetRoleEventResponse,
+} from '../shared/functions';
 import { config } from './config';
 import { isUserRole } from '../shared/documents';
 
@@ -51,3 +56,10 @@ export const storageOnFinalized = functions.storage.onObjectFinalized(
     await app.files.onStorageObjectFinalized(event.data);
   },
 );
+
+export const createSubscription = functions.https.onCall<
+  FunctionsCreateSubscriptionRequest,
+  Promise<FunctionsCreateSubscriptionResponse>
+>(async (event) => {
+  return await app.subscriptions.createSubscription(event.data);
+});

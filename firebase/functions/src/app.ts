@@ -8,6 +8,7 @@ import { IdentityService } from './identity';
 import { FilesService } from './files';
 import { NodesService } from './nodes/nodes';
 import { UsersService } from './users';
+import { SubscriptionsService } from './subscriptions';
 
 export type Logger = {
   info(...args: unknown[]): void;
@@ -59,6 +60,10 @@ export default class Application {
 
   get files() {
     return new FilesService(this);
+  }
+
+  get subscriptions() {
+    return new SubscriptionsService(this);
   }
 
   dir(object: unknown) {

@@ -22,3 +22,18 @@ export type FunctionsSetRoleEventResponse = WithAdminResponse<
       reason: string;
     }
 >;
+
+export type FunctionsCreateSubscriptionRequest = {
+  kind: string;
+  fullName?: string;
+  email: string;
+};
+
+export type FunctionsCreateSubscriptionResponse =
+  | {
+      status: 'success';
+    }
+  | {
+      status: 'failed';
+      reason: string;
+    };
