@@ -32,12 +32,15 @@ export const TOKEN = '_token';
 
 export type DocumentLoadSource = 'cached' | 'remote';
 
-const getDocBySource = (ref: DocumentReference, source: DocumentLoadSource | undefined = 'cached') => {
+const getDocBySource = async (ref: DocumentReference, source: DocumentLoadSource | undefined = 'cached') => {
   if (!browser) {
     source = undefined;
   }
   if (source === 'cached') {
-    return getDocFromCache(ref);
+    const cached = await getDocFromCache(ref);
+    if(!cached.exists) {
+      return getDocFromServer(ref);
+    }
   } else if (source === 'remote') {
     return getDocFromServer(ref);
   } else if (source === undefined) {
