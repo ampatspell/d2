@@ -20,7 +20,7 @@
 
 <Row>
   <Column {label}>
-    {#if value === undefined}
+    {#if value === undefined || value === null}
       Not set
     {:else}
       <div class="value">

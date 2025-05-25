@@ -31,7 +31,7 @@ const getDocsBySource = async (ref: Query, source: DocumentLoadSource | undefine
   }
   if (source === 'cached') {
     const cached = await getDocsFromCache(ref);
-    if(cached.empty) {
+    if (cached.empty) {
       return getDocsFromServer(ref);
     }
     return cached;

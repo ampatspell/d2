@@ -4,7 +4,8 @@
   import LucideActivity from '$d2/icons/lucide--activity.svelte';
   import LucideFlame from '$d2/icons/lucide--flame.svelte';
   import LucideSettings from '$d2/icons/lucide--settings.svelte';
-  import LucideFile from '$d2/icons/lucide--file.svelte';
+  import LucideMail from '$d2/icons/lucide--mail.svelte';
+  import LucideArchive from '$d2/icons/lucide--archive.svelte';
   import { page } from '$app/state';
 
   let route = $derived(page.url.pathname);
@@ -30,8 +31,13 @@
       current: equals,
     },
     {
-      icon: LucideFile,
+      icon: LucideArchive,
       route: '/backend/nodes',
+      current: startsWith,
+    },
+    {
+      icon: LucideMail,
+      route: '/backend/subscriptions',
       current: startsWith,
     },
   ];

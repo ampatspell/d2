@@ -38,7 +38,7 @@ const getDocBySource = async (ref: DocumentReference, source: DocumentLoadSource
   }
   if (source === 'cached') {
     const cached = await getDocFromCache(ref);
-    if(!cached.exists) {
+    if (!cached.exists) {
       return getDocFromServer(ref);
     }
     return cached;

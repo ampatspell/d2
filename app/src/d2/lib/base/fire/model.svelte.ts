@@ -36,7 +36,7 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
 
   _onError(error: unknown) {
     const path = this.path;
-    if(path) {
+    if (path) {
       console.error(path, error);
     }
     this.isLoading = false;

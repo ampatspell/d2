@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import Section from '$d2/components/dark/section/section.svelte';
-  import LucideFile from '$d2/icons/lucide--file.svelte';
   import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { Snippet } from 'svelte';
@@ -11,6 +10,7 @@
   import Upload from '../../nodes/upload.svelte';
   import Fold from '../../nodes/fold.svelte';
   import Tree from '../../nodes/tree/tree.svelte';
+  import LucideArchive from '$d2/icons/lucide--archive.svelte';
 
   let {
     id,
@@ -30,7 +30,7 @@
   let onSelect = (model: NodeModel | undefined) => goto(route(model));
 </script>
 
-<Section title="Nodes" icon={LucideFile} {children}>
+<Section title="Nodes" icon={LucideArchive} {children}>
   {#snippet accessories()}
     <Fold {nodes} {settings} {onSelect} />
     <Upload {selected} />
