@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] reorderable array of objects as inspector row
 - [ ] uploads create "placeholder" nodes which are then replaced by file nodes on the backend
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
