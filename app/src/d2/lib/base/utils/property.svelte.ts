@@ -3,6 +3,8 @@ import { getter, type OptionsInput } from './options';
 import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 import type { HasSubscriber } from '../model/subscriber.svelte';
+import type { HasPosition } from './types';
+import { removeObject, sortedBy } from './array';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {
@@ -108,6 +110,80 @@ export const data = <D, K extends keyof D>(
       model.data[key] = value;
     },
   });
+};
+
+export type ArrayPropertyItemModelOptions<T extends HasPosition> = {
+  array: ArrayPropertyModel<T>;
+  data: T;
+};
+
+export class ArrayPropertyItemModel<T extends HasPosition = HasPosition> extends Model<
+  ArrayPropertyItemModelOptions<T>
+> {
+  readonly data = $derived(this.options.data);
+  readonly position = data(this, 'position');
+
+  delete() {
+    this.options.array.delete(this.data);
+  }
+
+  didUpdate() {
+    this.options.array.didUpdate();
+  }
+}
+
+export type ArrayPropertyModelOptions<T extends HasPosition, I extends ArrayPropertyItemModel<T>> = {
+  property: Property<T[]>;
+  factory: new (...args: ConstructorParameters<typeof ArrayPropertyItemModel<T>>) => I;
+  add: (position: number) => T;
+};
+
+export class ArrayPropertyModel<
+  T extends HasPosition = HasPosition,
+  I extends ArrayPropertyItemModel<T> = ArrayPropertyItemModel<T>,
+> extends Model<ArrayPropertyModelOptions<T, I>> {
+  readonly property = $derived(this.options.property);
+
+  private readonly _items = $derived.by(() => {
+    const factory = this.options.factory;
+    return this.property.value.map((data) => {
+      return new factory({ array: this, data });
+    });
+  });
+
+  readonly items = $derived(sortedBy(this._items, [{ value: (item) => item.position }]));
+
+  add() {
+    const array = this.property.value;
+    array.push(this.options.add(array.length));
+    this.property.update([...array]);
+  }
+
+  delete(data: T) {
+    const array = this.property.value;
+    removeObject(array, data);
+    this.property.update([...array]);
+  }
+
+  didUpdate() {
+    this.property.update([...this.property.value]);
+  }
+
+  reorder() {
+    const items = [...this.items];
+    if (items.filter((item, idx) => item.position.update(idx)).length) {
+      this.didUpdate();
+    }
+  }
+}
+
+export const array = <
+  T extends HasPosition = HasPosition,
+  I extends ArrayPropertyItemModel<T> = ArrayPropertyItemModel<T>,
+>(
+  opts: ArrayPropertyModelOptions<T, I>,
+) => {
+  return new ArrayPropertyModel<T, I>(opts);
 };
 
 export type TransformOptions<IS, IT, RS, RT> = {

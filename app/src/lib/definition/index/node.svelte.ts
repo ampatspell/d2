@@ -1,14 +1,30 @@
 import LucideFlame from '$d2/icons/lucide--flame.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
-import { data } from '$d2/lib/base/utils/property.svelte';
+import { array, ArrayPropertyItemModel, data, toRequired } from '$d2/lib/base/utils/property.svelte';
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
 import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
+import type { IndexNodeLink } from './definition.svelte';
+
+export class IndexNodeLinkModel extends ArrayPropertyItemModel<IndexNodeLink> {
+  label = data(this, 'label');
+  path = data(this, 'path');
+}
 
 export class IndexNodePropertiesModel extends NodePropertiesModel<'index'> {
   readonly title = data(this, 'title');
   readonly background = data(this, 'background');
+
+  readonly links = array({
+    property: toRequired(data(this, 'links'), []),
+    factory: IndexNodeLinkModel,
+    add: (position) => ({
+      position,
+      label: '',
+      path: '',
+    }),
+  });
 
   readonly paths = [this.background];
 }
@@ -37,4 +53,5 @@ export class IndexNodeModel extends NodeModel<'index'> {
   readonly icon = LucideFlame;
 
   readonly title = $derived(this.data.properties.title);
+  readonly links = $derived(this.data.properties.links ?? []);
 }

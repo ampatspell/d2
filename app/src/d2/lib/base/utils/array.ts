@@ -100,3 +100,11 @@ export const uniq = <T>(array: readonly T[], cb?: (item: T) => unknown) => {
     return [...new Set(array)];
   }
 };
+
+export const replaceObject = <T>(array: T[], previous: T, object: T) => {
+  const index = array.indexOf(previous);
+  if (index > -1) {
+    array.splice(index, 1, object);
+  }
+  return array;
+};

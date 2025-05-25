@@ -13,7 +13,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 10px;
+    padding: var(--inspector-row-padding, 10px);
     min-height: 32px;
     gap: 5px;
   }

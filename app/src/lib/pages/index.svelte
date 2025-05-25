@@ -17,7 +17,9 @@
   {/if}
   <div class="title">{index.title}</div>
   <div class="links">
-    <a href="/gallery">random gallery</a>
+    {#each index.links as link (link)}
+      <a href={link.path}>{link.label}</a>
+    {/each}
   </div>
 </div>
 
