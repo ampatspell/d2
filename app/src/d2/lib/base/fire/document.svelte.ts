@@ -41,6 +41,7 @@ const getDocBySource = async (ref: DocumentReference, source: DocumentLoadSource
     if(!cached.exists) {
       return getDocFromServer(ref);
     }
+    return cached;
   } else if (source === 'remote') {
     return getDocFromServer(ref);
   } else if (source === undefined) {

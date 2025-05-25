@@ -55,7 +55,9 @@ export class UsersUserModel extends Subscribable<UsersUserModelOptions> {
     await setRole(this.id, role);
   }
 
-  async load() {}
+  async load() {
+    await this.doc.load();
+  }
 
   readonly isLoaded = $derived(isLoaded([this.doc]));
   readonly dependencies = [this.doc];
