@@ -7,8 +7,6 @@
   import type { Snippet } from 'svelte';
   // import Stats from './dark/stats.svelte';
 
-  let session = getSession();
-  let isAdmin = $derived(session.user?.isAdmin ?? false);
   let route = $derived(page.url.pathname);
   let isBackend = $derived(route.startsWith('/backend'));
 
@@ -30,7 +28,7 @@
 
 <!-- <Stats /> -->
 
-{#if isAdmin && !isBackend}
+{#if !isBackend}
   <div class="admin">
     <Icon icon={LucideFlame} route="/backend/nodes" />
   </div>
