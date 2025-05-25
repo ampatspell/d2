@@ -2,7 +2,6 @@
   import './layout.scss';
   import { page } from '$app/state';
   import LucideFlame from '$d2/icons/lucide--flame.svelte';
-  import { getSession } from '$d2/lib/session/session.svelte';
   import Icon from './dark/icon.svelte';
   import type { Snippet } from 'svelte';
   // import Stats from './dark/stats.svelte';
