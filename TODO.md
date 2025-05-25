@@ -1,6 +1,6 @@
 ## TODO
 
-- [ ] reorderable array of objects as inspector row
+- [ ] reordering for property arrays
 - [ ] uploads create "placeholder" nodes which are then replaced by file nodes on the backend
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
@@ -8,6 +8,7 @@
 - [ ] select multiple nodes in sidebar
 - [ ] multiple selection in grid
 - [ ] keyboard navigation in sidebar
+- [x] array of objects as inspector row
 - [x] backend nodes as grid
 - [x] reorder nodes in backend grid
 - [x] reorder and move nodes in the sidebar

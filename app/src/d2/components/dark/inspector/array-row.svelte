@@ -38,11 +38,12 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    > .rows {
+    .rows {
       display: flex;
       flex-direction: column;
       gap: 5px;
-      > .row {
+      .row {
+        user-select: none;
         padding: 5px;
         display: flex;
         flex-direction: row;
