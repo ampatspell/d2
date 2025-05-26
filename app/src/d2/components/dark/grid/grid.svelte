@@ -28,7 +28,7 @@
   let dragging = $state<unknown>();
 
   let draggableDelegate = options<DraggableGroupDelegate>({
-    direction: 'horizontal',
+    direction: 'horizontal-flat',
     onDragging: (model) => (dragging = model),
     isDraggable: getter(() => gridDelegate.isDraggable),
     onDrop: (opts) => gridDelegate.onDrop(opts as DraggableOnDrop<T>),

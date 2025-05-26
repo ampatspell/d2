@@ -50,8 +50,11 @@
       color: #fff;
     }
     > .links {
-      font-size: 21px;
-      font-weight: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 500;
       color: #fff;
       > a {
         text-decoration: none;

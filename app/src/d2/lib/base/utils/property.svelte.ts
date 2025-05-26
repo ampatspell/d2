@@ -5,6 +5,7 @@ import type { Document } from '../fire/document.svelte';
 import type { HasSubscriber } from '../model/subscriber.svelte';
 import type { HasPosition } from './types';
 import { removeObject, sortedBy } from './array';
+import type { DraggableOnDrop } from '$d2/components/dark/draggable/models.svelte';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {
@@ -151,7 +152,7 @@ export class ArrayPropertyModel<
     });
   });
 
-  readonly items = $derived(sortedBy(this._items, [{ value: (item) => item.position }]));
+  readonly items = $derived(sortedBy(this._items, [{ value: (item) => item.position.value }]));
 
   add() {
     const array = this.property.value;
@@ -169,11 +170,22 @@ export class ArrayPropertyModel<
     this.property.update([...this.property.value]);
   }
 
-  reorder() {
+  reorder(force = false) {
     const items = [...this.items];
-    if (items.filter((item, idx) => item.position.update(idx)).length) {
+    if (items.filter((item, idx) => item.position.update(idx)).length || force) {
       this.didUpdate();
     }
+  }
+
+  onReorder({ position, source, target }: DraggableOnDrop<I>) {
+    let diff;
+    if (position === 'before') {
+      diff = -0.5;
+    } else {
+      diff = 0.5;
+    }
+    source.position.update(target.position.value + diff);
+    this.reorder(true);
   }
 }
 
