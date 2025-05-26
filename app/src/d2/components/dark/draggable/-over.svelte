@@ -26,7 +26,7 @@
     background: var(--dark-accent-color-1);
     border-radius: var(--marker);
     transition: 0.1s ease-in-out all;
-    &.horizontal {
+    &.horizontal-flat {
       --offset: 5px;
       &.before,
       &.after {
@@ -40,7 +40,21 @@
         transform: translate(calc(var(--x) + var(--width) + var(--offset) - var(--marker)), var(--y));
       }
     }
-    &.vertical {
+    &.vertical-flat {
+      --offset: 3px;
+      &.before,
+      &.after {
+        height: var(--marker);
+        width: var(--width);
+      }
+      &.before {
+        transform: translate(calc(var(--x)), calc(var(--y) - calc(var(--marker) / 2) - var(--offset)));
+      }
+      &.after {
+        transform: translate(var(--x), calc(var(--y) + var(--height) - calc(var(--marker) / 2) + var(--offset)));
+      }
+    }
+    &.vertical-tree {
       --offset: 2px;
       &.before,
       &.after {

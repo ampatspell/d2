@@ -9,21 +9,19 @@
   import Button from '../button.svelte';
   import Draggable from '../draggable/draggable.svelte';
   import DraggableGroup from '../draggable/draggable-group.svelte';
-  import type { DraggableGroupDelegate } from '../draggable/models.svelte';
-  import { options } from '$d2/lib/base/utils/options';
+  import type { DraggableGroupDelegate, DraggableOnDrop } from '../draggable/models.svelte';
+  import { getter, options } from '$d2/lib/base/utils/options';
 
   let { label, model, item }: { label: string; model: ArrayPropertyModel<T, I>; item: Snippet<[I]> } = $props();
 
   let dragging = $state<unknown>();
 
   let delegate = options<DraggableGroupDelegate>({
-    isDraggable: true,
-    direction: 'vertical',
+    isDraggable: getter(() => model.items.length > 1),
+    direction: 'vertical-flat',
     onDragging: (model) => (dragging = model),
     isValidTarget: (model) => dragging !== model,
-    onDrop: (opts) => {
-      console.log(opts);
-    },
+    onDrop: (opts) => model.onReorder(opts as DraggableOnDrop<I>),
   });
 
   let rect = $state<DOMRectReadOnly>();
@@ -73,7 +71,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
     }
   }
   .row {

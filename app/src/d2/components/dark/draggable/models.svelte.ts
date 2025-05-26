@@ -6,7 +6,7 @@ import type { Point } from '$d2/lib/base/utils/types';
 import { untrack } from 'svelte';
 
 export type OverPosition = 'over' | 'before' | 'after';
-export type Direction = 'horizontal' | 'vertical';
+export type Direction = 'horizontal-flat' | 'vertical-flat' | 'vertical-tree';
 
 export type DraggableOnDrop<T> = { position: OverPosition; source: T; target: T };
 
@@ -101,7 +101,7 @@ export class DraggingModel extends Model<DraggingModelOptions> {
       const x = calc('x', 'width');
       const y = calc('y', 'height');
       if (x && y) {
-        if (direction === 'vertical') {
+        if (direction === 'vertical-tree') {
           const offset = 10;
           const position = mouse.y - rect.y;
           if (position < offset) {
@@ -111,7 +111,16 @@ export class DraggingModel extends Model<DraggingModelOptions> {
             return 'after';
           }
           return 'over';
-        } else if (direction === 'horizontal') {
+        } else if (direction === 'vertical-flat') {
+          if (draggable !== this.draggable) {
+            const position = mouse.y - rect.y;
+            if (position < rect.height / 2) {
+              return 'before';
+            } else {
+              return 'after';
+            }
+          }
+        } else if (direction === 'horizontal-flat') {
           if (draggable !== this.draggable) {
             const position = mouse.x - rect.x;
             if (position < rect.width / 2) {
