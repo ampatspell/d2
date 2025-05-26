@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] vertical reorderable options to disable dropping onto elements, layout options
 - [ ] reordering for property arrays
 - [ ] uploads create "placeholder" nodes which are then replaced by file nodes on the backend
 - [ ] separate file node from image node (image node extends file node)
