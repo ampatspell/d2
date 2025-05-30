@@ -1,8 +1,5 @@
 ## TODO
 
-- [ ] vertical reorderable options to disable dropping onto elements, layout options
-- [ ] reordering for property arrays
-- [ ] uploads should pass parent id not parent path
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
 - [ ] password protected pages
@@ -21,3 +18,6 @@
 - [x] image grid frontend UI
 - [x] image lightbox frontend UI
 - [x] remove `demo`, use `app` also as a demo
+- [x] uploads should pass parent id not parent path
+- [x] vertical reorderable options to disable dropping onto elements, layout options
+- [x] reordering for property arrays
