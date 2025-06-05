@@ -5,7 +5,10 @@ export default defineConfig({
   plugins: [sveltekit()],
   server: {
     fs: {
-      allow: [searchForWorkspaceRoot(process.cwd()), '..'],
-    },
-  },
+      allow: [
+        searchForWorkspaceRoot(process.cwd()),
+        '../d2'
+      ]
+    }
+  }
 });

@@ -13,6 +13,7 @@ import { browser } from '$app/environment';
 import { serialized } from '../utils/object';
 import { BaseModel } from '../model/base.svelte';
 import { PUBLIC_FIREBASE, PUBLIC_FIREBASE_REGION } from '$env/static/public';
+import { getAnalytics, type Analytics } from '@firebase/analytics';
 
 export { type FirebaseOptions };
 
@@ -23,6 +24,7 @@ export class Firebase extends BaseModel {
   private _auth?: Auth;
   private _storage?: FirebaseStorage;
   private _functions?: Functions;
+  private _analytics?: Analytics;
 
   readonly projectId = $derived(this.options.projectId);
   readonly region = $derived(this._region);
@@ -69,6 +71,13 @@ export class Firebase extends BaseModel {
       this._functions = getFunctions(this.app, this.region);
     }
     return this._functions;
+  }
+
+  get analytics() {
+    if(!this._analytics) {
+      this._analytics = getAnalytics(this.app);
+    }
+    return this._analytics;
   }
 
   get dashboardUrl() {
