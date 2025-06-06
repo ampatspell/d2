@@ -1,12 +1,12 @@
 ## TODO
 
-- [ ] google analytics
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
 - [ ] password protected pages
 - [ ] select multiple nodes in sidebar
 - [ ] multiple selection in grid
 - [ ] keyboard navigation in sidebar
+- [x] basic google analytics
 - [x] array of objects as inspector row
 - [x] backend nodes as grid
 - [x] reorder nodes in backend grid
