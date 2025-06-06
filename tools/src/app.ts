@@ -199,6 +199,7 @@ const package_json = (app: App) => dedent`
       "@firebase/firestore": "^4.7.5",
       "@firebase/functions": "^0.11.10",
       "@firebase/storage": "^0.13.4",
+      "@firebase/analytics": "^0.10.16",
       "firebase": "^11.0.2",
       "p-limit": "^6.2.0",
       "fast-deep-equal": "^3.1.3"
@@ -335,6 +336,7 @@ export class App {
         'src/hooks.ts',
         'src/routes/(backend)',
         'src/routes/+error.svelte',
+        'src/routes/+layout.svelte',
         'static/d2',
       ],
       source,
