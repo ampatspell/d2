@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] add sentry for both app and cloud functions
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
 - [ ] password protected pages

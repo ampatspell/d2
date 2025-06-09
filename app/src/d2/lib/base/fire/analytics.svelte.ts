@@ -1,6 +1,6 @@
 import { logEvent } from "@firebase/analytics";
 import { firebase } from "./firebase.svelte";
-import { browser } from "$app/environment";
+import { browser, dev } from "$app/environment";
 import { afterNavigate } from "$app/navigation";
 
 export class FirebaseAnalytics {
@@ -15,7 +15,9 @@ export class FirebaseAnalytics {
   }
 
   pageView() {
-    logEvent(this.service, 'page_view');
+    if(browser && !dev) {
+      logEvent(this.service, 'page_view');
+    }
   }
 }
 
