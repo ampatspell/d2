@@ -3,6 +3,7 @@
   import Page from '$d2/components/dark/section/page/page.svelte';
   import { options } from '$d2/lib/base/utils/options';
   import type { PageData } from './$types';
+  import Link from './Link.svelte';
   import Markdown from './Markdown.svelte';
   import type { MarkdownDelegate } from './models.svelte';
   import Weirdo from './Weirdo.svelte';
@@ -15,7 +16,9 @@
   let delegate = options<MarkdownDelegate>({
     componentForElement: (element) => {
       const name = element.tagName;
-      if (name === 'weirdo') {
+      if (name === 'a') {
+        return Link;
+      } else if (name === 'weirdo') {
         return Weirdo;
       }
     },

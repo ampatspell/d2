@@ -28,7 +28,7 @@ export const toTree = async (string: string | undefined) => {
   return root;
 };
 
-export const elements = ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'pre', 'code'];
+export const elements = ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'pre', 'code', 'blockquote'];
 
 export type Element = Node & { tagName: string; properties: Record<string, string> };
 
