@@ -1,9 +1,8 @@
 <script lang="ts">
-  import type { Root } from 'mdast';
   import Children from './Children.svelte';
-  import { createMarkdownContext, type MarkdownDelegate } from './models.svelte';
+  import { createMarkdownContext, type MarkdownDelegate, type MarkdownRoot } from './models.svelte';
 
-  let { node, delegate }: { node: Root; delegate: MarkdownDelegate } = $props();
+  let { node, delegate }: { node: MarkdownRoot; delegate: MarkdownDelegate } = $props();
 
   createMarkdownContext(delegate);
 </script>

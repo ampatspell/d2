@@ -1,9 +1,9 @@
 <script lang="ts">
   import Button from '$d2/components/dark/button.svelte';
   import Children from './Children.svelte';
-  import type { Element } from './models.svelte';
+  import type { MarkdownElement } from './models.svelte';
 
-  let { node }: { node: Element } = $props();
+  let { node }: { node: MarkdownElement } = $props();
 
   let clicks = $state(0);
 
@@ -13,7 +13,7 @@
 </script>
 
 <div class="weirdo">
-  <div class="row">WEIRDO #{clicks} {node.properties.label}</div>
+  <div class="row">WEIRDO #{clicks} {node.attributes.label}</div>
   <div class="row"><Button label="Click" {onClick} /></div>
   <div class="row"><Children {node} /></div>
 </div>

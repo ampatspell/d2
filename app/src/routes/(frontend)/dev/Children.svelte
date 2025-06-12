@@ -1,12 +1,14 @@
 <script lang="ts">
-  import type { Node as NodeType, Parent } from 'mdast';
   import Node from './Node.svelte';
+  import { asParent, type MarkdownNode } from './models.svelte';
 
-  let { node }: { node: NodeType } = $props();
-  let parent = $derived(node as Parent);
-  let children = $derived(parent.children);
+  let { node }: { node: MarkdownNode } = $props();
+  let element = $derived(asParent(node));
+  let children = $derived(element?.children);
 </script>
 
-{#each children as node (node)}
-  <Node {node} />
-{/each}
+{#if children}
+  {#each children as node (node)}
+    <Node {node} />
+  {/each}
+{/if}

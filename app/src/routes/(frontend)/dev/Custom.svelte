@@ -1,16 +1,14 @@
 <script lang="ts">
-  import type { Node } from 'mdast';
-  import { getMarkdownContext, type Element } from './models.svelte';
+  import { getMarkdownContext, type MarkdownElement } from './models.svelte';
   import { serializedToString } from '$d2/lib/base/utils/object';
 
-  let { node }: { node: Node } = $props();
-  let element = $derived(node as Element);
+  let { node }: { node: MarkdownElement } = $props();
   let context = getMarkdownContext();
-  let Component = $derived(context.componentForElement(element));
+  let Component = $derived(context.componentForElement(node));
 </script>
 
 {#if Component}
-  <Component node={element} />
+  <Component {node} />
 {:else}
-  {`<${[element.tagName, serializedToString(element.properties)].join(' ')} />`}
+  {`<${[node.name, serializedToString(node.attributes)].join(' ')} />`}
 {/if}

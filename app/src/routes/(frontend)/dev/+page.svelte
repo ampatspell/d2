@@ -13,9 +13,11 @@
   let input = $derived(data.input);
   let node = $derived(data.root);
 
+  $inspect(node);
+
   let delegate = options<MarkdownDelegate>({
     componentForElement: (element) => {
-      const name = element.tagName;
+      const name = element.name;
       if (name === 'a') {
         return Link;
       } else if (name === 'weirdo') {

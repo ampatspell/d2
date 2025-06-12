@@ -1,13 +1,11 @@
 <script lang="ts">
-  import type { Node } from 'mdast';
-  import { type Element } from './models.svelte';
   import Children from './Children.svelte';
+  import type { MarkdownElement } from './models.svelte';
 
-  let { node }: { node: Node } = $props();
-  let element = $derived(node as Element);
-  let tagName = $derived(element.tagName.toLowerCase());
+  let { node }: { node: MarkdownElement } = $props();
+  let name = $derived(node.name);
 </script>
 
-<svelte:element this={tagName}>
+<svelte:element this={name}>
   <Children {node} />
 </svelte:element>

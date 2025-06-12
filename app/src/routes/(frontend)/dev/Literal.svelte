@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Literal, Node } from 'mdast';
+  import type { MarkdownText } from './models.svelte';
 
-  let { node }: { node: Node } = $props();
-  let value = $derived((node as Literal).value);
+  let { node }: { node: MarkdownText } = $props();
+  let value = $derived(node.value);
 </script>
 
 {value}

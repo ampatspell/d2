@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { Node as NodeType } from 'mdast';
   import Literal from './Literal.svelte';
   import Element from './Element.svelte';
+  import type { MarkdownNode } from './models.svelte';
 
-  let { node }: { node: NodeType } = $props();
+  let { node }: { node: MarkdownNode } = $props();
 </script>
 
 {#if node.type === 'text'}
