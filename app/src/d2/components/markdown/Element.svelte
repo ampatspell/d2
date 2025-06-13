@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { getMarkdownContext, type MarkdownElement } from './models.svelte';
   import Custom from './Custom.svelte';
   import Basic from './Basic.svelte';
+  import type { MarkdownElement } from '$d2/lib/markdown/tree';
 
   let { node }: { node: MarkdownElement } = $props();
-  let markdown = getMarkdownContext();
-  let isBasic = $derived(markdown.isBasicElement(node));
+
+  const elements = ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'pre', 'code', 'blockquote'];
+
+  let isBasic = $derived(elements.includes(node.name));
 </script>
 
 {#if isBasic}

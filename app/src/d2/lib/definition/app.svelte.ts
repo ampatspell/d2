@@ -10,7 +10,8 @@ import { setGlobal } from '../base/utils/set-global';
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly nodes: NodeDefinitionModelOptions<any, any>[];
-  readonly elements?: MarkdownElementDefinitionModelOptions[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly elements?: MarkdownElementDefinitionModelOptions<any>[];
 };
 
 export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {

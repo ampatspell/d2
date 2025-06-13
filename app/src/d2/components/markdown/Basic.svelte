@@ -1,6 +1,6 @@
 <script lang="ts">
+  import type { MarkdownElement } from '$d2/lib/markdown/tree';
   import Children from './Children.svelte';
-  import type { MarkdownElement } from './models.svelte';
 
   let { node }: { node: MarkdownElement } = $props();
   let name = $derived(node.name);

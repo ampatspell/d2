@@ -1,7 +1,7 @@
 <script lang="ts">
   import Button from '$d2/components/dark/button.svelte';
+  import type { MarkdownElement } from '$d2/lib/markdown/tree';
   import Children from './Children.svelte';
-  import type { MarkdownElement } from './models.svelte';
 
   let { node }: { node: MarkdownElement } = $props();
 

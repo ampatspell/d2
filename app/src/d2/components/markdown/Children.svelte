@@ -1,6 +1,6 @@
 <script lang="ts">
+  import { asParent, type MarkdownNode } from '$d2/lib/markdown/tree';
   import Node from './Node.svelte';
-  import { asParent, type MarkdownNode } from './models.svelte';
 
   let { node }: { node: MarkdownNode } = $props();
   let element = $derived(asParent(node));

@@ -1,5 +1,5 @@
+import { toTree } from '$d2/lib/markdown/tree';
 import type { PageLoad } from './$types';
-import { toTree } from './models.svelte';
 
 export const load: PageLoad = async () => {
   const input = `

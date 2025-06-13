@@ -1,30 +1,13 @@
 <script lang="ts">
   import Dark from '$d2/components/dark/dark.svelte';
   import Page from '$d2/components/dark/section/page/page.svelte';
-  import { options } from '$d2/lib/base/utils/options';
+  import Markdown from '$d2/components/markdown/Markdown.svelte';
   import type { PageData } from './$types';
-  import Link from './Link.svelte';
-  import Markdown from './Markdown.svelte';
-  import type { MarkdownDelegate } from './models.svelte';
-  import Weirdo from './Weirdo.svelte';
 
   let { data }: { data: PageData } = $props();
 
   let input = $derived(data.input);
   let node = $derived(data.root);
-
-  $inspect(node);
-
-  let delegate = options<MarkdownDelegate>({
-    componentForElement: (element) => {
-      const name = element.name;
-      if (name === 'a') {
-        return Link;
-      } else if (name === 'weirdo') {
-        return Weirdo;
-      }
-    },
-  });
 </script>
 
 <Dark>
@@ -32,7 +15,7 @@
     <div class="page">
       <div class="box input">{input}</div>
       <div class="box content">
-        <Markdown {node} {delegate} />
+        <Markdown {node} />
       </div>
     </div>
   </Page>
