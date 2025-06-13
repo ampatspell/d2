@@ -6,7 +6,7 @@
   let node = $derived(model.node);
 </script>
 
-<div class="box"><Children {node}/></div>
+<div class="box"><Children {node} /></div>
 
 <style lang="scss">
   .box {

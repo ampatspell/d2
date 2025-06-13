@@ -35,5 +35,17 @@
     > .input {
       white-space: pre-wrap;
     }
+    > .content {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      :global(h1),
+      :global(h2) {
+        padding: 20px 0 10px 0;
+      }
+      :global(> :first-child) {
+        padding-top: 0;
+      }
+    }
   }
 </style>

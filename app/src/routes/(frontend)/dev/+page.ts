@@ -5,7 +5,7 @@ export const load: PageLoad = async () => {
   const input = `
 # Hello\n\nworld
 
-<box>this is in the box</box>
+<box>this is in the **box** *box*</box>
 
 a bit more afterwards
 
