@@ -1,7 +1,7 @@
 import type { Literal, Node, Parent, Root } from 'mdast';
 import { getDefinition } from '$d2/lib/definition/app.svelte';
 import type { MarkdownElementModel } from '$d2/lib/markdown/element.svelte';
-import { parse } from './parser';
+import { parse as _parse } from './parser';
 
 type Element = Node & { tagName: string; properties: Record<string, string> };
 
@@ -35,7 +35,7 @@ export const asParent = (node: MarkdownNode): MarkdownParent | undefined => {
   }
 };
 
-const normalized = (root: Root): MarkdownRoot => {
+const _normalized = (root: Root): MarkdownRoot => {
   const definition = getDefinition();
   const models: MarkdownElementModel[] = [];
   const normalizeNode = (node: Node): MarkdownNode => {
@@ -76,6 +76,6 @@ const normalized = (root: Root): MarkdownRoot => {
   };
 };
 
-export const toTree = async (string: string | undefined) => {
-  return normalized(await parse(string));
+export const parse = async (string: string | undefined) => {
+  return _normalized(await _parse(string));
 };

@@ -20,6 +20,8 @@ export class MarkdownElementModel extends Subscribable<MarkdownElementModelOptio
 
   readonly isLoaded = true;
 
+  async load() {}
+
   get dependencies(): HasSubscriber[] {
     return [];
   }

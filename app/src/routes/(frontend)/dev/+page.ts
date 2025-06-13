@@ -1,4 +1,4 @@
-import { toTree } from '$d2/lib/markdown/tree';
+import { parse } from '$d2/lib/markdown/tree';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
@@ -17,6 +17,6 @@ before [back](/) after
   `;
   return {
     input,
-    root: await toTree(input),
+    root: await parse(input),
   };
 };

@@ -5,7 +5,7 @@
 
   let { node }: { node: MarkdownElement } = $props();
 
-  const elements = ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'pre', 'code', 'blockquote', 'strong', 'em'];
+  const elements = ['h1', 'h2', 'h3', 'h4', 'h5', 'p', 'pre', 'code', 'blockquote', 'strong', 'em', 'ul', 'li'];
 
   let isBasic = $derived(elements.includes(node.name));
 </script>

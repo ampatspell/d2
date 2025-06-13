@@ -1,10 +1,12 @@
 <script lang="ts">
+  import Markdown from '$d2/components/markdown/Markdown.svelte';
   import type { IndexNodeModel } from '$lib/definition/index/node.svelte';
 
   let { index }: { index: IndexNodeModel } = $props();
 
   let background = $derived(index.details.background);
   let url = $derived(background?.thumbnails['2048x2048'].url);
+  let introduction = $derived(index.details.introduction);
 </script>
 
 <svelte:head>
@@ -16,6 +18,9 @@
     <div class="image" style:--url="url({url})"></div>
   {/if}
   <div class="title">{index.title}</div>
+  <div class="markdown">
+    <Markdown node={introduction} />
+  </div>
   <div class="links">
     {#each index.links as link (link)}
       <a href={link.path}>{link.label}</a>
@@ -59,6 +64,9 @@
       > a {
         text-decoration: none;
       }
+    }
+    > .markdown {
+      color: #fff;
     }
   }
 </style>
