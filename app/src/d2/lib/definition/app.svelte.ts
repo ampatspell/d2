@@ -5,7 +5,6 @@ import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.sve
 import type { NodeData, NodeType } from '../nodes/node.svelte';
 import { unknown } from './unknown/definition.svelte';
 import { MarkdownElementDefinitionModel, type MarkdownElementDefinitionModelOptions } from './markdown.svelte';
-import { setGlobal } from '../base/utils/set-global';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,7 +41,6 @@ let _definition = $state<AppDefinitionModel>();
 
 export const createDefinition = (opts: OptionsInput<AppDefinitionModelOptions>) => {
   _definition = new AppDefinitionModel(opts);
-  setGlobal({ definition: _definition });
 };
 
 export const getDefinition = () => {
