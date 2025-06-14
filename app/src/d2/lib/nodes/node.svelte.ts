@@ -214,7 +214,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   readonly backend = $derived(this._backend.content);
 
-  readonly definition = $derived(getDefinition().byType(this.kind));
+  readonly definition = $derived(getDefinition().nodeByType(this.kind));
   readonly name = $derived(this.definition.name);
 
   abstract readonly properties: NodePropertiesModel<Type>;
@@ -343,5 +343,5 @@ export const createNodeModel = (
   partial: boolean,
   backend: NodeBackendModelDelegate | undefined,
 ) => {
-  return getDefinition().byDocument(doc).model({ doc, partial, backend });
+  return getDefinition().nodeByDocument(doc).model({ doc, partial, backend });
 };

@@ -3,6 +3,7 @@ import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { array, ArrayPropertyItemModel, data, toRequired } from '$d2/lib/base/utils/property.svelte';
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
+import { markdown } from '$d2/lib/markdown/model.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
 import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
 import type { IndexNodeLink } from './definition.svelte';
@@ -14,6 +15,7 @@ export class IndexNodeLinkModel extends ArrayPropertyItemModel<IndexNodeLink> {
 
 export class IndexNodePropertiesModel extends NodePropertiesModel<'index'> {
   readonly title = data(this, 'title');
+  readonly introduction = data(this, 'introduction');
   readonly background = data(this, 'background');
 
   readonly links = array({
@@ -35,13 +37,18 @@ export class IndexNodeDetailsModel extends NodeDetailsModel<'index'> {
     factory: FileNodeModel,
   });
 
-  readonly background = $derived(this._background.node?.asImage);
+  readonly _introduction = markdown({
+    string: getter(() => this.data.properties.introduction),
+  });
 
-  readonly isLoaded = $derived(isLoaded([this._background]));
-  readonly dependencies = [this._background];
+  readonly background = $derived(this._background.node?.asImage);
+  readonly introduction = $derived(this._introduction.root);
+
+  readonly isLoaded = $derived(isLoaded([this._background, this._introduction]));
+  readonly dependencies = [this._background, this._introduction];
 
   async load() {
-    await this._background.load();
+    await Promise.all([this._background.load(), this._introduction.load()]);
   }
 }
 

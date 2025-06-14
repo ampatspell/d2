@@ -4,18 +4,30 @@ import type { Document } from '../base/fire/document.svelte';
 import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.svelte';
 import type { NodeData, NodeType } from '../nodes/node.svelte';
 import { unknown } from './unknown/definition.svelte';
+import { MarkdownElementDefinitionModel, type MarkdownElementDefinitionModelOptions } from './markdown.svelte';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly nodes: NodeDefinitionModelOptions<any, any>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly markdown?: MarkdownElementDefinitionModelOptions<any>[];
 };
 
 export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
-  readonly nodes = $derived(this.options.nodes.map((opts) => new NodeDefinitionModel(opts)));
+  readonly nodes = $derived.by(() => {
+    return this.options.nodes.map((opts) => new NodeDefinitionModel(opts));
+  });
+
   readonly nodesWithDefaults = $derived(this.nodes.filter((node) => node.hasDefaults));
+
+  readonly markdown = $derived.by(() => {
+    const markdown = this.options.markdown ?? [];
+    return markdown.map((opts) => new MarkdownElementDefinitionModel(opts));
+  });
+
   private readonly unknown = new NodeDefinitionModel(unknown());
 
-  byType(type: NodeType | undefined): NodeDefinitionModel<NodeType> {
+  nodeByType(type: NodeType | undefined): NodeDefinitionModel<NodeType> {
     const definition = this.nodes.find((node) => node.type === type);
     if (definition) {
       return definition;
@@ -23,18 +35,22 @@ export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
     return this.unknown as unknown as NodeDefinitionModel<NodeType>;
   }
 
-  byDocument(doc: Document<NodeData>) {
+  nodeByDocument(doc: Document<NodeData>) {
     const kind = doc.data?.kind;
-    return this.byType(kind);
+    return this.nodeByType(kind);
+  }
+
+  markdownElementByType(type: string) {
+    return this.markdown.find((markdown) => markdown.type === type);
   }
 }
 
-let _app = $state<AppDefinitionModel>();
+let _definition = $state<AppDefinitionModel>();
 
 export const createDefinition = (opts: OptionsInput<AppDefinitionModelOptions>) => {
-  _app = new AppDefinitionModel(opts);
+  _definition = new AppDefinitionModel(opts);
 };
 
 export const getDefinition = () => {
-  return _app!;
+  return _definition!;
 };

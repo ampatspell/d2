@@ -4,11 +4,11 @@
   import Column from './column.svelte';
   import Row from './row.svelte';
 
-  let { label, property }: { label: string; property: Property<string> } = $props();
+  let { label, multiline, property }: { label: string; multiline?: boolean; property: Property<string> } = $props();
 </script>
 
 <Row>
   <Column {label} flex={true}>
-    <PropertyInput {property} />
+    <PropertyInput {multiline} {property} />
   </Column>
 </Row>

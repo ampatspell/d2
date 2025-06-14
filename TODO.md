@@ -1,5 +1,6 @@
 ## TODO
 
+- [ ] markdown prop with custom components
 - [ ] add sentry for both app and cloud functions
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes

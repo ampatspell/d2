@@ -74,7 +74,7 @@ export class Firebase extends BaseModel {
   }
 
   get analytics() {
-    if(!this._analytics) {
+    if (!this._analytics) {
       this._analytics = getAnalytics(this.app);
     }
     return this._analytics;
