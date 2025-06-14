@@ -9,8 +9,7 @@ export type MarkdownModelOptions = {
 };
 
 export class MarkdownModel extends Subscribable<MarkdownModelOptions> {
-  private _root = $state<MarkdownRoot>();
-  readonly root = $derived(this._root);
+  private root = $state<MarkdownRoot>();
 
   private _models = mapModels({
     source: getter(() => this.root?.models ?? []),
@@ -19,8 +18,14 @@ export class MarkdownModel extends Subscribable<MarkdownModelOptions> {
 
   readonly models = $derived(this._models.content);
 
+  readonly string = $derived(this.options.string);
+
   async load() {
-    this._root = await parse(this.options.string);
+    const string = this.string;
+    const root = await parse(string);
+    if(this.string === string) {
+      this.root = root;
+    }
     await this._models.load((model) => model.load());
   }
 
@@ -32,7 +37,7 @@ export class MarkdownModel extends Subscribable<MarkdownModelOptions> {
     });
   }
 
-  readonly isLoaded = $derived(!!this._root && isLoaded(this.models));
+  readonly isLoaded = $derived(!!this.root && isLoaded(this.models));
   readonly dependencies = [this._models];
 }
 
