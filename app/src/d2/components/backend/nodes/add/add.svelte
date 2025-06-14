@@ -3,7 +3,7 @@
   import { openSelectNodeDefinitionModal } from './models.svelte';
   import Add from '$d2/components/dark/section/page/add.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let {
     nodes,

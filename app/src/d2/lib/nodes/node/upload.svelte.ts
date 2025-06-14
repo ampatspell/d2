@@ -1,12 +1,12 @@
 import * as fs from '@firebase/firestore';
 import * as storage from 'firebase/storage';
 import pLimit, { type LimitFunction } from 'p-limit';
-import { progress, sum } from '../base/utils/number';
-import { firebase } from '../base/fire/firebase.svelte';
-import { removeObject } from '../base/utils/array';
-import { Subscribable } from '../base/model/model.svelte';
 import type { NodeModel } from './node.svelte';
-import { nextPosition, nodesCollection } from './nodes.svelte';
+import { progress, sum } from '$d2/lib/base/utils/number';
+import { nextPosition, nodesCollection } from '../nodes.svelte';
+import { firebase } from '$d2/lib/base/fire/firebase.svelte';
+import { Subscribable } from '$d2/lib/base/model/model.svelte';
+import { removeObject } from '$d2/lib/base/utils/array';
 
 export type UploadFileStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
 

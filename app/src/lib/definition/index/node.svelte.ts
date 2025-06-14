@@ -5,7 +5,9 @@ import { array, ArrayPropertyItemModel, data, toRequired } from '$d2/lib/base/ut
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { markdown } from '$d2/lib/markdown/model.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
-import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
+import { NodeDetailsModel } from '$d2/lib/nodes/node/details.svelte';
+import { NodeModel } from '$d2/lib/nodes/node/node.svelte';
+import { NodePropertiesModel } from '$d2/lib/nodes/node/properties.svelte';
 import type { IndexNodeLink } from './definition.svelte';
 
 export class IndexNodeLinkModel extends ArrayPropertyItemModel<IndexNodeLink> {

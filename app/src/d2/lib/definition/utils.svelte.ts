@@ -1,8 +1,8 @@
-import type { NodeModel, NodeType } from '../nodes/node.svelte';
 import type { NodeDefinitionModelOptions } from './node.svelte';
 import type { AppDefinitionModelOptions } from './app.svelte';
 import type { MarkdownElementDefinitionModelOptions } from './markdown.svelte';
 import type { MarkdownElementModel } from '../markdown/element.svelte';
+import type { NodeModel, NodeType } from '../nodes/node/node.svelte';
 
 export const app = (opts: AppDefinitionModelOptions) => {
   return (): AppDefinitionModelOptions => opts;

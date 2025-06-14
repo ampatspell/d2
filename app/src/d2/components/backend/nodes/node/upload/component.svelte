@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { UploadFilesModalProps, UploadFilesModalResolution } from './models.svelte';
   import type { ModalRuntime } from '$d2/components/dark/modals/base/modal.svelte';
-  import type { UploadFileModel } from '$d2/lib/nodes/upload.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import Table from '$d2/components/dark/table/table.svelte';
   import Cell from '$d2/components/dark/table/cell.svelte';
@@ -12,6 +11,7 @@
   import Modal from '$d2/components/dark/modals/modal/modal.svelte';
   import Header from '$d2/components/dark/modals/modal/header.svelte';
   import Files from '$d2/components/dark/files.svelte';
+  import type { UploadFileModel } from '$d2/lib/nodes/node/upload.svelte';
 
   let { modal }: { modal: ModalRuntime<UploadFilesModalProps, UploadFilesModalResolution> } = $props();
 

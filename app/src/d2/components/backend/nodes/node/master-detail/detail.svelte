@@ -12,7 +12,7 @@
   import LucideFileTerminal from '$d2/icons/lucide--file-terminal.svelte';
   import { formatDate } from '$d2/lib/base/utils/date';
   import { setGlobal } from '$d2/lib/base/utils/set-global';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let { node }: { node: NodeModel } = $props();
 

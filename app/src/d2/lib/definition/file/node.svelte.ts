@@ -3,7 +3,9 @@ import LucideFileImage from '$d2/icons/lucide--file-image.svelte';
 import LucideFile from '$d2/icons/lucide--file.svelte';
 import { Model } from '$d2/lib/base/model/model.svelte';
 import { data } from '$d2/lib/base/utils/property.svelte';
-import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
+import { NodeDetailsModel } from '$d2/lib/nodes/node/details.svelte';
+import { NodeModel } from '$d2/lib/nodes/node/node.svelte';
+import { NodePropertiesModel } from '$d2/lib/nodes/node/properties.svelte';
 
 export class FileNodePropertiesModel extends NodePropertiesModel<'file'> {
   readonly filename = data(this, 'filename');

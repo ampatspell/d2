@@ -1,7 +1,7 @@
 <script lang="ts">
   import Tree from '$d2/components/dark/tree/tree.svelte';
   import { getter } from '$d2/lib/base/utils/options';
-  import { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import Item from './item.svelte';
   import { NodesTreeDelegate, type NodesTreeSettings } from './models.svelte';

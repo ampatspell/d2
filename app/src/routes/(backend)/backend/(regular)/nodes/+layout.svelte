@@ -4,8 +4,8 @@
   import type { LayoutData } from './$types';
   import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
   import { isTruthy } from '$d2/lib/base/utils/array';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import { page } from '$app/state';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 

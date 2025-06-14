@@ -6,19 +6,13 @@ import { serialized } from '../base/utils/object';
 import { queryAll } from '../base/fire/query.svelte';
 import { getter, options } from '../base/utils/options';
 import { mapModels } from '../base/model/models.svelte';
-import {
-  asParent,
-  createNodeModel,
-  nodeDocumentKey,
-  NodeModel,
-  type NodeBackendModelDelegate,
-  type NodeData,
-} from './node.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
 import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
 import { isTruthy, uniq, type SortDescriptors } from '../base/utils/array';
+import { asParent, createNodeModel, nodeDocumentKey, type NodeData, type NodeModel } from './node/node.svelte';
+import type { NodeBackendModelDelegate } from './node/backend.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {

@@ -1,8 +1,8 @@
 import type { Component } from 'svelte';
 import { Model } from '../base/model/model.svelte';
-import type { NodeModel, NodeType } from '../nodes/node.svelte';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import type { NodesModel } from '../nodes/nodes.svelte';
+import type { NodeModel, NodeType } from '../nodes/node/node.svelte';
 
 export type NodeBackendComponent<Type extends NodeType, Node extends NodeModel<Type>> = Component<{
   node: Node;

@@ -1,17 +1,21 @@
 import { Document } from '$d2/lib/base/fire/document.svelte';
-import { Model, Subscribable } from '$d2/lib/base/model/model.svelte';
+import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { getter } from '$d2/lib/base/utils/options';
-import { getDefinition } from '../definition/app.svelte';
-import { data, DocumentModelProperties, Property, type PropertyUpdateResult } from '../base/utils/property.svelte';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData, NodeParentData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
-import { isLoaded, type IsLoadedModels } from '../base/fire/is-loaded.svelte';
-import type { HasSubscriber } from '../base/model/subscriber.svelte';
-import { mapModel } from '../base/model/models.svelte';
-import { isTruthy, uniq } from '../base/utils/array';
+import { type Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
+import type { HasSubscriber } from '$d2/lib/base/model/subscriber.svelte';
+import { uniq } from '$d2/lib/base/utils/array';
+import { mapModel } from '$d2/lib/base/model/models.svelte';
+import { getDefinition } from '$d2/lib/definition/app.svelte';
+import { isLoaded, type IsLoadedModels } from '$d2/lib/base/fire/is-loaded.svelte';
+import { NodePathModel } from './path.svelte';
+import { NodeBackendModel, type NodeBackendModelDelegate } from './backend.svelte';
+import type { NodePropertiesModel } from './properties.svelte';
+import type { NodeDetailsModel } from './details.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -41,145 +45,12 @@ export const nodeDocumentKey = (doc: Document<NodeData>) => {
   return doc.data?.kind;
 };
 
-export type NodePropertiesModelOptions<Type extends NodeType> = {
-  model: NodeModel<Type>;
-};
-
-export class NodeBasePropertiesModel<Type extends NodeType> extends DocumentModelProperties<NodeData<Type>> {
-  readonly identifier = data(this, 'identifier');
-}
-
-export abstract class NodePropertiesModel<
-  Type extends NodeType,
-  O extends NodePropertiesModelOptions<Type> = NodePropertiesModelOptions<Type>,
-> extends Subscribable<O> {
-  readonly base = new NodeBasePropertiesModel<Type>({
-    model: getter(() => this.options.model),
-  });
-
-  readonly data = $derived(this.options.model.data.properties);
-
-  async didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
-    await this.options.model.didUpdate(property, result);
-  }
-
-  abstract readonly paths: (Property<string | undefined> | Property<string>)[];
-
-  async updatePaths(opts: PropertyUpdateResult<string>) {
-    let updated = false;
-    this.paths.forEach((prop) => {
-      const path = prop.value;
-      if (path?.startsWith(opts.before)) {
-        const rest = path.substring(opts.before.length, path.length);
-        const after = `${opts.after}${rest}`;
-        prop.update(after);
-        updated = true;
-      }
-    });
-    return updated;
-  }
-
-  dependencies: HasSubscriber[] = [];
-}
-
 export const is = <Model extends NodeModel>(model: NodeModel, factory: NodeModelFactory<Model>): this is Model => {
   if (model instanceof factory) {
     return true;
   }
   return false;
 };
-
-export type NodeBackendModelDelegate = {
-  parentFor: (node: NodeModel) => NodeModel | undefined;
-  childrenFor: (node: NodeModel) => NodeModel[];
-  didUpdatePath: (opts: PropertyUpdateResult<string>) => Promise<(NodeModel | undefined)[]>;
-};
-
-export type NodeBackendModelOptions<Type extends NodeType> = {
-  node: NodeModel<Type>;
-  delegate: NodeBackendModelDelegate;
-};
-
-export class NodeBackendModel<Type extends NodeType = NodeType> extends Model<NodeBackendModelOptions<Type>> {
-  private readonly delegate = $derived(this.options.delegate);
-  private readonly node = $derived(this.options.node);
-
-  readonly parent = $derived(this.delegate.parentFor(this.node));
-  readonly children = $derived(this.delegate.childrenFor(this.node));
-
-  readonly nodes: NodeModel[] = $derived.by(() => {
-    return [
-      this.node,
-      ...this.children.reduce<NodeModel[]>((all, child) => {
-        const recursive = child.backend?.nodes ?? [];
-        return [...all, ...recursive];
-      }, []),
-    ];
-  });
-
-  hasParent(node: NodeModel): boolean {
-    return this.parent?.backend?.isOrHasParent(node) ?? false;
-  }
-
-  isOrHasParent(node: NodeModel) {
-    return this.node === node || this.hasParent(node);
-  }
-
-  readonly path: string = $derived.by(() => {
-    const parent = this.parent?.backend?.path;
-    return [parent, '/', this.node.identifier].filter(isTruthy).join('');
-  });
-
-  async didUpdatePath(opts: PropertyUpdateResult<string>) {
-    const nodes = await this.delegate.didUpdatePath(opts);
-    return nodes.filter(isTruthy);
-  }
-
-  async didUpdateParent(parent: NodeParentData) {
-    const nodes = await Promise.all(this.children.map((child) => child.didUpdateParentIdentifier(parent)));
-    return nodes.filter(isTruthy);
-  }
-}
-
-export type NodeDetailsModelOptions<Type extends NodeType> = {
-  model: NodeModel<Type>;
-};
-
-export abstract class NodeDetailsModel<
-  Type extends NodeType = NodeType,
-  O extends NodeDetailsModelOptions<Type> = NodeDetailsModelOptions<Type>,
-> extends Subscribable<O> {
-  readonly model = $derived(this.options.model);
-  readonly path = $derived(this.model.path);
-  readonly data = $derived(this.model.data);
-
-  abstract load(): Promise<void>;
-  abstract isLoaded: boolean;
-}
-
-export type NodePathModelOptions = {
-  path: string;
-};
-
-export class NodePathModel extends Model<NodePathModelOptions> {
-  readonly value = $derived(this.options.path);
-
-  exceptOwn(path: string | undefined) {
-    if (path === this.value) {
-      return undefined;
-    }
-    return path;
-  }
-
-  exceptParents(path: string | undefined) {
-    if (typeof path === 'string' && this.value.startsWith(path) && path !== this.value) {
-      return undefined;
-    }
-    return path;
-  }
-
-  readonly serialized = $derived(serialized(this, ['value']));
-}
 
 export type NodeModelOptions<Type extends NodeType> = {
   doc: Document<NodeData<Type>>;

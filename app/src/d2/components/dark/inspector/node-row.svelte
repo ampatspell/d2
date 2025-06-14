@@ -1,7 +1,7 @@
 <script lang="ts">
   import SelectNodeButton from '$d2/components/backend/nodes/select-button.svelte';
   import type { Property } from '$d2/lib/base/utils/property.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import PropertyInput from '../property-input.svelte';
   import Column from './column.svelte';
