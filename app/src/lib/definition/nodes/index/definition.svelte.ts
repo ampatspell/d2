@@ -12,7 +12,6 @@ export type IndexNodeProperties = {
   title: string;
   background?: string;
   links?: IndexNodeLink[];
-  introduction?: string;
 };
 
 export const index = () => {
