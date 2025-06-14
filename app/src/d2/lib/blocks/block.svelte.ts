@@ -7,7 +7,9 @@ export type BlockModelFactory<Model extends BlockModel> = {
   new (...args: ConstructorParameters<typeof BlockModel<never>>): Model;
 };
 
-export type BlockModelOptions<Type extends BlockType> = {};
+export type BlockModelOptions<Type extends BlockType> = {
+  data: Type;
+};
 
 export class BlockModel<Type extends BlockType = BlockType> extends Subscribable<BlockModelOptions<Type>> {
   isLoaded = true;
