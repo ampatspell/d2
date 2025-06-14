@@ -2,9 +2,9 @@ import { Model } from '../base/model/model.svelte';
 import type { OptionsInput } from '../base/utils/options';
 import type { Document } from '../base/fire/document.svelte';
 import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.svelte';
-import type { NodeData, NodeType } from '../nodes/node.svelte';
 import { unknown } from './unknown/definition.svelte';
 import { MarkdownElementDefinitionModel, type MarkdownElementDefinitionModelOptions } from './markdown.svelte';
+import type { NodeData, NodeType } from '../nodes/node/node.svelte';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
