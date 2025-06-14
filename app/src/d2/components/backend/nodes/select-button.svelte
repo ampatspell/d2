@@ -1,7 +1,7 @@
 <script lang="ts">
   import { openSelectNodeModal } from '$d2/components/backend/nodes/node/select/models.svelte';
   import { getter } from '$d2/lib/base/utils/options';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import Button from '../../dark/button.svelte';
   import { getModalsContext } from '../../dark/modals/base/context.svelte';

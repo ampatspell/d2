@@ -6,15 +6,15 @@ import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
 import { getter, options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { nodesCollection, nodesSortDescriptors } from './nodes.svelte';
 import { queryAll, queryFirst } from '../base/fire/query.svelte';
+import { preloadModel } from '../base/fire/preload.svelte';
 import {
   createNodeModel,
   nodeDocumentKey,
-  type NodeModel,
-  type NodeBackendModelDelegate,
   type NodeData,
+  type NodeModel,
   type NodeModelFactory,
-} from './node.svelte';
-import { preloadModel } from '../base/fire/preload.svelte';
+} from './node/node.svelte';
+import type { NodeBackendModelDelegate } from './node/backend.svelte';
 
 export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;

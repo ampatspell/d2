@@ -2,8 +2,8 @@
   import Icon from '$d2/components/dark/icon.svelte';
   import type { TreeModelDelegate } from '$d2/components/dark/tree/tree.svelte';
   import LucideCloudUpload from '$d2/icons/lucide--cloud-upload.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import Item from '$d2/components/dark/tree/item.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let {
     model,

@@ -6,7 +6,7 @@
   import Modal from '$d2/components/dark/modals/modal/modal.svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import { addObject, removeObject } from '$d2/lib/base/utils/array';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
   import type { NodesTreeSettings } from '../../tree/models.svelte';
   import Tree from '../../tree/tree.svelte';
   import type { SelectNodeModalProps, SelectNodeModalResolution } from './models.svelte';
