@@ -1,5 +1,5 @@
 import { node } from '$d2/lib/nodes/loader.svelte';
-import { GalleryNodeModel } from '$lib/definition/gallery/node.svelte';
+import { GalleryNodeModel } from '$lib/definition/nodes/gallery/node.svelte';
 
 export const load = async () => {
   return {

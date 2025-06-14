@@ -1,5 +1,5 @@
 import { node } from '$d2/lib/nodes/loader.svelte';
-import { IndexNodeModel } from '$lib/definition/index/node.svelte';
+import { IndexNodeModel } from '$lib/definition/nodes/index/node.svelte';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
