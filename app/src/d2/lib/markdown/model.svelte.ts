@@ -9,7 +9,7 @@ export type MarkdownModelOptions = {
 };
 
 export class MarkdownModel extends Subscribable<MarkdownModelOptions> {
-  private root = $state<MarkdownRoot>();
+  root = $state<MarkdownRoot>();
 
   private _models = mapModels({
     source: getter(() => this.root?.models ?? []),
@@ -23,7 +23,7 @@ export class MarkdownModel extends Subscribable<MarkdownModelOptions> {
   async load() {
     const string = this.string;
     const root = await parse(string);
-    if(this.string === string) {
+    if (this.string === string) {
       this.root = root;
     }
     await this._models.load((model) => model.load());
