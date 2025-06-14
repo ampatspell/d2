@@ -10,7 +10,7 @@ export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly nodes: NodeDefinitionModelOptions<any, any>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly markdown?: MarkdownElementDefinitionModelOptions<any>[];
+  readonly elements?: MarkdownElementDefinitionModelOptions<any>[];
 };
 
 export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
@@ -20,8 +20,8 @@ export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
 
   readonly nodesWithDefaults = $derived(this.nodes.filter((node) => node.hasDefaults));
 
-  readonly markdown = $derived.by(() => {
-    const markdown = this.options.markdown ?? [];
+  readonly elements = $derived.by(() => {
+    const markdown = this.options.elements ?? [];
     return markdown.map((opts) => new MarkdownElementDefinitionModel(opts));
   });
 
@@ -40,8 +40,8 @@ export class AppDefinitionModel extends Model<AppDefinitionModelOptions> {
     return this.nodeByType(kind);
   }
 
-  markdownElementByType(type: string) {
-    return this.markdown.find((markdown) => markdown.type === type);
+  elementByType(type: string) {
+    return this.elements.find((markdown) => markdown.type === type);
   }
 }
 

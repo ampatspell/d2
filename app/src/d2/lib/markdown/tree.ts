@@ -55,7 +55,7 @@ const _normalized = (root: Root): MarkdownRoot => {
         model: undefined,
         children: normalizeChildren(element),
       };
-      const model = definition.markdownElementByType(name)?.model({ node: normalized });
+      const model = definition.elementByType(name)?.model({ node: normalized });
       if (model) {
         models.push(model);
         normalized.model = model;
