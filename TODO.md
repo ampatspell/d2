@@ -1,6 +1,6 @@
 ## TODO
 
-- [ ] markdown prop with custom components
+- [ ] nestable nodes (document-less nodes)
 - [ ] add sentry for both app and cloud functions
 - [ ] separate file node from image node (image node extends file node)
 - [ ] list orphaned nodes
@@ -8,6 +8,7 @@
 - [ ] select multiple nodes in sidebar
 - [ ] multiple selection in grid
 - [ ] keyboard navigation in sidebar
+- [x] markdown prop with custom components
 - [x] basic google analytics
 - [x] array of objects as inspector row
 - [x] backend nodes as grid
