@@ -5,10 +5,13 @@ import { NodeDefinitionModel, type NodeDefinitionModelOptions } from './node.sve
 import { unknown } from './unknown/definition.svelte';
 import { MarkdownElementDefinitionModel, type MarkdownElementDefinitionModelOptions } from './markdown.svelte';
 import type { NodeData, NodeType } from '../nodes/node/node.svelte';
+import type { BlockDefinitionModelOptions } from './block.svelte';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly nodes: NodeDefinitionModelOptions<any, any>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly blocks: BlockDefinitionModelOptions<any, any>[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly elements?: MarkdownElementDefinitionModelOptions<any>[];
 };

@@ -18,7 +18,7 @@ export type IndexNodeProperties = {
 export const index = () => {
   return node('index', {
     name: 'Index',
-    node: IndexNodeModel,
+    model: IndexNodeModel,
     defaults: () => ({
       title: 'maybe',
       background: '',

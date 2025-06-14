@@ -11,7 +11,7 @@ export type GalleryNodeProperties = {
 export const gallery = () => {
   return node('gallery', {
     name: 'Gallery',
-    node: GalleryNodeModel,
+    model: GalleryNodeModel,
     defaults: ({ path }) => ({
       title: 'Gallery',
       images: path,

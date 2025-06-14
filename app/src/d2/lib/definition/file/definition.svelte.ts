@@ -5,7 +5,7 @@ import { FileNodeModel } from './node.svelte';
 export const file = () => {
   return node('file', {
     name: 'File',
-    node: FileNodeModel,
+    model: FileNodeModel,
     defaults: undefined,
     backend: Backend,
   });

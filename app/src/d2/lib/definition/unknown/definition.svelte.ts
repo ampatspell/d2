@@ -5,7 +5,7 @@ import { UnknownNodeModel } from './node.svelte';
 export const unknown = () => {
   return node(undefined, {
     name: 'Unknown',
-    node: UnknownNodeModel,
+    model: UnknownNodeModel,
     defaults: undefined,
     backend: Backend,
   });
