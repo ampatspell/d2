@@ -5,7 +5,7 @@ import { getter } from '$d2/lib/base/utils/options';
 import { UploadFilesModel } from './upload.svelte';
 import type { Component } from 'svelte';
 import type { BaseNodeData, NodeParentData } from '$d2-shared/documents';
-import type { NodePropertiesRegistry } from '$lib/definition/registry';
+import type { BlockPropertiesRegistry, NodePropertiesRegistry } from '$lib/definition/registry';
 import { type Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
 import type { HasSubscriber } from '$d2/lib/base/model/subscriber.svelte';
 import { uniq } from '$d2/lib/base/utils/array';
@@ -16,6 +16,7 @@ import { NodePathModel } from './path.svelte';
 import { NodeBackendModel, type NodeBackendModelDelegate } from './backend.svelte';
 import type { NodePropertiesModel } from './properties.svelte';
 import type { NodeDetailsModel } from './details.svelte';
+import type { BlockType } from '$d2/lib/blocks/block.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -23,6 +24,11 @@ export type NodeData<Type extends NodeType = NodeType> = BaseNodeData<Type, Node
 
 export type NodeModelFactory<Model extends NodeModel> = {
   new (...args: ConstructorParameters<typeof NodeModel<never>>): Model;
+};
+
+export type BlockProperty<Type extends BlockType = BlockType> = {
+  kind: Type;
+  properties: BlockPropertiesRegistry[BlockType];
 };
 
 export const asParent = (node: NodeModel | undefined): NodeParentData | null => {
