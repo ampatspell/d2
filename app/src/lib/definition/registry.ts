@@ -13,5 +13,5 @@ export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry & {
 
 export const definition = app({
   nodes: [file(), index(), gallery()],
-  elements: [link(), box()],
+  markdown: [link(), box()],
 });
