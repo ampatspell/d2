@@ -1,10 +1,10 @@
 <script lang="ts">
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import Grid from '$d2/components/dark/grid/grid.svelte';
   import { getter, options } from '$d2/lib/base/utils/options';
   import type { GridDelegate, GridModelDelegate } from '$d2/components/dark/grid/models.svelte';
   import Item from './item.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let { models, nodes }: { models: NodeModel[]; nodes: NodesModel } = $props();
 

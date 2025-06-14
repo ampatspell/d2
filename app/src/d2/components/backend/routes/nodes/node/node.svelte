@@ -5,7 +5,7 @@
   import Icon from '$d2/components/dark/section/page/icon.svelte';
   import Page from '$d2/components/dark/section/page/page.svelte';
   import LucideLayoutGrid from '$d2/icons/lucide--layout-grid.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 
   let {

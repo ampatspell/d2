@@ -4,7 +4,9 @@ import { getter } from '$d2/lib/base/utils/options';
 import { data } from '$d2/lib/base/utils/property.svelte';
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNodes } from '$d2/lib/nodes/map.svelte';
-import { NodeDetailsModel, NodeModel, NodePropertiesModel } from '$d2/lib/nodes/node.svelte';
+import { NodeDetailsModel } from '$d2/lib/nodes/node/details.svelte';
+import { NodeModel } from '$d2/lib/nodes/node/node.svelte';
+import { NodePropertiesModel } from '$d2/lib/nodes/node/properties.svelte';
 
 export class GalleryNodePropertiesModel extends NodePropertiesModel<'gallery'> {
   readonly title = data(this, 'title');

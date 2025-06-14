@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from '$d2/components/dark/icon.svelte';
   import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let { model }: { model: NodeModel } = $props();
 </script>

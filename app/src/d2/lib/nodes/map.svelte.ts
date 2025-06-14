@@ -4,7 +4,7 @@ import { mapModel } from '../base/model/models.svelte';
 import { serialized } from '../base/utils/object';
 import { getter, options, type OptionsInput } from '../base/utils/options';
 import { node, nodes, NodesLoaderModel, type NodeLoaderModel } from './loader.svelte';
-import type { NodeModel, NodeModelFactory } from './node.svelte';
+import type { NodeModel, NodeModelFactory } from './node/node.svelte';
 
 export type MapNodeOptions<T, Model extends NodeModel> = {
   source: T;

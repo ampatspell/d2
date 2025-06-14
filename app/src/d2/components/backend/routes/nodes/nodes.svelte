@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import Section from '$d2/components/dark/section/section.svelte';
-  import type { NodeModel } from '$d2/lib/nodes/node.svelte';
   import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
   import type { Snippet } from 'svelte';
   import Overflow from '$d2/components/dark/overflow.svelte';
@@ -11,6 +10,7 @@
   import Fold from '../../nodes/fold.svelte';
   import Tree from '../../nodes/tree/tree.svelte';
   import LucideArchive from '$d2/icons/lucide--archive.svelte';
+  import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 
   let {
     id,
