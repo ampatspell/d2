@@ -2,6 +2,7 @@ import LucideFlame from '$d2/icons/lucide--flame.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { array, ArrayPropertyItemModel, data, toRequired } from '$d2/lib/base/utils/property.svelte';
+import { block } from '$d2/lib/blocks/map.svelte';
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
 import { NodeDetailsModel } from '$d2/lib/nodes/node/details.svelte';
@@ -33,17 +34,23 @@ export class IndexNodePropertiesModel extends NodePropertiesModel<'index'> {
 
 export class IndexNodeDetailsModel extends NodeDetailsModel<'index'> {
   readonly _background = mapNode.forPath({
-    path: getter(() => this.path.exceptOwn(this.data.properties.background)),
+    path: getter(() => this.path.exceptOwn(this.properties.background)),
     factory: FileNodeModel,
   });
 
   readonly background = $derived(this._background.node?.asImage);
 
-  readonly isLoaded = $derived(isLoaded([this._background]));
-  readonly dependencies = [this._background];
+  readonly _introduction = block({
+    data: getter(() => this.properties.introduction),
+  });
+
+  readonly introduction = $derived(this._introduction.block);
+
+  readonly isLoaded = $derived(isLoaded([this._background, this._introduction]));
+  readonly dependencies = [this._background, this._introduction];
 
   async load() {
-    await Promise.all([this._background.load()]);
+    await Promise.all([this._background.load(), this._introduction.load()]);
   }
 }
 

@@ -12,6 +12,7 @@ export abstract class NodeDetailsModel<
   readonly model = $derived(this.options.model);
   readonly path = $derived(this.model.path);
   readonly data = $derived(this.model.data);
+  readonly properties = $derived(this.data.properties);
 
   abstract load(): Promise<void>;
   abstract isLoaded: boolean;

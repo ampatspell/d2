@@ -15,4 +15,11 @@ export type BlockDefinitionModelOptions<
 export class BlockDefinitionModel<
   Type extends BlockType = BlockType,
   Block extends BlockModel<Type> = BlockModel<Type>,
-> extends Model<BlockDefinitionModelOptions<Type, Block>> {}
+> extends Model<BlockDefinitionModelOptions<Type, Block>> {
+  readonly type = $derived(this.options.type);
+  readonly name = $derived(this.options.name);
+
+  model(...args: ConstructorParameters<typeof BlockModel<Type>>) {
+    return new this.options.model(...args);
+  }
+}
