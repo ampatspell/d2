@@ -1,5 +1,5 @@
 import type { DocumentData } from '@firebase/firestore';
-import { getter, type OptionsInput } from './options';
+import { getter, options, type OptionsInput } from './options';
 import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 import type { HasSubscriber } from '../model/subscriber.svelte';
@@ -93,24 +93,42 @@ export class DataModelProperties<
   dependencies: HasSubscriber[] = [];
 }
 
-export type PropertyDelegateWithData<D> = { data: D } & PropertyDelegateOptions;
-
-export const data = <D, K extends keyof D>(
-  model: PropertyDelegateWithData<D>,
-  key: K,
-  opts?: { update?: (value: D[K]) => D[K] },
+export const propertyForKey = <D, K extends keyof D>(
+  _opts: OptionsInput<{
+    model: PropertyDelegateOptions;
+    data: D;
+    key: K;
+    opts?: { update?: (value: D[K]) => D[K] };
+  }>,
 ) => {
+  const opts = options(_opts);
   return new Property<D[K]>({
-    delegate: model,
-    value: getter(() => model.data[key]),
+    delegate: opts.model,
+    value: getter(() => opts.data[opts.key]),
     update: (value: D[K]) => {
-      const update = opts?.update;
+      const update = opts.opts?.update;
       if (update) {
         value = update(value);
       }
-      model.data[key] = value;
+      opts.data[opts.key] = value;
     },
   });
+};
+
+export const data = <D, K extends keyof D>(
+  model: { data: D } & PropertyDelegateOptions,
+  key: K,
+  opts?: { update?: (value: D[K]) => D[K] },
+) => {
+  return propertyForKey<D, K>({ model, data: getter(() => model.data), key, opts });
+};
+
+export const property = <D, K extends keyof D>(
+  model: { properties: D } & PropertyDelegateOptions,
+  key: K,
+  opts?: { update?: (value: D[K]) => D[K] },
+) => {
+  return propertyForKey<D, K>({ model, data: getter(() => model.properties), key, opts });
 };
 
 export type ArrayPropertyItemModelOptions<T extends HasPosition> = {

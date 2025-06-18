@@ -1,7 +1,7 @@
 import LucideFlame from '$d2/icons/lucide--flame.svelte';
 import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { getter } from '$d2/lib/base/utils/options';
-import { array, ArrayPropertyItemModel, data, toRequired } from '$d2/lib/base/utils/property.svelte';
+import { array, ArrayPropertyItemModel, data, property, toRequired } from '$d2/lib/base/utils/property.svelte';
 import { block } from '$d2/lib/blocks/map.svelte';
 import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';
 import { mapNode } from '$d2/lib/nodes/map.svelte';
@@ -41,7 +41,7 @@ export class IndexNodeDetailsModel extends NodeDetailsModel<'index'> {
   readonly background = $derived(this._background.node?.asImage);
 
   readonly _introduction = block({
-    data: getter(() => this.properties.introduction),
+    property: property(this, 'introduction'),
   });
 
   readonly introduction = $derived(this._introduction.block);

@@ -1,5 +1,6 @@
 <script lang="ts">
   import ArrayRow from '$d2/components/dark/inspector/array-row.svelte';
+  import BlockRow from '$d2/components/dark/inspector/block-row.svelte';
   import InputRow from '$d2/components/dark/inspector/input-row.svelte';
   import NodeRow from '$d2/components/dark/inspector/node-row.svelte';
   import Section from '$d2/components/dark/inspector/section.svelte';
@@ -12,6 +13,7 @@
   let title = $derived(node.properties.title);
   let background = $derived(toRequired(node.properties.background, ''));
   let links = $derived(node.properties.links);
+  let introduction = $derived(node.details.introduction);
 </script>
 
 <Section>
@@ -23,4 +25,5 @@
       <InputRow label="Path" property={link.path} />
     {/snippet}
   </ArrayRow>
+  <BlockRow label="Introduction" block={introduction} />
 </Section>

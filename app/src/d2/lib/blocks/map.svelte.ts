@@ -2,16 +2,17 @@ import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { Subscribable } from '../base/model/model.svelte';
 import { mapModel } from '../base/model/models.svelte';
 import { getter, type OptionsInput } from '../base/utils/options';
+import type { Property } from '../base/utils/property.svelte';
 import { getDefinition } from '../definition/app.svelte';
 import type { BlockProperty } from '../nodes/node/node.svelte';
 import type { BlockType } from './block.svelte';
 
 export type MapBlockOptions<Type extends BlockType> = {
-  source: BlockProperty<Type> | undefined;
+  property: Property<BlockProperty<Type> | undefined>;
 };
 
 export class MapBlock<Type extends BlockType = BlockType> extends Subscribable<MapBlockOptions<Type>> {
-  private readonly _source = $derived(this.options.source);
+  private readonly _source = $derived(this.options.property.value);
 
   private readonly _block = mapModel({
     source: getter(() => this._source),
@@ -31,8 +32,8 @@ export class MapBlock<Type extends BlockType = BlockType> extends Subscribable<M
 
 export const block = <Type extends BlockType = BlockType>(
   opts: OptionsInput<{
-    data: BlockProperty<Type> | undefined;
+    property: Property<BlockProperty<Type> | undefined>;
   }>,
 ) => {
-  return new MapBlock<Type>({ source: opts.data });
+  return new MapBlock<Type>({ property: opts.property });
 };
