@@ -4,7 +4,7 @@
   import Column from './column.svelte';
   import Row from './row.svelte';
 
-  let { label, block }: { label: string; block: MapBlock } = $props();
+  let { label, block }: { label: string; block: MapBlock<any> } = $props();
 
   let onClear = () => {
     block.clear();
