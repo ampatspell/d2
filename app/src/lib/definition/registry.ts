@@ -6,6 +6,7 @@ import { box } from './elements/box/definition.svelte';
 import { link } from './elements/link/definition.svelte';
 import { markdown, type MarkdownBlockProperties } from './blocks/markdown/definition.svelte';
 import { index, type IndexNodeProperties } from './nodes/index/definition.svelte';
+import { string, type StringBlockProperties } from './blocks/string/definition.svelte';
 
 export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry & {
   index: IndexNodeProperties;
@@ -14,10 +15,11 @@ export type NodePropertiesRegistry = FunctionsNodePropertiesRegistry & {
 
 export type BlockPropertiesRegistry = {
   markdown: MarkdownBlockProperties;
+  string: StringBlockProperties;
 };
 
 export const definition = app({
   nodes: [file(), index(), gallery()],
-  blocks: [markdown()],
+  blocks: [markdown(), string()],
   elements: [link(), box()],
 });
