@@ -10,7 +10,7 @@
     block.clear();
   };
   let onMarkdown = () => {
-    block.property.update({ kind: 'markdown', properties: { content: 'hello' } });
+    block.replaceWith('markdown');
   };
 </script>
 

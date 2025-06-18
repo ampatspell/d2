@@ -27,8 +27,15 @@ export class MapBlock<Type extends BlockType = BlockType> extends Subscribable<M
     await this._block.load((model) => model.load());
   }
 
-  async clear() {
+  clear() {
     this.property.update(undefined);
+  }
+
+  replaceWith<Type extends BlockType>(kind: Type) {
+    const definition = getDefinition().blockByType(kind);
+    // TODO: this should be constrained
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.property.update(definition.data() as any);
   }
 
   readonly isLoaded = $derived(isLoaded([this.block]));

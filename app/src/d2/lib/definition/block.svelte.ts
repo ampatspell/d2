@@ -1,6 +1,7 @@
 import type { BlockPropertiesRegistry } from '$lib/definition/registry';
 import { Model } from '../base/model/model.svelte';
 import type { BlockModel, BlockType } from '../blocks/block.svelte';
+import type { BlockProperty } from '../nodes/node/node.svelte';
 
 export type BlockDefinitionModelOptions<
   Type extends BlockType = BlockType,
@@ -21,5 +22,18 @@ export class BlockDefinitionModel<
 
   model(...args: ConstructorParameters<typeof BlockModel<Type>>) {
     return new this.options.model(...args);
+  }
+
+  defaults() {
+    return this.options.defaults?.();
+  }
+
+  data() {
+    const kind = this.type;
+    const properties = this.defaults();
+    return {
+      kind,
+      properties,
+    } as BlockProperty<Type>;
   }
 }
