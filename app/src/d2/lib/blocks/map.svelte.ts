@@ -1,6 +1,7 @@
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { Subscribable } from '../base/model/model.svelte';
 import { mapModel } from '../base/model/models.svelte';
+import { serialized } from '../base/utils/object';
 import { getter, type OptionsInput } from '../base/utils/options';
 import type { Property } from '../base/utils/property.svelte';
 import { getDefinition } from '../definition/app.svelte';
@@ -12,10 +13,10 @@ export type MapBlockOptions<Type extends BlockType> = {
 };
 
 export class MapBlock<Type extends BlockType = BlockType> extends Subscribable<MapBlockOptions<Type>> {
-  private readonly _source = $derived(this.options.property.value);
+  readonly property = $derived(this.options.property);
 
   private readonly _block = mapModel({
-    source: getter(() => this._source),
+    source: getter(() => this.property.value),
     target: (data) => getDefinition().blockByType(data.kind).model({ data }),
     key: (data) => data.kind,
   });
@@ -26,8 +27,14 @@ export class MapBlock<Type extends BlockType = BlockType> extends Subscribable<M
     await this._block.load((model) => model.load());
   }
 
+  async clear() {
+    this.property.update(undefined);
+  }
+
   readonly isLoaded = $derived(isLoaded([this.block]));
   readonly dependencies = [this._block];
+
+  readonly serialized = $derived(serialized(this, ['block']));
 }
 
 export const block = <Type extends BlockType = BlockType>(

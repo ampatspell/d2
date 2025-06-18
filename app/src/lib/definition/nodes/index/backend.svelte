@@ -13,7 +13,7 @@
   let title = $derived(node.properties.title);
   let background = $derived(toRequired(node.properties.background, ''));
   let links = $derived(node.properties.links);
-  let introduction = $derived(node.details.introduction);
+  let introduction = $derived(node.details._introduction);
 </script>
 
 <Section>
