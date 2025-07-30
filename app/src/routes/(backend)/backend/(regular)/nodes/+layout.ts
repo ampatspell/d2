@@ -5,7 +5,7 @@ import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async () => {
   return {
-    nodes: await preloadModel(NodesModel.all()),
+    nodes: await preloadModel(NodesModel.allNodes()),
     settings: await preloadModel(NodesSettingsModel.forCurrentUser()),
   };
 };

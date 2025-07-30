@@ -136,7 +136,8 @@ export class DraggingModel extends Model<DraggingModelOptions> {
     return undefined;
   }
 
-  static onMouseDown(draggable: DraggableModel, e: MouseEvent) {
+  // TODO: rename back to "onMouseDown"
+  static onDraggableMouseDown(draggable: DraggableModel, e: MouseEvent) {
     const model = new this({ draggable });
     model.onMouseDown(e);
     return model;
@@ -239,7 +240,7 @@ export class DraggableContext extends Model<DraggableContextOptions> {
   onMouseDown(draggable: DraggableModel, e: MouseEvent) {
     if (this.isDraggable) {
       this.onPrepare();
-      this.dragging = DraggingModel.onMouseDown(draggable, e);
+      this.dragging = DraggingModel.onDraggableMouseDown(draggable, e);
     }
   }
 

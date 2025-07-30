@@ -97,6 +97,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {
     const ref = fs.doc(nodesCollection);
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     const now = new Date();
     const identifier = ref.id;
 
@@ -144,7 +145,8 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
   readonly dependencies = [this._query, this._nodes];
   readonly serialized = $derived(serialized(this, []));
 
-  static all() {
+  // TODO rename back to "all"
+  static allNodes() {
     return new this({
       query: nodesCollection,
     });
