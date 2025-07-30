@@ -1,5 +1,5 @@
 import type { NodeParentData } from '$d2-shared/documents';
-import { Model } from '$d2/lib/base/model/model.svelte';
+import { Model } from '$d2/lib/base/model/base.svelte';
 import { isTruthy } from '$d2/lib/base/utils/array';
 import type { PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
 import type { NodeModel, NodeType } from './node.svelte';

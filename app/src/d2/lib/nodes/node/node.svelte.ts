@@ -93,6 +93,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   abstract readonly icon: Component;
 
   async save() {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     this.data.updatedAt = new Date();
     await this.doc.save();
   }

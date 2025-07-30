@@ -30,6 +30,7 @@ const maybeSubscribeContentArray = (objects: unknown[]) => {
 
 export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends Subscribable<O> {
   private readonly _target = $derived(this.options.target);
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   private readonly _cache: Map<Source, CacheValue<Target>> = new Map();
   private _iteration = 0;
 

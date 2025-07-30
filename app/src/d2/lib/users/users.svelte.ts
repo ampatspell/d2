@@ -1,6 +1,5 @@
 import * as fs from '@firebase/firestore';
 import { queryAll } from '../base/fire/query.svelte';
-import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
 import { mapModels } from '../base/model/models.svelte';
 import { getter } from '../base/utils/options';
@@ -8,6 +7,7 @@ import type { UserData, UserRole } from '$d2-shared/documents';
 import { Document } from '../base/fire/document.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { getSession, setRole } from '../session/session.svelte';
+import { Subscribable } from '../base/refactoring/subscribable.svelte';
 
 export const usersCollection = fs.collection(firebase.firestore, 'users');
 

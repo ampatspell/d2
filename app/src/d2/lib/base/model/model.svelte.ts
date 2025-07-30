@@ -1,15 +1,6 @@
-import { options, type OptionsInput } from '../utils/options';
-import { BaseModel } from './base.svelte';
+import { type OptionsInput } from '../utils/options';
+import { Model } from './base.svelte';
 import { type HasSubscriber, Subscriber } from './subscriber.svelte';
-
-export class Model<O> extends BaseModel {
-  protected readonly options: O;
-
-  constructor(opts: OptionsInput<O>) {
-    super();
-    this.options = options(opts);
-  }
-}
 
 export abstract class Subscribable<O> extends Model<O> implements HasSubscriber {
   readonly subscriber: Subscriber;
