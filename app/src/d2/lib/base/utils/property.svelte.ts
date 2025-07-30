@@ -1,11 +1,12 @@
 import type { DocumentData } from '@firebase/firestore';
 import { getter, type OptionsInput } from './options';
-import { Model, Subscribable } from '../model/model.svelte';
 import type { Document } from '../fire/document.svelte';
 import type { HasSubscriber } from '../model/subscriber.svelte';
 import type { HasPosition } from './types';
 import { removeObject, sortedBy } from './array';
 import type { DraggableOnDrop } from '$d2/components/dark/draggable/models.svelte';
+import { Model } from '../model/base.svelte';
+import { Subscribable } from '../model/model.svelte';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {

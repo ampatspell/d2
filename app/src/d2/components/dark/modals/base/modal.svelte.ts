@@ -3,9 +3,9 @@ import type { ModalsContext } from './context.svelte';
 import type { BeforeNavigate } from '@sveltejs/kit';
 import type { Placement } from '../base/placement/placement.svelte';
 import { center } from '../base/placement/center/placement.svelte';
-import { Model } from '$d2/lib/base/model/model.svelte';
 import { options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { deferred } from '$d2/lib/base/utils/promise';
+import { Model } from '$d2/lib/base/model/base.svelte';
 
 export type ModalRuntime<I, O> = {
   readonly props: I;

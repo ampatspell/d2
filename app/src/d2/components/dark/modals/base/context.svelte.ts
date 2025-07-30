@@ -1,11 +1,11 @@
 import { beforeNavigate } from '$app/navigation';
 import type { BeforeNavigate } from '@sveltejs/kit';
 import { Modal, type OpenModalOptions } from './modal.svelte';
-import { Model } from '$d2/lib/base/model/model.svelte';
 import { options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { lastObject, removeObject } from '$d2/lib/base/utils/array';
 import { serialized } from '$d2/lib/base/utils/object';
 import { createContext } from '$d2/lib/base/utils/context';
+import { Model } from '$d2/lib/base/model/base.svelte';
 
 export type ModalsContextOptions = Record<string, never>;
 

@@ -1,6 +1,6 @@
 import type { Component } from 'svelte';
-import { Model } from '../base/model/model.svelte';
 import type { MarkdownElementModel, MarkdownElementModelOptions } from '../markdown/element.svelte';
+import { Model } from '../base/model/base.svelte';
 
 export type MarkdownElementDefinitionModelOptions<Model extends MarkdownElementModel> = {
   type: string;

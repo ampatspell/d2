@@ -3,9 +3,10 @@ import { untrack } from 'svelte';
 import { Model } from '../model/base.svelte';
 import { addObject, removeObject } from '../utils/array';
 
-const _subscribed = $state<Subscribable[]>([]);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const _subscribed = $state<Subscribable<any>[]>([]);
 
-export class Subscribable<O = unknown> extends Model<O> {
+export class Subscribable<O> extends Model<O> {
   private _isSubscribed = $state(false);
   private _subscriber: ReturnType<typeof createSubscriber> | undefined;
 

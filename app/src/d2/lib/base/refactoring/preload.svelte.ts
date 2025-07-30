@@ -9,7 +9,8 @@ export type HasLoad = {
   load(): Promise<void>;
 };
 
-export const preload = async <T extends Subscribable & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const preload = async <T extends Subscribable<any> & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
   if (browser) {
     return new Promise<T>((resolve) => {
       const cancel = $effect.root(() => {

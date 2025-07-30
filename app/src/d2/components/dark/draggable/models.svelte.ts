@@ -1,4 +1,4 @@
-import { Model } from '$d2/lib/base/model/model.svelte';
+import { Model } from '$d2/lib/base/model/base.svelte';
 import { addObject, removeObject } from '$d2/lib/base/utils/array';
 import { createContext } from '$d2/lib/base/utils/context';
 import type { OptionsInput } from '$d2/lib/base/utils/options';

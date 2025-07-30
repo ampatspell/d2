@@ -4,8 +4,8 @@ import {
 } from '$d2-shared/functions';
 import { httpsCallable } from '@firebase/functions';
 import { firebase } from '../base/fire/firebase.svelte';
-import { Model } from '../base/model/model.svelte';
 import { serialized } from '../base/utils/object';
+import { Model } from '../base/model/base.svelte';
 
 export type CreateSubscriptionModelOptions = {
   kind: string;
