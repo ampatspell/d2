@@ -21,11 +21,13 @@ export class Subscribable<O> extends Model<O> {
         return $effect.root(() => {
           this.subscribe();
           untrack(() => {
+            console.log('+', this);
             this._isSubscribed = true;
             addObject(_subscribed, this);
           });
           return () => {
             untrack(() => {
+              console.log('-', this);
               removeObject(_subscribed, this);
               this._isSubscribed = false;
             });

@@ -4,7 +4,7 @@
   import LucideFlame from '$d2/icons/lucide--flame.svelte';
   import Icon from './dark/icon.svelte';
   import type { Snippet } from 'svelte';
-  // import Stats from './dark/stats.svelte';
+  import Stats from './dark/stats.svelte';
 
   let route = $derived(page.url.pathname);
   let isBackend = $derived(route.startsWith('/backend'));
@@ -25,7 +25,7 @@
 
 {@render children()}
 
-<!-- <Stats /> -->
+<Stats />
 
 {#if !isBackend}
   <div class="admin">

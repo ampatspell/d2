@@ -37,7 +37,7 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
     this.isPassive = this.options.isPassive ?? false;
   }
 
-  _onWillLoad(subscribe: boolean) {
+  protected _onWillLoad(subscribe: boolean) {
     this.promises._onWillLoad();
     this._error = undefined;
     this._metadata = undefined;
@@ -49,15 +49,15 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
 
   declare path: string | undefined;
 
-  _onError(error: unknown) {
+  protected _onError(error: unknown) {
     this._isLoading = false;
     this._error = error;
     this._metadata = undefined;
-    console.error(this+'', error);
+    console.error(this + '', error);
     this.promises._onError(error);
   }
 
-  _onDidLoad(metadata: SnapshotMetadata) {
+  protected _onDidLoad(metadata: SnapshotMetadata) {
     this._isLoading = false;
     this._isLoaded = true;
     this._error = undefined;
@@ -65,7 +65,7 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
     this.promises._onDidLoad(this, metadata.fromCache ? 'cached' : 'remote');
   }
 
-  async _onLoad(cb: () => Promise<void>) {
+  protected async _onLoad(cb: () => Promise<void>) {
     this._isLoading = true;
     try {
       await cb();
@@ -76,7 +76,7 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
     }
   }
 
-  abstract _subscribeActive(): void;
+  protected abstract _subscribeActive(): void;
 
   subscribe() {
     if (this.isPassive) {

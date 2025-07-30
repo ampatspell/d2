@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fireStats } from '$d2/lib/base/fire/stats.svelte';
-  // import { modelStats } from '$d2/lib/base/model/stats.svelte';
+    import { Subscribable } from '$d2/lib/base/refactoring/subscribable.svelte';
   import Dark from './dark.svelte';
   import Overflow from './overflow.svelte';
   import Cell from './table/cell.svelte';
@@ -8,15 +8,15 @@
   import Row from './table/row.svelte';
   import Table from './table/table.svelte';
 
-  let listening = $derived(fireStats.listening);
-  // let subscribed = $derived(modelStats.subscribed);
+  // let listening = $derived(fireStats.listening);
+  let subscribed = $derived(Subscribable.subscribed);
 </script>
 
 <div class="stats">
   <Dark>
     <Overflow overflow="y">
       <Table>
-        {#each listening as model (model)}
+        {#each subscribed as model (model)}
           <Cell>
             <Row>
               <Content>
