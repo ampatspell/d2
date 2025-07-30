@@ -2,6 +2,7 @@ import { createSubscriber } from 'svelte/reactivity';
 import { untrack } from 'svelte';
 import { Model } from '../model/base.svelte';
 import { addObject, removeObject } from '../utils/array';
+import { setGlobal } from '../utils/set-global';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _subscribed = $state<Subscribable<any>[]>([]);
@@ -41,3 +42,5 @@ export class Subscribable<O> extends Model<O> {
     return _subscribed;
   }
 }
+
+setGlobal({ Subscribable }, true);
