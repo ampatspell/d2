@@ -1,13 +1,19 @@
 import type { SnapshotMetadata } from '@firebase/firestore';
 import { LoadPromises } from '../../fire/load-promise.svelte';
 import type { OptionsInput } from '../../utils/options';
-import { Subscribable } from '../subscribable.svelte';
+import { SubscribableModel } from '../subscribable.svelte';
+import { untrack } from 'svelte';
+import { removeObject } from '../../utils/array';
+
+const _listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
 
 export type FirebaseModelOptions = {
   isPassive?: boolean;
 };
 
-export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseModelOptions> extends Subscribable<O> {
+export abstract class FirebaseModel<
+  O extends FirebaseModelOptions = FirebaseModelOptions,
+> extends SubscribableModel<O> {
   private _isLoading = $state(false);
   private _isLoaded = $state(false);
   private _error = $state<unknown>();
@@ -83,5 +89,20 @@ export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseMod
       return;
     }
     this._subscribeActive();
+  }
+
+  protected _registerListening(model: FirebaseModel<FirebaseModelOptions>) {
+    untrack(() => {
+      _listening.push(model);
+    });
+    return () => {
+      untrack(() => {
+        removeObject(_listening, model);
+      });
+    };
+  }
+
+  static get listening() {
+    return _listening;
   }
 }

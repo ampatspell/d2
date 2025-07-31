@@ -19,7 +19,6 @@ import deepEqual from 'fast-deep-equal';
 import type { OptionsInput } from '../../utils/options';
 import type { VoidCallback } from '../../utils/types';
 import { serialized } from '../../utils/object';
-import { fireStats } from './stats.svelte';
 
 const createToken = () => {
   if (browser) {
@@ -154,7 +153,7 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
             this._onError(error);
           },
         );
-        const listening = fireStats._registerListening(this);
+        const listening = this._registerListening(this);
         cancel = () => {
           snapshot();
           listening();

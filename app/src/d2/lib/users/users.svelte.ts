@@ -3,7 +3,7 @@ import { firebase } from '../base/fire/firebase.svelte';
 import type { UserData, UserRole } from '$d2-shared/documents';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { getSession, setRole } from '../session/session.svelte';
-import { Subscribable } from '../base/refactoring/subscribable.svelte';
+import { SubscribableModel as SubscribableModel } from '../base/refactoring/subscribable.svelte';
 import { Document } from '../base/refactoring/fire/document.svelte';
 import { queryAll } from '../base/refactoring/fire/query.svelte';
 import { getter } from '../base/utils/options';
@@ -13,7 +13,7 @@ export const usersCollection = fs.collection(firebase.firestore, 'users');
 
 export type UsersModelOptions = undefined;
 
-export class UsersModel extends Subscribable<UsersModelOptions> {
+export class UsersModel extends SubscribableModel<UsersModelOptions> {
   private _query = queryAll<UserData>({
     ref: fs.query(usersCollection, fs.where('isAnonymous', '==', false)),
   });
@@ -40,7 +40,7 @@ export type UsersUserModelOptions = {
   doc: Document<UserData>;
 };
 
-export class UsersUserModel extends Subscribable<UsersUserModelOptions> {
+export class UsersUserModel extends SubscribableModel<UsersUserModelOptions> {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
   readonly data = $derived(this.doc.data!);

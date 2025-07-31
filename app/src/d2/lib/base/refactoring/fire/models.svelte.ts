@@ -1,5 +1,5 @@
 import { untrack } from 'svelte';
-import { Subscribable } from '../subscribable.svelte';
+import { SubscribableModel } from '../subscribable.svelte';
 import { isTruthy, sortedBy, type SortDescriptors } from '../../utils/array';
 
 const ITERATIONS = 10;
@@ -15,7 +15,7 @@ type CacheValue<Target> = {
   key: unknown;
 };
 
-export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends Subscribable<O> {
+export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends SubscribableModel<O> {
   private readonly _target = $derived(this.options.target);
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   private readonly _cache: Map<Source, CacheValue<Target>> = new Map();

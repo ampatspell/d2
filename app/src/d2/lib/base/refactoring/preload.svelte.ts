@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { Deferred } from '../utils/promise';
-import { subscribe, type Subscribable } from './subscribable.svelte';
+import { subscribe, type SubscribableModel } from './subscribable.svelte';
 
 export type HasIsLoaded = {
   readonly isLoaded: boolean;
@@ -10,7 +10,7 @@ export type HasLoad = {
   load(): Promise<void>;
 };
 
-export const preload = async <T extends Subscribable & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
+export const preload = async <T extends SubscribableModel & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
   if (browser) {
     const deferred = new Deferred<T, unknown>();
     const cancel = $effect.root(() => {

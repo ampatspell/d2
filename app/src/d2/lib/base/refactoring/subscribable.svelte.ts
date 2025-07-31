@@ -3,10 +3,10 @@ import { Model } from '../model/base.svelte';
 import { addObject, removeObject } from '../utils/array';
 import type { VoidCallback } from '../utils/types';
 
-const _subscribed = $state<Subscribable[]>([]);
+const _subscribed = $state<SubscribableModel[]>([]);
 
-class SubscribableState {
-  constructor(private _subscribable: Subscribable) {}
+class SubscribableModelState {
+  constructor(private _subscribable: SubscribableModel) {}
 
   private _activations = 0;
   private _cancel = $state<VoidCallback>();
@@ -22,7 +22,7 @@ class SubscribableState {
   }
 
   private _maybeSubscribe() {
-    if(this._shouldSubscribe()) {
+    if (this._shouldSubscribe()) {
       this._cancel = $effect.root(() => {
         untrack(() => {
           addObject(_subscribed, this._subscribable);
@@ -42,21 +42,21 @@ class SubscribableState {
     this._cancel = undefined;
   }
 
-  private _withDependencies(cb: (child: SubscribableState) => void) {
+  private _withDependencies(cb: (child: SubscribableModelState) => void) {
     this._dependencies.map((child) => cb(stateFor(child)));
   }
 
   private _maybeActivate() {
-    if(this._activations++ === 0) {
+    if (this._activations++ === 0) {
       this._maybeSubscribe();
-      this._withDependencies(state => state._maybeActivate());
+      this._withDependencies((state) => state._maybeActivate());
     }
   }
 
   private async _maybeDeactivate() {
     await tick();
     if (--this._activations === 0) {
-      this._withDependencies(state => state._maybeDeactivate());
+      this._withDependencies((state) => state._maybeDeactivate());
       this._maybeUnsubscribe();
     }
   }
@@ -74,14 +74,13 @@ class SubscribableState {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export abstract class Subscribable<O = any> extends Model<O> {
-  private _subscribable = new SubscribableState(this);
+export abstract class SubscribableModel<O = unknown> extends Model<O> {
+  private _subscribable = new SubscribableModelState(this);
   readonly isSubscribed = $derived(this._subscribable.isSubscribed);
 
   subscribe() {}
 
-  readonly dependencies: Subscribable[] | undefined;
+  readonly dependencies: SubscribableModel[] | undefined;
 
   protected _subscribe<T>(cb: () => T): T {
     this._subscribable.touch();
@@ -94,13 +93,13 @@ export abstract class Subscribable<O = any> extends Model<O> {
 }
 
 function stateFor(model: undefined): undefined;
-function stateFor(model: Subscribable): SubscribableState;
-function stateFor(model: Subscribable | undefined): SubscribableState | undefined;
+function stateFor(model: SubscribableModel): SubscribableModelState;
+function stateFor(model: SubscribableModel | undefined): SubscribableModelState | undefined;
 
-function stateFor(model: Subscribable | undefined): SubscribableState | undefined {
+function stateFor(model: SubscribableModel | undefined): SubscribableModelState | undefined {
   return model?.['_subscribable'];
 }
 
-export const subscribe = (model: Subscribable | undefined) => {
+export const subscribe = (model: SubscribableModel | undefined) => {
   return untrack(() => stateFor(model)?.activate());
 };

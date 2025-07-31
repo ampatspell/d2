@@ -17,7 +17,6 @@ import { browser } from '$app/environment';
 import type { VoidCallback } from '../../utils/types';
 import { insertObjectAt, removeObjectAt } from '../../utils/array';
 import { serialized } from '../../utils/object';
-import { fireStats } from './stats.svelte';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -104,7 +103,7 @@ export class QueryBase<
             this._onError(error);
           },
         );
-        const listening = fireStats._registerListening(this);
+        const listening = this._registerListening(this);
         cancel = () => {
           snapshot();
           listening();
