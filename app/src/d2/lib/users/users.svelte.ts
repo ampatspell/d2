@@ -27,11 +27,6 @@ export class UsersModel extends SubscribableModel<UsersModelOptions> {
 
   readonly all = $derived(this._users.content);
 
-  async load() {
-    await this._query.load();
-    await this._users.load((model) => model.load());
-  }
-
   readonly isLoaded = $derived(isLoaded([this._query]));
   readonly dependencies = [this._query, this._users];
 }
@@ -53,10 +48,6 @@ export class UsersUserModel extends SubscribableModel<UsersUserModelOptions> {
 
   async setRole(role: UserRole) {
     await setRole(this.id, role);
-  }
-
-  async load() {
-    await this.doc.load();
   }
 
   readonly isLoaded = $derived(isLoaded([this.doc]));

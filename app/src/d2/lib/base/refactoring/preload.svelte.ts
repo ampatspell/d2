@@ -6,11 +6,13 @@ export type HasIsLoaded = {
   readonly isLoaded: boolean;
 };
 
-export type HasLoad = {
-  load(): Promise<void>;
+export type MaybeHasLoad = {
+  load?(): Promise<void>;
 };
 
-export const preload = async <T extends SubscribableModel & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
+export type PreloadableModel = SubscribableModel & HasIsLoaded & MaybeHasLoad;
+
+export const preload = async <T extends PreloadableModel>(model: T): Promise<T> => {
   if (browser) {
     const deferred = new Deferred<T, unknown>();
     const cancel = $effect.root(() => {
@@ -33,9 +35,13 @@ export const preload = async <T extends SubscribableModel & HasIsLoaded & HasLoa
     });
     return deferred.promise;
   } else {
-    await model.load();
-    if (!model.isLoaded) {
-      console.error(`Insufficient load for ${model}`);
+    if (model.load) {
+      await model.load();
+      if (!model.isLoaded) {
+        console.error(`Insufficient load for ${model}`);
+      }
+    } else {
+      console.error(`Model ${model} is missing load() for SSR`);
     }
     return model;
   }
