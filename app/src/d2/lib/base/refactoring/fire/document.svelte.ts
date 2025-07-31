@@ -19,6 +19,7 @@ import deepEqual from 'fast-deep-equal';
 import type { OptionsInput } from '../../utils/options';
 import type { VoidCallback } from '../../utils/types';
 import { serialized } from '../../utils/object';
+import { fireStats } from './stats.svelte';
 
 const createToken = () => {
   if (browser) {
@@ -140,9 +141,7 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
   _subscribeActive() {
     $effect(() => {
       const ref = this.ref;
-
       untrack(() => this._onWillLoad(!!ref));
-
       let cancel: VoidCallback;
       if (ref) {
         const snapshot = onSnapshot(
@@ -155,14 +154,12 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
             this._onError(error);
           },
         );
-        // TODO: fireStats
-        // const listening = fireStats._registerListening(this);
+        const listening = fireStats._registerListening(this);
         cancel = () => {
           snapshot();
-          // listening();
+          listening();
         };
       }
-
       return () => {
         cancel?.();
       };
@@ -228,5 +225,5 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     }
   }
 
-  serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error', 'isSubscribed']));
+  serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error']));
 }

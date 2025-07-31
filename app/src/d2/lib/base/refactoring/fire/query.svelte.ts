@@ -17,6 +17,7 @@ import { browser } from '$app/environment';
 import type { VoidCallback } from '../../utils/types';
 import { insertObjectAt, removeObjectAt } from '../../utils/array';
 import { serialized } from '../../utils/object';
+import { fireStats } from './stats.svelte';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -103,11 +104,10 @@ export class QueryBase<
             this._onError(error);
           },
         );
-        // TODO: fireStats
-        // const listening = fireStats._registerListening(this);
+        const listening = fireStats._registerListening(this);
         cancel = () => {
           snapshot();
-          // listening();
+          listening();
         };
       }
 
@@ -179,7 +179,7 @@ export class QueryAll<T extends DocumentData = DocumentData> extends QueryBase<T
   readonly size = $derived(this.content.length);
 
   readonly serialized = $derived.by(() => {
-    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'isSubscribed', 'size']);
+    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'size']);
   });
 }
 
@@ -199,7 +199,7 @@ export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase
   }
 
   readonly serialized = $derived.by(() => {
-    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'isSubscribed', 'exists']);
+    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'exists']);
   });
 }
 

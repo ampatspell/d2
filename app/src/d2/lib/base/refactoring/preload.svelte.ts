@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
-import type { Subscribable } from './subscribable.svelte';
+import { Deferred } from '../utils/promise';
+import { subscribe, type Subscribable } from './subscribable.svelte';
 
 export type HasIsLoaded = {
   readonly isLoaded: boolean;
@@ -9,19 +10,28 @@ export type HasLoad = {
   load(): Promise<void>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const preload = async <T extends Subscribable<any> & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
+export const preload = async <T extends Subscribable & HasIsLoaded & HasLoad>(model: T): Promise<T> => {
   if (browser) {
-    return new Promise<T>((resolve) => {
-      const cancel = $effect.root(() => {
-        $effect(() => {
-          if (model.isLoaded) {
-            resolve(model);
-            cancel();
-          }
-        });
+    const deferred = new Deferred<T, unknown>();
+    const cancel = $effect.root(() => {
+      // TODO: Promise.race for timeout
+      const tick = async () => {
+        await Promise.resolve();
+        if (model.isLoaded) {
+          cancel();
+          deferred.resolve(model);
+        }
+      };
+      $effect(() => {
+        return subscribe(model);
+      });
+      $effect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        model.isLoaded;
+        tick();
       });
     });
+    return deferred.promise;
   } else {
     await model.load();
     if (!model.isLoaded) {

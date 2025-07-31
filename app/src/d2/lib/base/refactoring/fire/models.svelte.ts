@@ -76,7 +76,7 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
     return result;
   }
 
-  protected abstract _update(): void; // TODO: something depends on return type from this
+  protected abstract _update(): void;
   protected abstract readonly _waitForContent: (Target | undefined)[];
 
   subscribe() {
@@ -151,7 +151,10 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
   private readonly _source = $derived(this.options.source);
   private _content = $state<Target>();
 
-  readonly content = $derived(this._content);
+  get content() {
+    return this._subscribe(() => this._content);
+  }
+
   protected readonly _waitForContent = $derived([this.content]);
 
   protected _update() {
@@ -176,8 +179,10 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
   }
 }
 
-export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) =>
-  new MapModels<Source, Target>(...args);
+export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) => {
+  return new MapModels<Source, Target>(...args);
+};
 
-export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) =>
-  new MapModel<Source, Target>(...args);
+export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) => {
+  return new MapModel<Source, Target>(...args);
+};

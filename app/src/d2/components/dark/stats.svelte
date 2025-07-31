@@ -31,13 +31,19 @@
 </div>
 
 <style lang="scss">
+  @use 'sass:color';
   .stats {
     position: fixed;
     bottom: 5px;
     right: 5px;
     width: 500px;
     height: 300px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 5px 10px color.adjust(#000, $alpha: -0.95),
+      0 20px 40px color.adjust(#000, $alpha: -0.95);
+    border: 1px solid color.adjust(#000, $alpha: -0.95);
+    overflow: hidden;
+    border-radius: 3px;
     background: #fff;
     display: flex;
     flex-direction: column;

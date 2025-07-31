@@ -33,6 +33,7 @@ export class UsersModel extends Subscribable<UsersModelOptions> {
   }
 
   readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly dependencies = [this._query, this._users];
 }
 
 export type UsersUserModelOptions = {
@@ -59,6 +60,7 @@ export class UsersUserModel extends Subscribable<UsersUserModelOptions> {
   }
 
   readonly isLoaded = $derived(isLoaded([this.doc]));
+  readonly dependencies = [this.doc];
 
   static forId(id: string) {
     return new this({
