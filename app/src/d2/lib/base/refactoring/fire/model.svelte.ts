@@ -3,7 +3,7 @@ import { LoadPromises } from '../../fire/load-promise.svelte';
 import type { OptionsInput } from '../../utils/options';
 import { SubscribableModel } from '../subscribable.svelte';
 import { untrack } from 'svelte';
-import { removeObject } from '../../utils/array';
+import { addObject, removeObject } from '../../utils/array';
 
 const _listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
 
@@ -93,7 +93,7 @@ export abstract class FirebaseModel<
 
   protected _registerListening(model: FirebaseModel<FirebaseModelOptions>) {
     untrack(() => {
-      _listening.push(model);
+      addObject(_listening, model);
     });
     return () => {
       untrack(() => {

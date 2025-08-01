@@ -69,5 +69,4 @@ export class IndexNodeModel extends NodeModel<'index'> {
     console.log(deps);
     return deps;
   }
-
 }

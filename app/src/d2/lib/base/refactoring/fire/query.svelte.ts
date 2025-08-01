@@ -21,6 +21,7 @@ import type { VoidCallback } from '../../utils/types';
 import { insertObjectAt, removeObjectAt } from '../../utils/array';
 import { serialized } from '../../utils/object';
 import { getter, options, type OptionsInput } from '../../utils/options';
+import { asDependencies } from '../subscribable.svelte';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -49,7 +50,7 @@ export type QueryBaseOptions = {
   ref: Query | undefined;
 } & FirebaseModelOptions;
 
-export class QueryBase<
+export abstract class QueryBase<
   T extends DocumentData = DocumentData,
   O extends QueryBaseOptions = QueryBaseOptions,
 > extends FirebaseModel<O> {
@@ -173,8 +174,6 @@ export class QueryBase<
       this._onSnapshot(snapshot);
     });
   }
-
-  readonly dependencies = [];
 }
 
 export type QueryAllOptions = QueryBaseOptions;
@@ -182,6 +181,8 @@ export type QueryAllOptions = QueryBaseOptions;
 export class QueryAll<T extends DocumentData = DocumentData> extends QueryBase<T, QueryAllOptions> {
   readonly content = $derived(this._content);
   readonly size = $derived(this.content.length);
+
+  readonly dependencies = $derived(asDependencies(this.content));
 
   readonly serialized = $derived.by(() => {
     return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'size']);
@@ -202,6 +203,8 @@ export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase
   protected _normalizeRef(ref: Query) {
     return query(ref, limit(1));
   }
+
+  readonly dependencies = $derived(asDependencies(this.content));
 
   readonly serialized = $derived.by(() => {
     return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'exists']);
@@ -227,7 +230,7 @@ export const document = <T extends DocumentData = DocumentData>(_opts: OptionsIn
   return queryFirst<T>({
     ref: getter(() => {
       const ref = opts.ref;
-      if(ref) {
+      if (ref) {
         return query(ref.parent, where(documentId(), '==', ref.id));
       }
     }),

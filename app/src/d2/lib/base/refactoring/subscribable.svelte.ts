@@ -5,60 +5,83 @@ import type { VoidCallback } from '../utils/types';
 
 const _subscribed = $state<SubscribableModel[]>([]);
 
+const _add = (model: SubscribableModel) => {
+  untrack(() => {
+    addObject(_subscribed, model);
+  });
+  return () => {
+    untrack(() => {
+      removeObject(_subscribed, model);
+    });
+  }
+}
+
 class SubscribableModelState {
   constructor(private _subscribable: SubscribableModel) {}
 
   private _activations = 0;
   private _cancel = $state<VoidCallback>();
-  private _isTouched = false;
+  private _isTouched = $state(false);
   readonly isSubscribed = $derived(!!this._cancel);
+  private _dependencies = $derived.by(() => this._subscribable.dependencies ?? []);
 
-  private get _dependencies() {
-    return this._subscribable.dependencies ?? [];
-  }
-
-  private _shouldSubscribe() {
-    return this._isTouched && this._activations > 0 && !this._cancel;
+  private get _shouldSubscribe() {
+    return this._activations > 0 && !this._cancel;
   }
 
   private _maybeSubscribe() {
-    if (this._shouldSubscribe()) {
+    if (this._shouldSubscribe) {
       this._cancel = $effect.root(() => {
-        untrack(() => {
-          addObject(_subscribed, this._subscribable);
-        });
+        const stats = _add(this._subscribable);
         this._subscribable.subscribe();
+        this._trackDependencies();
         return () => {
-          untrack(() => {
-            removeObject(_subscribed, this._subscribable);
-          });
+          stats();
         };
       });
     }
   }
 
   private _maybeUnsubscribe() {
-    this._cancel?.();
-    this._cancel = undefined;
-  }
-
-  private _withDependencies(cb: (child: SubscribableModelState) => void) {
-    this._dependencies.map((child) => cb(stateFor(child)));
-  }
-
-  private _maybeActivate() {
-    if (this._activations++ === 0) {
-      this._maybeSubscribe();
-      this._withDependencies((state) => state._maybeActivate());
+    if(this._activations < 1) {
+      this._cancel?.();
+      this._cancel = undefined;
     }
   }
 
-  private async _maybeDeactivate() {
+  private _activateDependencies(source: SubscribableModel[]) {
+    const withDeps = <T>(cb: (child: SubscribableModelState) => T): T[] => {
+      return untrack(() => {
+        return source.map((child) => {
+          const state = stateFor(child);
+          return cb(state);
+        });
+      });
+    };
+
+    const cancel = withDeps((state) => state.activate());
+    return async () => {
+      await tick();
+      cancel.forEach(fn => fn());
+    };
+  }
+
+  private _trackDependencies() {
+    $effect(() => {
+      const dependencies = this._dependencies;
+      return this._activateDependencies(dependencies);
+    });
+  }
+
+  private _activate() {
+    this._activations++;
+    this._maybeSubscribe();
+  }
+
+  private async _deactivate() {
     await tick();
-    if (--this._activations === 0) {
-      this._withDependencies((state) => state._maybeDeactivate());
-      this._maybeUnsubscribe();
-    }
+    this._activations--;
+    this._maybeUnsubscribe();
   }
 
   touch() {
@@ -69,9 +92,9 @@ class SubscribableModelState {
   }
 
   activate() {
-    this._maybeActivate();
+    this._activate();
     return () => {
-      this._maybeDeactivate();
+      this._deactivate();
     };
   }
 }
@@ -82,9 +105,6 @@ export abstract class SubscribableModel<O = unknown> extends Model<O> {
 
   subscribe() {}
 
-  /**
-   * Dependencies must be stable
-   */
   abstract dependencies?: SubscribableModel[];
 
   protected _subscribe<T>(cb: () => T): T {
@@ -108,3 +128,17 @@ function stateFor(model: SubscribableModel | undefined): SubscribableModelState 
 export const subscribe = (model: SubscribableModel | undefined) => {
   return untrack(() => stateFor(model)?.activate());
 };
+
+export const isSubscribable = (model: unknown): model is SubscribableModel => {
+  return model instanceof SubscribableModel;
+};
+
+export const asDependencies = (content: unknown) => {
+  if(Array.isArray(content)) {
+    return content.filter(isSubscribable);
+  } else {
+    if (isSubscribable(content)) {
+      return [content];
+    }
+  }
+}

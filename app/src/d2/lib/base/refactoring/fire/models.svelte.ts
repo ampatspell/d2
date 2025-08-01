@@ -1,5 +1,5 @@
 import { untrack } from 'svelte';
-import { SubscribableModel } from '../subscribable.svelte';
+import { asDependencies, SubscribableModel } from '../subscribable.svelte';
 import { isTruthy, sortedBy, type SortDescriptors } from '../../utils/array';
 
 const ITERATIONS = 10;
@@ -103,8 +103,6 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
       });
     });
   }
-
-  readonly dependencies = [];
 }
 
 export type MapModelsOptions<Source, Target> = {
@@ -135,7 +133,6 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     const content = this._withCache((findOrCreate) => {
       return this._source.map((source) => findOrCreate(source)).filter(isTruthy);
     });
-    // TODO: content needs to be activated and touched if this one is
     this._content = untrack(() => content);
     return content;
   }
@@ -144,6 +141,8 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     const models = this._update();
     await Promise.all(models.map((model) => cb(model)));
   }
+
+  readonly dependencies = $derived(asDependencies(this._content));
 }
 
 export type MapModelOptions<Source, Target> = {
@@ -166,7 +165,6 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     if (source) {
       content = this._withCache((findOrCreate) => findOrCreate(source));
     }
-    // TODO: content needs to be activated and touched if this one is
     untrack(() => {
       if (this._content !== content) {
         this._content = content;
@@ -181,6 +179,8 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
       await cb(target);
     }
   }
+
+  readonly dependencies = $derived(asDependencies(this._content));
 }
 
 export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) => {

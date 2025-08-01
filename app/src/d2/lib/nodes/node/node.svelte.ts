@@ -197,7 +197,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   get nodeDependencies(): SubscribableModel[] {
     const base = [this.doc, this._backend];
-    if(this.isPartial) {
+    if (this.isPartial) {
       return base;
     } else {
       return [...base, this.details];
