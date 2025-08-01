@@ -1,7 +1,7 @@
 <script lang="ts">
   import Grid, { type GridOptions } from '$d2/components/frontend/galleries/grid/grid.svelte';
   import Lightbox, { type LightboxOptions } from '$d2/components/frontend/galleries/lightbox/lightbox.svelte';
-  import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+  import { subscribe } from '$d2/lib/base/refactoring/subscribable.svelte';
   import { aspectRatio } from '$d2/lib/base/utils/aspect-ratio';
   import { getter, options } from '$d2/lib/base/utils/options';
   import { FileNodeModel } from '$d2/lib/definition/file/node.svelte';

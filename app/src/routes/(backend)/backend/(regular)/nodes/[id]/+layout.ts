@@ -1,4 +1,4 @@
-import { preloadModel } from '$d2/lib/base/fire/preload.svelte.js';
+import { preload } from '$d2/lib/base/refactoring/preload.svelte.js';
 
 export const load = async (event) => {
   const { nodes } = await event.parent();
@@ -7,6 +7,6 @@ export const load = async (event) => {
   const details = node?.details;
   return {
     node,
-    details: details && (await preloadModel(details)),
+    details: details && (await preload(details)),
   };
 };

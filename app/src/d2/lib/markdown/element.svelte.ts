@@ -1,5 +1,4 @@
-import { Subscribable } from '../base/model/model.svelte';
-import type { HasSubscriber } from '../base/model/subscriber.svelte';
+import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
 import { serialized } from '../base/utils/object';
 import type { MarkdownElementDefinitionModel } from '../definition/markdown.svelte';
 import type { MarkdownElement } from './tree';
@@ -9,7 +8,7 @@ export type MarkdownElementModelOptions = {
   node: MarkdownElement;
 };
 
-export class MarkdownElementModel extends Subscribable<MarkdownElementModelOptions> {
+export class MarkdownElementModel extends SubscribableModel<MarkdownElementModelOptions> {
   readonly definition = $derived(this.options.definition);
   readonly type = $derived(this.definition.type);
   readonly component = $derived(this.definition.component);
@@ -22,9 +21,6 @@ export class MarkdownElementModel extends Subscribable<MarkdownElementModelOptio
 
   async load() {}
 
-  get dependencies(): HasSubscriber[] {
-    return [];
-  }
-
+  readonly dependencies = [];
   readonly serialized = $derived(serialized(this, ['type']));
 }

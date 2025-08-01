@@ -62,8 +62,10 @@ class SubscribableModelState {
   }
 
   touch() {
-    this._isTouched = true;
-    this._maybeSubscribe();
+    untrack(() => {
+      this._isTouched = true;
+      this._maybeSubscribe();
+    });
   }
 
   activate() {
@@ -80,7 +82,10 @@ export abstract class SubscribableModel<O = unknown> extends Model<O> {
 
   subscribe() {}
 
-  readonly dependencies: SubscribableModel[] | undefined;
+  /**
+   * Dependencies must be stable
+   */
+  abstract dependencies?: SubscribableModel[];
 
   protected _subscribe<T>(cb: () => T): T {
     this._subscribable.touch();

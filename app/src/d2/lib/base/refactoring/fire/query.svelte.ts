@@ -1,14 +1,17 @@
 import {
   type DocumentData,
+  DocumentReference,
   type Query,
   type QueryDocumentSnapshot,
   type QuerySnapshot,
+  documentId,
   getDocs,
   getDocsFromCache,
   getDocsFromServer,
   limit,
   onSnapshot,
   query,
+  where,
 } from '@firebase/firestore';
 import { untrack } from 'svelte';
 import { Document, type DocumentLoadSource } from './document.svelte';
@@ -17,6 +20,7 @@ import { browser } from '$app/environment';
 import type { VoidCallback } from '../../utils/types';
 import { insertObjectAt, removeObjectAt } from '../../utils/array';
 import { serialized } from '../../utils/object';
+import { getter, options, type OptionsInput } from '../../utils/options';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -169,6 +173,8 @@ export class QueryBase<
       this._onSnapshot(snapshot);
     });
   }
+
+  readonly dependencies = [];
 }
 
 export type QueryAllOptions = QueryBaseOptions;
@@ -210,4 +216,21 @@ export const queryFirst = <T extends DocumentData = DocumentData>(
   ...args: ConstructorParameters<typeof QueryFirst<T>>
 ) => {
   return new QueryFirst<T>(...args);
+};
+
+export type QueryFirstDocumentOptions = {
+  ref: DocumentReference | undefined;
+} & FirebaseModelOptions;
+
+export const document = <T extends DocumentData = DocumentData>(_opts: OptionsInput<QueryFirstDocumentOptions>) => {
+  const opts = options(_opts);
+  return queryFirst<T>({
+    ref: getter(() => {
+      const ref = opts.ref;
+      if(ref) {
+        return query(ref.parent, where(documentId(), '==', ref.id));
+      }
+    }),
+    isPassive: getter(() => opts.isPassive),
+  });
 };

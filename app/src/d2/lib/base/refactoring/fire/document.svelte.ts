@@ -224,5 +224,6 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     }
   }
 
-  serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error']));
+  readonly serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error']));
+  readonly dependencies = [];
 }

@@ -1,12 +1,11 @@
 import type { DocumentData } from '@firebase/firestore';
 import { getter, type OptionsInput } from './options';
-import type { Document } from '../fire/document.svelte';
-import type { HasSubscriber } from '../model/subscriber.svelte';
-import type { HasPosition } from './types';
 import { removeObject, sortedBy } from './array';
 import type { DraggableOnDrop } from '$d2/components/dark/draggable/models.svelte';
 import { Model } from '../model/base.svelte';
-import { Subscribable } from '../model/model.svelte';
+import { SubscribableModel } from '../refactoring/subscribable.svelte';
+import type { HasPosition } from './types';
+import type { Document } from '../refactoring/fire/document.svelte';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {
@@ -67,13 +66,13 @@ export type DocumentModelPropertiesOptions<D extends DocumentData> = {
 export class DocumentModelProperties<
   D extends DocumentData,
   O extends DocumentModelPropertiesOptions<D> = DocumentModelPropertiesOptions<D>,
-> extends Subscribable<O> {
+> extends SubscribableModel<O> {
   readonly data = $derived(this.options.model.doc.data!);
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
     return this.options.model.didUpdate(property, result);
   }
 
-  dependencies: HasSubscriber[] = [];
+  readonly dependencies = [];
 }
 
 export type DataModelPropertiesOptions<D extends DocumentData> = {
@@ -85,13 +84,13 @@ export type DataModelPropertiesOptions<D extends DocumentData> = {
 export class DataModelProperties<
   D extends DocumentData,
   O extends DataModelPropertiesOptions<D> = DataModelPropertiesOptions<D>,
-> extends Subscribable<O> {
+> extends SubscribableModel<O> {
   readonly data = $derived(this.options.model.data);
   didUpdate<T>(property: Property<T>, result: PropertyUpdateResult<T>) {
     return this.options.model.didUpdate(property, result);
   }
 
-  dependencies: HasSubscriber[] = [];
+  readonly dependencies = [];
 }
 
 export type PropertyDelegateWithData<D> = { data: D } & PropertyDelegateOptions;

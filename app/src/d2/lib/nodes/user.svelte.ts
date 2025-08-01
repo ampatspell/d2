@@ -1,14 +1,14 @@
 import * as fs from '@firebase/firestore';
-import { Subscribable } from '../base/model/model.svelte';
 import { getter } from '../base/utils/options';
 import { getSession } from '../session/session.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
-import { queryAll } from '../base/fire/query.svelte';
-import { mapModels } from '../base/model/models.svelte';
 import type { UserNodeData } from '$d2-shared/documents';
-import { Document } from '../base/fire/document.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { FoldSate } from '$d2/components/dark/section/page/fold.svelte';
+import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
+import { queryAll } from '../base/refactoring/fire/query.svelte';
+import { Document } from '../base/refactoring/fire/document.svelte';
+import { mapModels } from '../base/refactoring/fire/models.svelte';
 
 export const userNodesCollection = (uid: string) => fs.collection(firebase.firestore, `users/${uid}/nodes`);
 
@@ -16,7 +16,7 @@ export type NodesSettingsModelOptions = {
   uid: string | undefined;
 };
 
-export class NodesSettingsModel extends Subscribable<NodesSettingsModelOptions> {
+export class NodesSettingsModel extends SubscribableModel<NodesSettingsModelOptions> {
   readonly uid = $derived(this.options.uid);
 
   private readonly ref = $derived.by(() => {
@@ -124,7 +124,7 @@ export type NodeSettingsModelOptions = {
   doc: Document<UserNodeData>;
 };
 
-export class NodeSettingsModel extends Subscribable<NodeSettingsModelOptions> {
+export class NodeSettingsModel extends SubscribableModel<NodeSettingsModelOptions> {
   readonly doc = $derived(this.options.doc);
   readonly isNew = $derived(this.doc.isNew);
   readonly id = $derived(this.doc.id);

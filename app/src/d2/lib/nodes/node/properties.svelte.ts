@@ -1,5 +1,4 @@
-import { Subscribable } from '$d2/lib/base/model/model.svelte';
-import type { HasSubscriber } from '$d2/lib/base/model/subscriber.svelte';
+import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { data, DocumentModelProperties, Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
 import type { NodeData, NodeModel, NodeType } from './node.svelte';
@@ -15,7 +14,7 @@ export class NodeBasePropertiesModel<Type extends NodeType> extends DocumentMode
 export abstract class NodePropertiesModel<
   Type extends NodeType,
   O extends NodePropertiesModelOptions<Type> = NodePropertiesModelOptions<Type>,
-> extends Subscribable<O> {
+> extends SubscribableModel<O> {
   readonly base = new NodeBasePropertiesModel<Type>({
     model: getter(() => this.options.model),
   });
@@ -42,5 +41,5 @@ export abstract class NodePropertiesModel<
     return updated;
   }
 
-  dependencies: HasSubscriber[] = [];
+  readonly dependencies = [];
 }

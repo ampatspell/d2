@@ -103,6 +103,8 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
       });
     });
   }
+
+  readonly dependencies = [];
 }
 
 export type MapModelsOptions<Source, Target> = {
@@ -133,6 +135,7 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     const content = this._withCache((findOrCreate) => {
       return this._source.map((source) => findOrCreate(source)).filter(isTruthy);
     });
+    // TODO: content needs to be activated and touched if this one is
     this._content = untrack(() => content);
     return content;
   }
@@ -163,6 +166,7 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     if (source) {
       content = this._withCache((findOrCreate) => findOrCreate(source));
     }
+    // TODO: content needs to be activated and touched if this one is
     untrack(() => {
       if (this._content !== content) {
         this._content = content;
