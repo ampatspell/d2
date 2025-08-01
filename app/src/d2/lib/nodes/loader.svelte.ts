@@ -78,7 +78,7 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._query, this.__node];
-  readonly isLoaded = $derived(isLoaded([this._query, this._node]));
+  readonly isLoaded = $derived(isLoaded([this._query, this.__node, this._node]));
   readonly serialized = $derived(serialized(this, ['key', 'node']));
 }
 
@@ -201,7 +201,7 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
 
   readonly dependencies = [this._query, this.__nodes];
   readonly serialized = $derived(serialized(this, ['key', 'nodes']));
-  readonly isLoaded = $derived(isLoaded([this._query, asIsLoadedModel(this._nodes)]));
+  readonly isLoaded = $derived(isLoaded([this._query, this.__nodes, asIsLoadedModel(this._nodes)]));
 }
 
 export const nodesForQuery = <Model extends NodeModel = NodeModel>(

@@ -44,7 +44,7 @@ export class MarkdownModel extends LazySubscribableModel<MarkdownModelOptions> {
   }
 
   readonly isLoaded = $derived.by(() => {
-    return !!this.root && isLoaded(this.models);
+    return !!this.root && this._models.isLoaded && isLoaded(this.models);
   });
 
   readonly dependencies = [this._models];

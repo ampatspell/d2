@@ -105,7 +105,7 @@ export class NodesSettingsModel extends SubscribableModel<NodesSettingsModelOpti
   }
 
   readonly dependencies = [this._query, this._models];
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._models]));
 
   async load() {
     await this._query.load();

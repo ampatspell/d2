@@ -184,7 +184,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   }
 
   get nodeIsLoaded(): IsLoadedModels {
-    const base = [this.doc];
+    const base = [this.doc, this._backend];
     if (this.isPartial) {
       return base;
     } else {

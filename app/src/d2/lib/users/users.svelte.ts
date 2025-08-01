@@ -27,7 +27,7 @@ export class UsersModel extends SubscribableModel<UsersModelOptions> {
 
   readonly all = $derived(this._users.content);
 
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._users]));
   readonly dependencies = [this._query, this._users];
 }
 

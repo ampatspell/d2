@@ -28,7 +28,7 @@ export class SubscriptionsModel extends SubscribableModel<SubscriptionsModelOpti
     return this.all.find((model) => model.id === id);
   }
 
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._subscriptions]));
   readonly dependencies = [this._query, this._subscriptions];
 }
 

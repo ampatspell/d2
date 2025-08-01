@@ -141,7 +141,7 @@ export class NodesModel extends SubscribableModel<NodesModelOptions> {
     await this._nodes.load((node) => node.load());
   }
 
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._nodes]));
   readonly dependencies = [this._query, this._nodes];
   readonly serialized = $derived(serialized(this, []));
 

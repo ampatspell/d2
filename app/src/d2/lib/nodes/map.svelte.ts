@@ -31,7 +31,7 @@ export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribabl
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([this.node]));
+  readonly isLoaded = $derived(isLoaded([this._loader, this.node]));
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'node']));
 }
 
@@ -135,7 +135,7 @@ export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribab
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([this.loader, asIsLoadedModel(this.nodes)]));
+  readonly isLoaded = $derived(isLoaded([this._loader, this.loader, asIsLoadedModel(this.nodes)]));
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'nodes']));
 }
 

@@ -89,6 +89,10 @@ export abstract class BaseMap<
     });
   }
 
+  get isLoaded() {
+    return this._touch(() => true);
+  }
+
   async waitFor(fn: (model: Target) => boolean): Promise<Target> {
     return new Promise<Target>((resolve) => {
       // TODO: timeout - Promise.race
