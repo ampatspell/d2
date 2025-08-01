@@ -1,6 +1,6 @@
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { mapModels } from '../base/refactoring/fire/models.svelte';
-import { LazySubscribableModel } from '../base/refactoring/subscribable.svelte';
+import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
 import { getter, type OptionsInput } from '../base/utils/options';
 import { parse, type MarkdownRoot } from './tree';
 
@@ -8,12 +8,9 @@ export type MarkdownModelOptions = {
   string: string | undefined;
 };
 
-export class MarkdownModel extends LazySubscribableModel<MarkdownModelOptions> {
+export class MarkdownModel extends SubscribableModel<MarkdownModelOptions> {
   private _root = $state<MarkdownRoot>();
-
-  get root() {
-    return this._touch(() => this._root);
-  }
+  readonly root = $derived(this._root);
 
   private _models = mapModels({
     source: getter(() => this.root?.models ?? []),
@@ -21,15 +18,10 @@ export class MarkdownModel extends LazySubscribableModel<MarkdownModelOptions> {
   });
 
   readonly models = $derived(this._models.content);
-
-  readonly _string = $derived(this.options.string);
-
-  get string() {
-    return this._touch(() => this._string);
-  }
+  readonly string = $derived(this.options.string);
 
   async load() {
-    const string = this._string;
+    const string = this.string;
     const root = await parse(string);
     if (this.string === string) {
       this._root = root;
@@ -44,6 +36,7 @@ export class MarkdownModel extends LazySubscribableModel<MarkdownModelOptions> {
   }
 
   readonly isLoaded = $derived.by(() => {
+    console.log('isLoaded', !!this.root, this._models.isLoaded, isLoaded(this.models));
     return !!this.root && this._models.isLoaded && isLoaded(this.models);
   });
 
