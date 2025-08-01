@@ -1,7 +1,7 @@
 import type { SnapshotMetadata } from '@firebase/firestore';
 import { LoadPromises } from '../../fire/load-promise.svelte';
 import type { OptionsInput } from '../../utils/options';
-import { SubscribableModel } from '../subscribable.svelte';
+import { LazySubscribableModel } from '../subscribable.svelte';
 import { untrack } from 'svelte';
 import { addObject, removeObject } from '../../utils/array';
 
@@ -13,7 +13,7 @@ export type FirebaseModelOptions = {
 
 export abstract class FirebaseModel<
   O extends FirebaseModelOptions = FirebaseModelOptions,
-> extends SubscribableModel<O> {
+> extends LazySubscribableModel<O> {
   private _isLoading = $state(false);
   private _isLoaded = $state(false);
   private _error = $state<unknown>();
@@ -23,19 +23,19 @@ export abstract class FirebaseModel<
   readonly isPassive: boolean;
 
   get isLoading() {
-    return this._subscribe(() => this._isLoading);
+    return this._touch(() => this._isLoading);
   }
 
   get isLoaded() {
-    return this._subscribe(() => this._isLoaded);
+    return this._touch(() => this._isLoaded);
   }
 
   get error() {
-    return this._subscribe(() => this._error);
+    return this._touch(() => this._error);
   }
 
   get metadata() {
-    return this._subscribe(() => this._metadata);
+    return this._touch(() => this._metadata);
   }
 
   constructor(options: OptionsInput<O>) {

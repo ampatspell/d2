@@ -15,7 +15,6 @@ import type { NodeDetailsModel } from './details.svelte';
 import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
 import type { Document } from '$d2/lib/base/refactoring/fire/document.svelte';
 import { mapModel } from '$d2/lib/base/refactoring/fire/models.svelte';
-import { setGlobal } from '$d2/lib/base/utils/set-global';
 
 export type NodeType = keyof NodePropertiesRegistry;
 

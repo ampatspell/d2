@@ -63,10 +63,4 @@ export class IndexNodeModel extends NodeModel<'index'> {
 
   readonly title = $derived(this.data.properties.title);
   readonly links = $derived(this.data.properties.links ?? []);
-
-  get dependencies() {
-    const deps = super.dependencies;
-    console.log(deps);
-    return deps;
-  }
 }

@@ -1,5 +1,5 @@
 import { untrack } from 'svelte';
-import { asDependencies, SubscribableModel } from '../subscribable.svelte';
+import { asDependencies, LazySubscribableModel } from '../subscribable.svelte';
 import { isTruthy, sortedBy, type SortDescriptors } from '../../utils/array';
 
 const ITERATIONS = 10;
@@ -15,7 +15,11 @@ type CacheValue<Target> = {
   key: unknown;
 };
 
-export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends SubscribableModel<O> {
+export abstract class BaseMap<
+  Source,
+  Target,
+  O extends BaseMapOptions<Source, Target>,
+> extends LazySubscribableModel<O> {
   private readonly _target = $derived(this.options.target);
   // eslint-disable-next-line svelte/prefer-svelte-reactivity
   private readonly _cache: Map<Source, CacheValue<Target>> = new Map();
@@ -115,7 +119,7 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
   private _content = $state<Target[]>([]);
 
   get content() {
-    return this._subscribe(() => this._content);
+    return this._touch(() => this._content);
   }
 
   protected readonly _waitForContent = $derived(this.content);
@@ -154,7 +158,7 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
   private _content = $state<Target>();
 
   get content() {
-    return this._subscribe(() => this._content);
+    return this._touch(() => this._content);
   }
 
   protected readonly _waitForContent = $derived([this.content]);

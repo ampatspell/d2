@@ -12,7 +12,7 @@
 <Section title="Dev" icon={LucideSettings}>
   <Page title="Dev">
     <div class="rows">
-      {#each items.models.content as model}
+      {#each items.models.content as model (model)}
         <div class="row">{model.id} - {model.query.content}</div>
       {/each}
     </div>

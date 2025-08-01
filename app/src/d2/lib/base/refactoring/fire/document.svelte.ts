@@ -114,23 +114,23 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
   private _isDeleting = $state(false);
 
   get data() {
-    return this._subscribe(() => this._data);
+    return this._touch(() => this._data);
   }
 
   get exists() {
-    return this._subscribe(() => this._exists);
+    return this._touch(() => this._exists);
   }
 
   get isNew() {
-    return this._subscribe(() => this._isNew);
+    return this._touch(() => this._isNew);
   }
 
   get isSaving() {
-    return this._subscribe(() => this._isSaving);
+    return this._touch(() => this._isSaving);
   }
 
   get isDeleting() {
-    return this._subscribe(() => this._isDeleting);
+    return this._touch(() => this._isDeleting);
   }
 
   readonly ref = $derived(this.options.ref);

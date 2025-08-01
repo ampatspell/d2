@@ -68,7 +68,7 @@ export abstract class QueryBase<
   private __content = $state<Document<T>[]>([]);
 
   protected get _content() {
-    return this._subscribe(() => this.__content);
+    return this._touch(() => this.__content);
   }
 
   protected _onWillLoad(subscribe: boolean) {

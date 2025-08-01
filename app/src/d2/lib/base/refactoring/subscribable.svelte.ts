@@ -13,20 +13,22 @@ const _add = (model: SubscribableModel) => {
     untrack(() => {
       removeObject(_subscribed, model);
     });
-  }
-}
+  };
+};
 
 class SubscribableModelState {
   constructor(private _subscribable: SubscribableModel) {}
 
   private _activations = 0;
   private _cancel = $state<VoidCallback>();
-  private _isTouched = $state(false);
   readonly isSubscribed = $derived(!!this._cancel);
+  private _isTouched = $state(false);
+  private _isLazy = $derived.by(() => isLazy(this._subscribable));
+  private _isEagerOrTouched = $derived(!this._isLazy || this._isTouched);
   private _dependencies = $derived.by(() => this._subscribable.dependencies ?? []);
 
   private get _shouldSubscribe() {
-    return this._activations > 0 && !this._cancel;
+    return this._isEagerOrTouched && this._activations > 0 && !this._cancel;
   }
 
   private _maybeSubscribe() {
@@ -43,7 +45,7 @@ class SubscribableModelState {
   }
 
   private _maybeUnsubscribe() {
-    if(this._activations < 1) {
+    if (this._activations < 1) {
       this._cancel?.();
       this._cancel = undefined;
     }
@@ -62,7 +64,7 @@ class SubscribableModelState {
     const cancel = withDeps((state) => state.activate());
     return async () => {
       await tick();
-      cancel.forEach(fn => fn());
+      cancel.forEach((fn) => fn());
     };
   }
 
@@ -107,13 +109,15 @@ export abstract class SubscribableModel<O = unknown> extends Model<O> {
 
   abstract dependencies?: SubscribableModel[];
 
-  protected _subscribe<T>(cb: () => T): T {
-    this._subscribable.touch();
-    return cb();
-  }
-
   static get subscribed() {
     return _subscribed;
+  }
+}
+
+export abstract class LazySubscribableModel<O = unknown> extends SubscribableModel<O> {
+  protected _touch<T>(cb: () => T): T {
+    stateFor(this).touch();
+    return cb();
   }
 }
 
@@ -125,6 +129,10 @@ function stateFor(model: SubscribableModel | undefined): SubscribableModelState 
   return model?.['_subscribable'];
 }
 
+const isLazy = (model: SubscribableModel) => {
+  return model instanceof LazySubscribableModel;
+};
+
 export const subscribe = (model: SubscribableModel | undefined) => {
   return untrack(() => stateFor(model)?.activate());
 };
@@ -134,11 +142,11 @@ export const isSubscribable = (model: unknown): model is SubscribableModel => {
 };
 
 export const asDependencies = (content: unknown) => {
-  if(Array.isArray(content)) {
+  if (Array.isArray(content)) {
     return content.filter(isSubscribable);
   } else {
     if (isSubscribable(content)) {
       return [content];
     }
   }
-}
+};
