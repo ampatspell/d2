@@ -36,8 +36,7 @@ export class MarkdownModel extends SubscribableModel<MarkdownModelOptions> {
   }
 
   readonly isLoaded = $derived.by(() => {
-    console.log('isLoaded', !!this.root, this._models.isLoaded, isLoaded(this.models));
-    return !!this.root && this._models.isLoaded && isLoaded(this.models);
+    return this._models.isLoaded && isLoaded(this.models);
   });
 
   readonly dependencies = [this._models];

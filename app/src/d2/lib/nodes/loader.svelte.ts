@@ -71,7 +71,7 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
     await this._node?.load();
   }
 
-  preload() {
+  async preload() {
     return preload(this);
   }
 

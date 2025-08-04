@@ -20,8 +20,8 @@ export const preload = async <T extends PreloadableModel>(model: T): Promise<T> 
       const tick = async () => {
         await Promise.resolve();
         if (model.isLoaded) {
-          cancel();
           deferred.resolve(model);
+          cancel();
         }
       };
       $effect(() => {
