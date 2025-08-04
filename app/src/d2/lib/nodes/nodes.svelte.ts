@@ -71,13 +71,6 @@ export class NodesModel extends SubscribableModel<NodesModelOptions> {
 
     const saves = [];
 
-    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
-      nodes.forEach((node, idx) => {
-        const position = omit >= idx ? idx + 1 : idx;
-        saves.push(node.buildReorder().position(position).build());
-      });
-    };
-
     if (position === 'over') {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
@@ -90,9 +83,19 @@ export class NodesModel extends SubscribableModel<NodesModelOptions> {
       saves.push(source.buildReorder().parent(parent).position(nextPosition).build());
     }
 
+    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
+      nodes.forEach((node, idx) => {
+        const position = omit >= idx ? idx + 1 : idx;
+        saves.push(node.buildReorder().position(position).build());
+      });
+    };
+
     parents.map((parent) => reorder(this.byParentId(parent ?? null)));
 
-    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
+    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => {
+      console.log(hash);
+      return hash.save();
+    }));
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {

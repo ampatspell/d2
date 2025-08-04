@@ -196,7 +196,6 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const ref = this.ref;
     if (ref) {
       const data = Object.assign({}, toData($state.snapshot(this._data)), { [TOKEN]: this.token });
-      // TODO: queue
       this._isSaving = true;
       try {
         await setDoc(ref, data, { merge: true });
