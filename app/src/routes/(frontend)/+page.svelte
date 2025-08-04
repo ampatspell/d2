@@ -5,9 +5,11 @@
 
   let { data }: { data: PageData } = $props();
 
-  $effect(() => subscribe(data.loader));
+  let loader = $derived(data.loader);
 
-  let index = $derived(data.loader.node);
+  $effect(() => subscribe(loader));
+
+  let index = $derived(loader.node);
 </script>
 
 {#if index?.isLoaded}

@@ -194,14 +194,14 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
 
   readonly isLoaded = $derived(isLoaded(this.nodeIsLoaded));
 
-  get nodeDependencies(): SubscribableModel[] {
+  readonly nodeDependencies = $derived.by(() => {
     const base = [this.doc, this._backend];
     if (this.isPartial) {
       return base;
     } else {
       return [...base, this.details];
     }
-  }
+  });
 
   get dependencies() {
     return this.nodeDependencies;

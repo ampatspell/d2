@@ -1,7 +1,8 @@
-import { tick, untrack } from 'svelte';
+import { untrack } from 'svelte';
 import { Model } from '../model/base.svelte';
 import { addObject, removeObject } from '../utils/array';
 import type { VoidCallback } from '../utils/types';
+import { delay } from '../utils/promise';
 
 const _subscribed = $state<SubscribableModel[]>([]);
 
@@ -44,8 +45,8 @@ class SubscribableModelState {
     }
   }
 
-  private _maybeUnsubscribe() {
-    if (this._activations < 1) {
+  private async _maybeUnsubscribe() {
+    if (this._activations === 0) {
       this._cancel?.();
       this._cancel = undefined;
     }
@@ -62,8 +63,7 @@ class SubscribableModelState {
     };
 
     const cancel = withDeps((state) => state.activate());
-    return async () => {
-      await tick();
+    return () => {
       cancel.forEach((fn) => fn());
     };
   }
@@ -81,7 +81,7 @@ class SubscribableModelState {
   }
 
   private async _deactivate() {
-    await tick();
+    await delay();
     this._activations--;
     this._maybeUnsubscribe();
   }
