@@ -92,10 +92,7 @@ export class NodesModel extends SubscribableModel<NodesModelOptions> {
 
     parents.map((parent) => reorder(this.byParentId(parent ?? null)));
 
-    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => {
-      console.log(hash);
-      return hash.save();
-    }));
+    await Promise.all(uniq(saves.filter(isTruthy), (hash) => hash.node).map((hash) => hash.save()));
   }
 
   async create({ parent, definition }: { parent: NodeModel | undefined; definition: NodeDefinitionModel }) {

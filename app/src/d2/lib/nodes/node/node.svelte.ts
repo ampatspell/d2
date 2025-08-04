@@ -123,6 +123,8 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
       const children = await this.backend.didUpdateParent(asParent(this)!);
       const nodes = uniq([this, ...global, ...children]);
       await Promise.all(nodes.map((node) => node.save()));
+    } else {
+      console.warn('no backend for didUpdateIdentifier', this+'');
     }
   }
 
@@ -183,14 +185,14 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     return is(this, factory);
   }
 
-  get nodeIsLoaded(): IsLoadedModels {
+  readonly nodeIsLoaded = $derived.by(() => {
     const base = [this.doc, this._backend];
     if (this.isPartial) {
       return base;
     } else {
       return [...base, this.details];
     }
-  }
+  });
 
   readonly isLoaded = $derived(isLoaded(this.nodeIsLoaded));
 
