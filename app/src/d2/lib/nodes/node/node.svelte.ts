@@ -7,7 +7,7 @@ import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { type Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
 import { uniq } from '$d2/lib/base/utils/array';
 import { getDefinition } from '$d2/lib/definition/app.svelte';
-import { isLoaded, type IsLoadedModels } from '$d2/lib/base/fire/is-loaded.svelte';
+import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { NodePathModel } from './path.svelte';
 import { NodeBackendModel, type NodeBackendModelDelegate } from './backend.svelte';
 import type { NodePropertiesModel } from './properties.svelte';
