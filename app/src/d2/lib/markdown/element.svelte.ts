@@ -1,4 +1,4 @@
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
 import { serialized } from '../base/utils/object';
 import type { MarkdownElementDefinitionModel } from '../definition/markdown.svelte';
 import type { MarkdownElement } from './tree';

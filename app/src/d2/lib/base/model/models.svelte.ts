@@ -1,6 +1,6 @@
 import { untrack } from 'svelte';
-import { asDependencies, LazySubscribableModel } from '../subscribable.svelte';
-import { isTruthy, sortedBy, type SortDescriptors } from '../../utils/array';
+import { asDependencies, LazySubscribableModel } from './subscribable.svelte';
+import { isTruthy, sortedBy, type SortDescriptors } from '../utils/array';
 
 const ITERATIONS = 10;
 

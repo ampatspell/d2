@@ -1,6 +1,6 @@
 import { asIsLoadedModel, isLoaded } from '../base/fire/is-loaded.svelte';
-import { mapModel } from '../base/refactoring/fire/models.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
+import { mapModel } from '../base/model/models.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
 import { serialized } from '../base/utils/object';
 import { getter, options, type OptionsInput } from '../base/utils/options';
 import { node, nodes, NodesLoaderModel, type NodeLoaderModel } from './loader.svelte';

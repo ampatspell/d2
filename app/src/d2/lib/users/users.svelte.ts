@@ -3,11 +3,11 @@ import { firebase } from '../base/fire/firebase.svelte';
 import type { UserData, UserRole } from '$d2-shared/documents';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { getSession, setRole } from '../session/session.svelte';
-import { SubscribableModel as SubscribableModel } from '../base/refactoring/subscribable.svelte';
-import { Document } from '../base/refactoring/fire/document.svelte';
-import { queryAll } from '../base/refactoring/fire/query.svelte';
+import { SubscribableModel as SubscribableModel } from '../base/model/subscribable.svelte';
+import { Document } from '../base/fire/document.svelte';
+import { queryAll } from '../base/fire/query.svelte';
 import { getter } from '../base/utils/options';
-import { mapModels } from '../base/refactoring/fire/models.svelte';
+import { mapModels } from '../base/model/models.svelte';
 
 export const usersCollection = fs.collection(firebase.firestore, 'users');
 

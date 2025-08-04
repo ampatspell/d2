@@ -2,7 +2,7 @@
   import Page from '$d2/components/dark/section/page/page.svelte';
   import Section from '$d2/components/dark/section/section.svelte';
   import LucideSettings from '$d2/icons/lucide--settings.svelte';
-  import { subscribe } from '$d2/lib/base/refactoring/subscribable.svelte';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
   import { ItemsModel } from './models.svelte';
 
   let items = new ItemsModel(undefined);

@@ -6,7 +6,7 @@ import { progress, sum } from '$d2/lib/base/utils/number';
 import { nextPosition, nodesCollection } from '../nodes.svelte';
 import { firebase } from '$d2/lib/base/fire/firebase.svelte';
 import { removeObject } from '$d2/lib/base/utils/array';
-import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
 
 export type UploadFileStatus = 'idle' | 'uploading' | 'uploaded' | 'error';
 

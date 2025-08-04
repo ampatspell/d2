@@ -3,10 +3,10 @@ import { firebase } from '../base/fire/firebase.svelte';
 import type { SubscriptionData } from '$d2-shared/documents';
 import { getter } from '../base/utils/options';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
-import { queryAll } from '../base/refactoring/fire/query.svelte';
-import { mapModels } from '../base/refactoring/fire/models.svelte';
-import type { Document } from '../base/refactoring/fire/document.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll } from '../base/fire/query.svelte';
+import { mapModels } from '../base/model/models.svelte';
+import type { Document } from '../base/fire/document.svelte';
 
 export const subscriptionsCollection = fs.collection(firebase.firestore, 'subscriptions');
 

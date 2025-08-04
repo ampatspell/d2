@@ -1,4 +1,4 @@
-import { preload } from '$d2/lib/base/refactoring/preload.svelte.js';
+import { preload } from '$d2/lib/base/model/preload.svelte.js';
 import { UsersUserModel } from '$d2/lib/users/users.svelte.js';
 
 export const load = async (event) => {

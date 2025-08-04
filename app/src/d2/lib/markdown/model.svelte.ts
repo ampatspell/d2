@@ -1,6 +1,6 @@
 import { isLoaded } from '../base/fire/is-loaded.svelte';
-import { mapModels } from '../base/refactoring/fire/models.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
+import { mapModels } from '../base/model/models.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
 import { getter, type OptionsInput } from '../base/utils/options';
 import { parse, type MarkdownRoot } from './tree';
 

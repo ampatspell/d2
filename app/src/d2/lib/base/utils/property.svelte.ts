@@ -3,9 +3,9 @@ import { getter, type OptionsInput } from './options';
 import { removeObject, sortedBy } from './array';
 import type { DraggableOnDrop } from '$d2/components/dark/draggable/models.svelte';
 import { Model } from '../model/base.svelte';
-import { SubscribableModel } from '../refactoring/subscribable.svelte';
+import { SubscribableModel } from '../model/subscribable.svelte';
 import type { HasPosition } from './types';
-import type { Document } from '../refactoring/fire/document.svelte';
+import type { Document } from '../fire/document.svelte';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type PropertyUpdateResult<T = any> = {

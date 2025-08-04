@@ -1,4 +1,4 @@
-import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
 import type { NodeModel, NodeType } from './node.svelte';
 
 export type NodeDetailsModelOptions<Type extends NodeType> = {

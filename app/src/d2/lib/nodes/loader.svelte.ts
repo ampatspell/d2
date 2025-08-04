@@ -11,10 +11,10 @@ import {
   type NodeModelFactory,
 } from './node/node.svelte';
 import type { NodeBackendModelDelegate } from './node/backend.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
-import { queryAll, queryFirst } from '../base/refactoring/fire/query.svelte';
-import { mapModel, mapModels } from '../base/refactoring/fire/models.svelte';
-import { preload } from '../base/refactoring/preload.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll, queryFirst } from '../base/fire/query.svelte';
+import { mapModel, mapModels } from '../base/model/models.svelte';
+import { preload } from '../base/model/preload.svelte';
 
 export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;

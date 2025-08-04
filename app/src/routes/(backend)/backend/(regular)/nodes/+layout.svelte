@@ -5,7 +5,7 @@
   import { isTruthy } from '$d2/lib/base/utils/array';
   import { page } from '$app/state';
   import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
-  import { subscribe } from '$d2/lib/base/refactoring/subscribable.svelte';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
 
   let { data, children }: { data: LayoutData; children: Snippet } = $props();
 

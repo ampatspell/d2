@@ -17,11 +17,11 @@ import { untrack } from 'svelte';
 import { Document, type DocumentLoadSource } from './document.svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
 import { browser } from '$app/environment';
-import type { VoidCallback } from '../../utils/types';
-import { insertObjectAt, removeObjectAt } from '../../utils/array';
-import { serialized } from '../../utils/object';
-import { getter, options, type OptionsInput } from '../../utils/options';
-import { asDependencies } from '../subscribable.svelte';
+import type { VoidCallback } from '../utils/types';
+import { insertObjectAt, removeObjectAt } from '../utils/array';
+import { serialized } from '../utils/object';
+import { getter, options, type OptionsInput } from '../utils/options';
+import { asDependencies } from '../model/subscribable.svelte';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;

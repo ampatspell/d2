@@ -5,10 +5,10 @@ import { firebase } from '../base/fire/firebase.svelte';
 import type { UserNodeData } from '$d2-shared/documents';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import type { FoldSate } from '$d2/components/dark/section/page/fold.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
-import { queryAll } from '../base/refactoring/fire/query.svelte';
-import { Document } from '../base/refactoring/fire/document.svelte';
-import { mapModels } from '../base/refactoring/fire/models.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll } from '../base/fire/query.svelte';
+import { Document } from '../base/fire/document.svelte';
+import { mapModels } from '../base/model/models.svelte';
 
 export const userNodesCollection = (uid: string) => fs.collection(firebase.firestore, `users/${uid}/nodes`);
 

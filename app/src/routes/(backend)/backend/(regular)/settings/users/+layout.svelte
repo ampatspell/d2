@@ -2,7 +2,7 @@
   import Users from '$d2/components/backend/routes/settings/users/users.svelte';
   import type { Snippet } from 'svelte';
   import type { LayoutData, LayoutParams } from './$types';
-  import { subscribe } from '$d2/lib/base/refactoring/subscribable.svelte';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
 
   let { data, params, children }: { data: LayoutData; params: LayoutParams; children: Snippet } = $props();
 

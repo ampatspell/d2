@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { subscribe } from '$d2/lib/base/refactoring/subscribable.svelte';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
   import Index from '$lib/pages/index.svelte';
   import type { PageData } from './$types';
 

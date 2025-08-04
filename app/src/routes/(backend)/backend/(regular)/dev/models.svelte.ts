@@ -1,7 +1,7 @@
-import type { Document } from '$d2/lib/base/refactoring/fire/document.svelte';
-import { mapModels } from '$d2/lib/base/refactoring/fire/models.svelte';
-import { document, queryAll } from '$d2/lib/base/refactoring/fire/query.svelte';
-import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
+import type { Document } from '$d2/lib/base/fire/document.svelte';
+import { mapModels } from '$d2/lib/base/model/models.svelte';
+import { document, queryAll } from '$d2/lib/base/fire/query.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import type { NodeData } from '$d2/lib/nodes/node/node.svelte';
 import { nodesCollection } from '$d2/lib/nodes/nodes.svelte';

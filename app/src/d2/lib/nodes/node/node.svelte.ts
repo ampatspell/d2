@@ -12,9 +12,9 @@ import { NodePathModel } from './path.svelte';
 import { NodeBackendModel, type NodeBackendModelDelegate } from './backend.svelte';
 import type { NodePropertiesModel } from './properties.svelte';
 import type { NodeDetailsModel } from './details.svelte';
-import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
-import type { Document } from '$d2/lib/base/refactoring/fire/document.svelte';
-import { mapModel } from '$d2/lib/base/refactoring/fire/models.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
+import type { Document } from '$d2/lib/base/fire/document.svelte';
+import { mapModel } from '$d2/lib/base/model/models.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 

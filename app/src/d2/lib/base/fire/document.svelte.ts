@@ -16,9 +16,9 @@ import {
 import { untrack } from 'svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
 import deepEqual from 'fast-deep-equal';
-import type { OptionsInput } from '../../utils/options';
-import type { VoidCallback } from '../../utils/types';
-import { serialized } from '../../utils/object';
+import type { OptionsInput } from '../utils/options';
+import type { VoidCallback } from '../utils/types';
+import { serialized } from '../utils/object';
 
 const createToken = () => {
   if (browser) {

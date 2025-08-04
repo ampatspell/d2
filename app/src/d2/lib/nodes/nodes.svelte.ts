@@ -9,10 +9,10 @@ import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models
 import { isTruthy, uniq, type SortDescriptors } from '../base/utils/array';
 import { asParent, createNodeModel, nodeDocumentKey, type NodeData, type NodeModel } from './node/node.svelte';
 import type { NodeBackendModelDelegate } from './node/backend.svelte';
-import { SubscribableModel } from '../base/refactoring/subscribable.svelte';
-import { queryAll } from '../base/refactoring/fire/query.svelte';
-import { mapModels } from '../base/refactoring/fire/models.svelte';
-import { Document } from '../base/refactoring/fire/document.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll } from '../base/fire/query.svelte';
+import { mapModels } from '../base/model/models.svelte';
+import { Document } from '../base/fire/document.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {

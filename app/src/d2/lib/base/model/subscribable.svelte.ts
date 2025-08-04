@@ -1,5 +1,5 @@
 import { untrack } from 'svelte';
-import { Model } from '../model/base.svelte';
+import { Model } from './base.svelte';
 import { addObject, removeObject } from '../utils/array';
 import type { VoidCallback } from '../utils/types';
 import { delay } from '../utils/promise';

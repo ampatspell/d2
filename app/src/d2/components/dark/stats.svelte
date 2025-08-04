@@ -1,6 +1,6 @@
 <script lang="ts">
   // import { FirebaseModel } from '$d2/lib/base/refactoring/fire/model.svelte';
-  import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
+  import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
   import Dark from './dark.svelte';
   import Overflow from './overflow.svelte';
   import Cell from './table/cell.svelte';

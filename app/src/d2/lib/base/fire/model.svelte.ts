@@ -1,9 +1,9 @@
 import type { SnapshotMetadata } from '@firebase/firestore';
-import { LoadPromises } from '../../fire/load-promise.svelte';
-import type { OptionsInput } from '../../utils/options';
-import { LazySubscribableModel } from '../subscribable.svelte';
+import { LoadPromises } from './load-promise.svelte';
+import type { OptionsInput } from '../utils/options';
+import { LazySubscribableModel } from '../model/subscribable.svelte';
 import { untrack } from 'svelte';
-import { addObject, removeObject } from '../../utils/array';
+import { addObject, removeObject } from '../utils/array';
 
 const _listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
 

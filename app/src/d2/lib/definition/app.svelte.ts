@@ -4,7 +4,7 @@ import { unknown } from './unknown/definition.svelte';
 import { MarkdownElementDefinitionModel, type MarkdownElementDefinitionModelOptions } from './markdown.svelte';
 import type { NodeData, NodeType } from '../nodes/node/node.svelte';
 import { Model } from '../base/model/base.svelte';
-import type { Document } from '../base/refactoring/fire/document.svelte';
+import type { Document } from '../base/fire/document.svelte';
 
 export type AppDefinitionModelOptions = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

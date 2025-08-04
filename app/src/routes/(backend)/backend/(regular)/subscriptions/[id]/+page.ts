@@ -1,4 +1,4 @@
-import { preload } from '$d2/lib/base/refactoring/preload.svelte';
+import { preload } from '$d2/lib/base/model/preload.svelte';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async (event) => {

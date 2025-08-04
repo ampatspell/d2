@@ -1,4 +1,4 @@
-import { SubscribableModel } from '$d2/lib/base/refactoring/subscribable.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
 import { getter } from '$d2/lib/base/utils/options';
 import { data, DocumentModelProperties, Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
 import type { NodeData, NodeModel, NodeType } from './node.svelte';
