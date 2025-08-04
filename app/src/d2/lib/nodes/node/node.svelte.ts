@@ -124,7 +124,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
       const nodes = uniq([this, ...global, ...children]);
       await Promise.all(nodes.map((node) => node.save()));
     } else {
-      console.warn('no backend for didUpdateIdentifier', this+'');
+      console.warn('no backend for didUpdateIdentifier', this + '');
     }
   }
 
