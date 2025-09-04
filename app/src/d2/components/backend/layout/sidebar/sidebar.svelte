@@ -7,6 +7,7 @@
   import LucideMail from '$d2/icons/lucide--mail.svelte';
   import LucideArchive from '$d2/icons/lucide--archive.svelte';
   import { page } from '$app/state';
+  import { resolve } from '$app/paths';
 
   let route = $derived(page.url.pathname);
 
@@ -22,22 +23,22 @@
   let top = [
     {
       icon: LucideFlame,
-      route: '/',
+      route: resolve('/'),
       current: equals,
     },
     {
       icon: LucideActivity,
-      route: '/backend',
+      route: resolve('/backend'),
       current: equals,
     },
     {
       icon: LucideArchive,
-      route: '/backend/nodes',
+      route: resolve('/backend/nodes'),
       current: startsWith,
     },
     {
       icon: LucideMail,
-      route: '/backend/subscriptions',
+      route: resolve('/backend/subscriptions'),
       current: startsWith,
     },
   ];
@@ -45,7 +46,7 @@
   let bottom = [
     {
       icon: LucideSettings,
-      route: '/backend/settings',
+      route: resolve('/backend/settings'),
       current: startsWith,
     },
   ];

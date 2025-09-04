@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+    import { resolve } from '$app/paths';
   import Inspector from '$d2/components/dark/inspector/inspector.svelte';
   import Section from '$d2/components/dark/inspector/section.svelte';
   import ValueRow from '$d2/components/dark/inspector/value-row.svelte';
@@ -10,7 +11,7 @@
   let { subscription }: { subscription: SubscriptionModel } = $props();
 
   let onWillDelete = () => {
-    goto('/backend/subscriptions');
+    goto(resolve('/backend/subscriptions'));
   };
 
   let onDelete = async () => {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import MasterDetail from '$d2/components/backend/nodes/node/master-detail/master-detail.svelte';
   import Delete from '$d2/components/dark/section/page/delete.svelte';
   import Icon from '$d2/components/dark/section/page/icon.svelte';
@@ -21,9 +22,9 @@
   let onWillDelete = () => {
     let parent = node?.parent?.id;
     if (parent) {
-      goto(`/backend/nodes/${parent}`);
+      goto(resolve(`/backend/nodes/${parent}`));
     } else {
-      goto('/backend/nodes');
+      goto(resolve('/backend/nodes'));
     }
   };
 
