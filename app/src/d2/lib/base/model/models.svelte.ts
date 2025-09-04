@@ -141,7 +141,9 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     const content = this._withCache((findOrCreate) => {
       return this._source.map((source) => findOrCreate(source)).filter(isTruthy);
     });
-    this._content = untrack(() => content);
+    untrack(() => {
+      this._content = content;
+    });
     return content;
   }
 
