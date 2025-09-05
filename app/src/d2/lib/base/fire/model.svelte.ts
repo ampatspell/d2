@@ -1,66 +1,108 @@
 import type { SnapshotMetadata } from '@firebase/firestore';
 import { LoadPromises } from './load-promise.svelte';
-import { Subscribable } from '../model/model.svelte';
 import type { OptionsInput } from '../utils/options';
-import type { VoidCallback } from '../utils/types';
+import { LazySubscribableModel } from '../model/subscribable.svelte';
+import { untrack } from 'svelte';
+import { addObject, removeObject } from '../utils/array';
+
+const _listening = $state<FirebaseModel<FirebaseModelOptions>[]>([]);
 
 export type FirebaseModelOptions = {
   isPassive?: boolean;
 };
 
-export abstract class FirebaseModel<O extends FirebaseModelOptions = FirebaseModelOptions> extends Subscribable<O> {
-  isLoading = $state(false);
-  isLoaded = $state(false);
-  error = $state<unknown>();
-  isError = $derived.by(() => !!this.error);
-  metadata = $state<SnapshotMetadata>();
-  promises = new LoadPromises<typeof this, unknown>();
-  isPassive: boolean;
+export abstract class FirebaseModel<
+  O extends FirebaseModelOptions = FirebaseModelOptions,
+> extends LazySubscribableModel<O> {
+  private _isLoading = $state(false);
+  private _isLoaded = $state(false);
+  private _error = $state<unknown>();
+  readonly isError = $derived(!!this._error);
+  private _metadata = $state<SnapshotMetadata>();
+  readonly promises = new LoadPromises<typeof this, unknown>();
+  readonly isPassive: boolean;
+
+  get isLoading() {
+    return this._touch(() => this._isLoading);
+  }
+
+  get isLoaded() {
+    return this._touch(() => this._isLoaded);
+  }
+
+  get error() {
+    return this._touch(() => this._error);
+  }
+
+  get metadata() {
+    return this._touch(() => this._metadata);
+  }
 
   constructor(options: OptionsInput<O>) {
     super(options);
     this.isPassive = this.options.isPassive ?? false;
   }
 
-  _onWillLoad(subscribe: boolean) {
+  protected _onWillLoad(subscribe: boolean) {
     this.promises._onWillLoad();
-    this.error = undefined;
-    this.metadata = undefined;
-    this.isLoading = true;
+    this._error = undefined;
+    this._metadata = undefined;
+    this._isLoading = true;
     if (!subscribe) {
-      this.isLoaded = false;
+      this._isLoaded = false;
     }
   }
 
   declare path: string | undefined;
 
-  _onError(error: unknown) {
-    const path = this.path;
-    if (path) {
-      console.error(path, error);
-    }
-    this.isLoading = false;
-    this.error = error;
-    this.metadata = undefined;
+  protected _onError(error: unknown) {
+    this._isLoading = false;
+    this._error = error;
+    this._metadata = undefined;
+    console.error(this + '', error);
     this.promises._onError(error);
   }
 
-  _onDidLoad(metadata: SnapshotMetadata) {
-    this.isLoading = false;
-    this.isLoaded = true;
-    this.error = undefined;
-    this.metadata = metadata;
+  protected _onDidLoad(metadata: SnapshotMetadata) {
+    this._isLoading = false;
+    this._isLoaded = true;
+    this._error = undefined;
+    this._metadata = metadata;
     this.promises._onDidLoad(this, metadata.fromCache ? 'cached' : 'remote');
   }
 
-  abstract _subscribeActive(): VoidCallback;
+  protected async _onLoad(cb: () => Promise<void>) {
+    this._isLoading = true;
+    try {
+      await cb();
+    } catch (err) {
+      this._onError(err);
+    } finally {
+      this._isLoading = false;
+    }
+  }
+
+  protected abstract _subscribeActive(): void;
 
   subscribe() {
     if (this.isPassive) {
       return;
     }
-    return this._subscribeActive();
+    this._subscribeActive();
   }
 
-  dependencies = [];
+  protected _registerListening(model: FirebaseModel<FirebaseModelOptions>) {
+    untrack(() => {
+      addObject(_listening, model);
+    });
+    return () => {
+      untrack(() => {
+        removeObject(_listening, model);
+      });
+    };
+  }
+
+  static get listening() {
+    return _listening;
+  }
 }

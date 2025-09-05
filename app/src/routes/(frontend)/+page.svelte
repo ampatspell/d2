@@ -1,13 +1,15 @@
 <script lang="ts">
-  import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
   import Index from '$lib/pages/index.svelte';
   import type { PageData } from './$types';
 
   let { data }: { data: PageData } = $props();
 
-  $effect(() => subscribe(data.loader));
+  let loader = $derived(data.loader);
 
-  let index = $derived(data.loader.node);
+  $effect(() => subscribe(loader));
+
+  let index = $derived(loader.node);
 </script>
 
 {#if index?.isLoaded}

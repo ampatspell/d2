@@ -1,5 +1,5 @@
 import type { TreeDelegate, TreeModelDelegate, TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
-import { Model } from '$d2/lib/base/model/model.svelte';
+import { Model } from '$d2/lib/base/model/base.svelte';
 import type { NodeModel } from '$d2/lib/nodes/node/node.svelte';
 import type { NodesModel } from '$d2/lib/nodes/nodes.svelte';
 

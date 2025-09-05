@@ -15,11 +15,10 @@ import {
 } from '@firebase/firestore';
 import { untrack } from 'svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
-import { fireStats } from './stats.svelte';
+import deepEqual from 'fast-deep-equal';
 import type { OptionsInput } from '../utils/options';
 import type { VoidCallback } from '../utils/types';
 import { serialized } from '../utils/object';
-import deepEqual from 'fast-deep-equal';
 
 const createToken = () => {
   if (browser) {
@@ -101,53 +100,68 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
   constructor(options: OptionsInput<DocumentOptions<T>>) {
     super(options);
     this.token = createToken();
-    this.isNew = this.options.isNew ?? true;
+    this._isNew = this.options.isNew ?? true;
     const data = this.options.data;
     if (data) {
-      this.data = data;
+      this._data = data;
     }
   }
 
-  data = $state<T>();
-  exists = $state<boolean>();
-  isNew = $state<boolean>()!; // TODO: this is not updated on snapshot and on save
-  isSaving = $state(false);
-  isDeleting = $state(false);
+  private _data = $state<T>();
+  private _exists = $state<boolean>();
+  private _isNew = $state<boolean>()!; // TODO: this is not updated on snapshot and on save
+  private _isSaving = $state(false);
+  private _isDeleting = $state(false);
 
-  ref = $derived(this.options.ref);
-  id = $derived(this.ref?.id);
-  path = $derived(this.ref?.path);
+  get data() {
+    return this._touch(() => this._data);
+  }
+
+  get exists() {
+    return this._touch(() => this._exists);
+  }
+
+  get isNew() {
+    return this._touch(() => this._isNew);
+  }
+
+  get isSaving() {
+    return this._touch(() => this._isSaving);
+  }
+
+  get isDeleting() {
+    return this._touch(() => this._isDeleting);
+  }
+
+  readonly ref = $derived(this.options.ref);
+  readonly id = $derived(this.ref?.id);
+  readonly path = $derived(this.ref?.path);
 
   _subscribeActive() {
-    return $effect.root(() => {
-      $effect(() => {
-        const ref = this.ref;
-
-        untrack(() => this._onWillLoad(!!ref));
-
-        let cancel: VoidCallback;
-        if (ref) {
-          const snapshot = onSnapshot(
-            ref,
-            { includeMetadataChanges: true },
-            (snapshot) => {
-              this._onSnapshot(snapshot);
-            },
-            (error) => {
-              this._onError(error);
-            },
-          );
-          const listening = fireStats._registerListening(this);
-          cancel = () => {
-            snapshot();
-            listening();
-          };
-        }
-
-        return () => {
-          cancel?.();
+    $effect(() => {
+      const ref = this.ref;
+      untrack(() => this._onWillLoad(!!ref));
+      let cancel: VoidCallback;
+      if (ref) {
+        const snapshot = onSnapshot(
+          ref,
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this._onSnapshot(snapshot);
+          },
+          (error) => {
+            this._onError(error);
+          },
+        );
+        const listening = this._registerListening(this);
+        cancel = () => {
+          snapshot();
+          listening();
         };
-      });
+      }
+      return () => {
+        cancel?.();
+      };
     });
   }
 
@@ -156,11 +170,11 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const next = snapshot.data({ serverTimestamps: 'estimate' }) as T | undefined;
     if (next && next[TOKEN] !== this.token) {
       const cast = toData(next) as T;
-      if (!deepEqual($state.snapshot(this.data), cast)) {
-        this.data = cast;
+      if (!deepEqual($state.snapshot(this._data), cast)) {
+        this._data = cast;
       }
     }
-    this.exists = exists;
+    this._exists = exists;
     this._onDidLoad(snapshot.metadata);
   }
 
@@ -172,29 +186,23 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     if (!ref) {
       return;
     }
-    this.isLoading = true;
-    try {
+    await this._onLoad(async () => {
       const snapshot = await getDocBySource(ref, options.source);
       this._onSnapshot(snapshot);
-    } catch (err) {
-      this._onError(err);
-    } finally {
-      this.isLoading = false;
-    }
+    });
   }
 
   async save(): Promise<void> {
     const ref = this.ref;
     if (ref) {
-      const data = Object.assign({}, toData($state.snapshot(this.data)), { [TOKEN]: this.token });
-      // TODO: queue
-      this.isSaving = true;
+      const data = Object.assign({}, toData($state.snapshot(this._data)), { [TOKEN]: this.token });
+      this._isSaving = true;
       try {
         await setDoc(ref, data, { merge: true });
       } catch (err) {
         this._onError(err);
       } finally {
-        this.isSaving = false;
+        this._isSaving = false;
       }
     }
   }
@@ -203,17 +211,18 @@ export class Document<T extends DocumentData = DocumentData> extends FirebaseMod
     const ref = this.ref;
     if (ref) {
       try {
-        this.isDeleting = true;
+        this._isDeleting = true;
         await deleteDoc(ref);
-        this.exists = false;
+        this._exists = false;
       } catch (err) {
         this._onError(err);
       } finally {
-        this.isSaving = false;
-        this.isDeleting = false;
+        this._isSaving = false;
+        this._isDeleting = false;
       }
     }
   }
 
-  serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error', 'isSubscribed']));
+  readonly serialized = $derived(serialized(this, ['path', 'isLoading', 'isLoaded', 'error']));
+  readonly dependencies = [];
 }

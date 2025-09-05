@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { fireStats } from '$d2/lib/base/fire/stats.svelte';
-  // import { modelStats } from '$d2/lib/base/model/stats.svelte';
+  // import { FirebaseModel } from '$d2/lib/base/refactoring/fire/model.svelte';
+  import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
   import Dark from './dark.svelte';
   import Overflow from './overflow.svelte';
   import Cell from './table/cell.svelte';
@@ -8,15 +8,15 @@
   import Row from './table/row.svelte';
   import Table from './table/table.svelte';
 
-  let listening = $derived(fireStats.listening);
-  // let subscribed = $derived(modelStats.subscribed);
+  let models = $derived(SubscribableModel.subscribed);
+  // let models = $derived(FirebaseModel.listening);
 </script>
 
 <div class="stats">
   <Dark>
     <Overflow overflow="y">
       <Table>
-        {#each listening as model (model)}
+        {#each models as model (model)}
           <Cell>
             <Row>
               <Content>
@@ -31,13 +31,19 @@
 </div>
 
 <style lang="scss">
+  @use 'sass:color';
   .stats {
     position: fixed;
     bottom: 5px;
     right: 5px;
     width: 500px;
     height: 300px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 5px 10px color.adjust(#000, $alpha: -0.95),
+      0 20px 40px color.adjust(#000, $alpha: -0.95);
+    border: 1px solid color.adjust(#000, $alpha: -0.95);
+    overflow: hidden;
+    border-radius: 3px;
     background: #fff;
     display: flex;
     flex-direction: column;

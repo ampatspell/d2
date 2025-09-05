@@ -8,12 +8,12 @@ import {
 } from '@firebase/auth';
 import { goto } from '$app/navigation';
 import { httpsCallable } from '@firebase/functions';
-import { Model } from '../base/model/model.svelte';
 import { serialized } from '../base/utils/object';
 import type { OptionsInput } from '../base/utils/options';
 import { firebase } from '../base/fire/firebase.svelte';
 import type { FunctionsSetRoleEventRequest, FunctionsSetRoleEventResponse } from '$d2-shared/functions';
 import type { UserRole } from '$d2-shared/documents';
+import { Model } from '../base/model/base.svelte';
 
 export type SessionUserModelOptions = {
   user: User;

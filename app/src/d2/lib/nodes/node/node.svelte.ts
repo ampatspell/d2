@@ -1,5 +1,3 @@
-import { Document } from '$d2/lib/base/fire/document.svelte';
-import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 import { getter } from '$d2/lib/base/utils/options';
 import { UploadFilesModel } from './upload.svelte';
@@ -7,15 +5,16 @@ import type { Component } from 'svelte';
 import type { BaseNodeData, NodeParentData } from '$d2-shared/documents';
 import type { NodePropertiesRegistry } from '$lib/definition/registry';
 import { type Property, type PropertyUpdateResult } from '$d2/lib/base/utils/property.svelte';
-import type { HasSubscriber } from '$d2/lib/base/model/subscriber.svelte';
 import { uniq } from '$d2/lib/base/utils/array';
-import { mapModel } from '$d2/lib/base/model/models.svelte';
 import { getDefinition } from '$d2/lib/definition/app.svelte';
-import { isLoaded, type IsLoadedModels } from '$d2/lib/base/fire/is-loaded.svelte';
+import { isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { NodePathModel } from './path.svelte';
 import { NodeBackendModel, type NodeBackendModelDelegate } from './backend.svelte';
 import type { NodePropertiesModel } from './properties.svelte';
 import type { NodeDetailsModel } from './details.svelte';
+import { SubscribableModel } from '$d2/lib/base/model/subscribable.svelte';
+import type { Document } from '$d2/lib/base/fire/document.svelte';
+import { mapModel } from '$d2/lib/base/model/models.svelte';
 
 export type NodeType = keyof NodePropertiesRegistry;
 
@@ -58,7 +57,7 @@ export type NodeModelOptions<Type extends NodeType> = {
   partial: boolean;
 };
 
-export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscribable<NodeModelOptions<Type>> {
+export abstract class NodeModel<Type extends NodeType = NodeType> extends SubscribableModel<NodeModelOptions<Type>> {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
   readonly exists = $derived(this.doc.exists);
@@ -93,6 +92,7 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
   abstract readonly icon: Component;
 
   async save() {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     this.data.updatedAt = new Date();
     await this.doc.save();
   }
@@ -123,6 +123,8 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
       const children = await this.backend.didUpdateParent(asParent(this)!);
       const nodes = uniq([this, ...global, ...children]);
       await Promise.all(nodes.map((node) => node.save()));
+    } else {
+      console.warn('no backend for didUpdateIdentifier', this + '');
     }
   }
 
@@ -183,26 +185,27 @@ export abstract class NodeModel<Type extends NodeType = NodeType> extends Subscr
     return is(this, factory);
   }
 
-  get nodeIsLoadedModels(): IsLoadedModels {
-    const base = [this.doc];
+  readonly nodeIsLoaded = $derived.by(() => {
+    const base = [this.doc, this._backend];
     if (this.isPartial) {
       return base;
     } else {
       return [...base, this.details];
     }
-  }
+  });
 
-  get nodeDependencies(): HasSubscriber[] {
+  readonly isLoaded = $derived(isLoaded(this.nodeIsLoaded));
+
+  readonly nodeDependencies = $derived.by(() => {
     const base = [this.doc, this._backend];
     if (this.isPartial) {
       return base;
+    } else {
+      return [...base, this.details];
     }
-    return [...base, this.details];
-  }
+  });
 
-  readonly isLoaded = $derived(isLoaded(this.nodeIsLoadedModels));
-
-  get dependencies(): HasSubscriber[] {
+  get dependencies() {
     return this.nodeDependencies;
   }
 

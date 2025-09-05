@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import Section from '$d2/components/dark/section/section.svelte';
   import Cell from '$d2/components/dark/table/cell.svelte';
@@ -27,7 +28,7 @@
     },
   ];
 
-  let onDeselect = () => goto('/backend/settings');
+  let onDeselect = () => goto(resolve('/backend/settings'));
 </script>
 
 {#snippet sidebar()}

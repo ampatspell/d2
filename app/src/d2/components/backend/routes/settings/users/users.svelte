@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import Overflow from '$d2/components/dark/overflow.svelte';
   import Section from '$d2/components/dark/section/section.svelte';
   import Cell from '$d2/components/dark/table/cell.svelte';
@@ -11,7 +12,7 @@
 
   let { users, id, children }: { users: UsersModel; id: string | undefined; children: Snippet } = $props();
 
-  let onDeselect = () => goto('/backend/settings/users');
+  let onDeselect = () => goto(resolve('/backend/settings/users'));
 </script>
 
 <Section title="Users" icon={LucideUsers}>

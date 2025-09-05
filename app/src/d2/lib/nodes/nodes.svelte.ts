@@ -1,18 +1,18 @@
 import * as fs from '@firebase/firestore';
-import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { serialized } from '../base/utils/object';
-import { queryAll } from '../base/fire/query.svelte';
 import { getter, options } from '../base/utils/options';
-import { mapModels } from '../base/model/models.svelte';
 import type { NodeDefinitionModel } from '../definition/node.svelte';
-import { Document } from '../base/fire/document.svelte';
 import type { TreeOnReorder } from '$d2/components/dark/tree/tree.svelte';
 import type { NodesTreeSettings } from '$d2/components/backend/nodes/tree/models.svelte';
 import { isTruthy, uniq, type SortDescriptors } from '../base/utils/array';
 import { asParent, createNodeModel, nodeDocumentKey, type NodeData, type NodeModel } from './node/node.svelte';
 import type { NodeBackendModelDelegate } from './node/backend.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll } from '../base/fire/query.svelte';
+import { mapModels } from '../base/model/models.svelte';
+import { Document } from '../base/fire/document.svelte';
 
 export const nextPosition = (nodes: NodeModel[]) => {
   if (nodes.length) {
@@ -29,7 +29,7 @@ export type NodesModelOptions = {
   query: fs.Query;
 };
 
-export class NodesModel extends Subscribable<NodesModelOptions> {
+export class NodesModel extends SubscribableModel<NodesModelOptions> {
   private readonly _query = queryAll<NodeData>({
     ref: getter(() => this.options.query),
   });
@@ -71,13 +71,6 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
 
     const saves = [];
 
-    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
-      nodes.forEach((node, idx) => {
-        const position = omit >= idx ? idx + 1 : idx;
-        saves.push(node.buildReorder().position(position).build());
-      });
-    };
-
     if (position === 'over') {
       const nodes = this.byParentId(target.id);
       const position = nextPosition(nodes);
@@ -89,6 +82,13 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
       const parent = this.byId(target.parent?.id);
       saves.push(source.buildReorder().parent(parent).position(nextPosition).build());
     }
+
+    const reorder = (nodes: NodeModel[], omit: number = Infinity) => {
+      nodes.forEach((node, idx) => {
+        const position = omit >= idx ? idx + 1 : idx;
+        saves.push(node.buildReorder().position(position).build());
+      });
+    };
 
     parents.map((parent) => reorder(this.byParentId(parent ?? null)));
 
@@ -141,7 +141,7 @@ export class NodesModel extends Subscribable<NodesModelOptions> {
     await this._nodes.load((node) => node.load());
   }
 
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._nodes]));
   readonly dependencies = [this._query, this._nodes];
   readonly serialized = $derived(serialized(this, []));
 

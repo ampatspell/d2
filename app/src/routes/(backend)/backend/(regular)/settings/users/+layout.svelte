@@ -1,13 +1,13 @@
 <script lang="ts">
   import Users from '$d2/components/backend/routes/settings/users/users.svelte';
   import type { Snippet } from 'svelte';
-  import type { LayoutData } from './$types';
-  import { subscribe } from '$d2/lib/base/model/subscriber.svelte';
+  import type { LayoutData, LayoutParams } from './$types';
+  import { subscribe } from '$d2/lib/base/model/subscribable.svelte';
 
-  let { data, children }: { data: LayoutData; children: Snippet } = $props();
+  let { data, params, children }: { data: LayoutData; params: LayoutParams; children: Snippet } = $props();
 
   let users = $derived(data.users);
-  let id = $derived(data.id);
+  let id = $derived(params.id);
 
   $effect(() => subscribe(users));
 </script>

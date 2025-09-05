@@ -1,24 +1,27 @@
 import {
   type DocumentData,
+  DocumentReference,
   type Query,
   type QueryDocumentSnapshot,
   type QuerySnapshot,
+  documentId,
   getDocs,
   getDocsFromCache,
   getDocsFromServer,
   limit,
   onSnapshot,
   query,
+  where,
 } from '@firebase/firestore';
 import { untrack } from 'svelte';
-
 import { Document, type DocumentLoadSource } from './document.svelte';
-import { fireStats } from './stats.svelte';
 import { FirebaseModel, type FirebaseModelOptions } from './model.svelte';
+import { browser } from '$app/environment';
 import type { VoidCallback } from '../utils/types';
 import { insertObjectAt, removeObjectAt } from '../utils/array';
 import { serialized } from '../utils/object';
-import { browser } from '$app/environment';
+import { getter, options, type OptionsInput } from '../utils/options';
+import { asDependencies } from '../model/subscribable.svelte';
 
 export type DocumentsLoadOptions = {
   source?: DocumentLoadSource;
@@ -47,13 +50,13 @@ export type QueryBaseOptions = {
   ref: Query | undefined;
 } & FirebaseModelOptions;
 
-export class QueryBase<
+export abstract class QueryBase<
   T extends DocumentData = DocumentData,
   O extends QueryBaseOptions = QueryBaseOptions,
 > extends FirebaseModel<O> {
-  ref = $derived(this.options.ref);
+  readonly ref = $derived(this.options.ref);
 
-  path = $derived.by(() => {
+  readonly path = $derived.by(() => {
     const { ref } = this;
     if (ref) {
       const path = (ref as unknown as { path: string | undefined }).path;
@@ -61,66 +64,68 @@ export class QueryBase<
     }
   });
 
-  private needsContentReset = false;
-  _content = $state<Document<T>[]>([]);
+  private _needsContentReset = false;
+  private __content = $state<Document<T>[]>([]);
 
-  _onWillLoad(subscribe: boolean) {
+  protected get _content() {
+    return this._touch(() => this.__content);
+  }
+
+  protected _onWillLoad(subscribe: boolean) {
     super._onWillLoad(subscribe);
     if (subscribe) {
-      this.needsContentReset = true;
+      this._needsContentReset = true;
     } else {
-      this._content = [];
+      this.__content = [];
     }
   }
 
-  _maybeResetContent() {
-    const content = this._content;
-    if (this.needsContentReset) {
-      this._content = [];
-      this.needsContentReset = false;
+  private _maybeResetContent() {
+    const content = this.__content;
+    if (this._needsContentReset) {
+      this.__content = [];
+      this._needsContentReset = false;
     }
     return content;
   }
 
-  _subscribeActive() {
-    return $effect.root(() => {
-      $effect(() => {
-        const ref = this.ref;
+  protected _subscribeActive() {
+    $effect(() => {
+      const ref = this.ref;
 
-        untrack(() => this._onWillLoad(!!ref));
+      untrack(() => this._onWillLoad(!!ref));
 
-        let cancel: VoidCallback;
-        if (ref) {
-          const normalized = this._normalizeRef(ref);
-          const snapshot = onSnapshot(
-            normalized,
-            { includeMetadataChanges: true },
-            (snapshot) => {
-              this._onSnapshot(snapshot);
-            },
-            (error) => {
-              this._onError(error);
-            },
-          );
-          const listening = fireStats._registerListening(this);
-          cancel = () => {
-            snapshot();
-            listening();
-          };
-        }
-
-        return () => {
-          cancel?.();
+      let cancel: VoidCallback;
+      if (ref) {
+        const normalized = this._normalizeRef(ref);
+        const snapshot = onSnapshot(
+          normalized,
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this._onSnapshot(snapshot);
+          },
+          (error) => {
+            this._onError(error);
+          },
+        );
+        const listening = this._registerListening(this);
+        cancel = () => {
+          snapshot();
+          listening();
         };
-      });
+      }
+
+      return () => {
+        cancel?.();
+      };
     });
   }
 
-  _normalizeRef(ref: Query) {
+  protected _normalizeRef(ref: Query) {
     return ref;
   }
 
-  _onSnapshot(querySnapshot: QuerySnapshot) {
+  private _onSnapshot(querySnapshot: QuerySnapshot) {
     const previous = this._maybeResetContent();
     const findOrCreate = (snapshot: QueryDocumentSnapshot) => {
       let doc = previous.find((doc) => doc.path === snapshot.ref.path);
@@ -130,7 +135,7 @@ export class QueryBase<
       return doc;
     };
 
-    const current = this._content;
+    const current = this.__content;
 
     querySnapshot.docChanges().forEach(({ type, oldIndex, newIndex, doc: snapshot }) => {
       if (type === 'added') {
@@ -162,49 +167,48 @@ export class QueryBase<
     if (!ref) {
       return;
     }
-    this.isLoading = true;
-    try {
+    await this._onLoad(async () => {
       const normalized = this._normalizeRef(ref);
       const snapshot = await getDocsBySource(normalized, options.source);
-      this.needsContentReset = true;
+      this._needsContentReset = true;
       this._onSnapshot(snapshot);
-    } catch (err) {
-      this._onError(err);
-    } finally {
-      this.isLoading = false;
-    }
+    });
   }
 }
 
 export type QueryAllOptions = QueryBaseOptions;
 
 export class QueryAll<T extends DocumentData = DocumentData> extends QueryBase<T, QueryAllOptions> {
-  content = $derived(this._content);
-  size = $derived(this.content.length);
+  readonly content = $derived(this._content);
+  readonly size = $derived(this.content.length);
 
-  serialized = $derived(
-    serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'isSubscribed', 'size']),
-  );
+  readonly dependencies = $derived(asDependencies(this.content));
+
+  readonly serialized = $derived.by(() => {
+    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'size']);
+  });
 }
 
 export type QueryFirstOptions = QueryBaseOptions;
 
 export class QueryFirst<T extends DocumentData = DocumentData> extends QueryBase<T, QueryFirstOptions> {
-  content = $derived<Document<T> | undefined>(this._content[0]);
+  readonly content = $derived<Document<T> | undefined>(this._content[0]);
 
-  exists = $derived.by(() => {
+  readonly exists = $derived.by(() => {
     if (this.isLoaded) {
       return !!this.content;
     }
   });
 
-  _normalizeRef(ref: Query) {
+  protected _normalizeRef(ref: Query) {
     return query(ref, limit(1));
   }
 
-  serialized = $derived(
-    serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'isSubscribed', 'exists']),
-  );
+  readonly dependencies = $derived(asDependencies(this.content));
+
+  readonly serialized = $derived.by(() => {
+    return serialized(this, ['path', 'isLoading', 'isLoaded', 'isError', 'error', 'exists']);
+  });
 }
 
 export const queryAll = <T extends DocumentData = DocumentData>(...args: ConstructorParameters<typeof QueryAll<T>>) => {
@@ -215,4 +219,21 @@ export const queryFirst = <T extends DocumentData = DocumentData>(
   ...args: ConstructorParameters<typeof QueryFirst<T>>
 ) => {
   return new QueryFirst<T>(...args);
+};
+
+export type QueryFirstDocumentOptions = {
+  ref: DocumentReference | undefined;
+} & FirebaseModelOptions;
+
+export const document = <T extends DocumentData = DocumentData>(_opts: OptionsInput<QueryFirstDocumentOptions>) => {
+  const opts = options(_opts);
+  return queryFirst<T>({
+    ref: getter(() => {
+      const ref = opts.ref;
+      if (ref) {
+        return query(ref.parent, where(documentId(), '==', ref.id));
+      }
+    }),
+    isPassive: getter(() => opts.isPassive),
+  });
 };

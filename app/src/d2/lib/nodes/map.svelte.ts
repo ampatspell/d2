@@ -1,6 +1,6 @@
 import { asIsLoadedModel, isLoaded } from '../base/fire/is-loaded.svelte';
-import { Subscribable } from '../base/model/model.svelte';
 import { mapModel } from '../base/model/models.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
 import { serialized } from '../base/utils/object';
 import { getter, options, type OptionsInput } from '../base/utils/options';
 import { node, nodes, NodesLoaderModel, type NodeLoaderModel } from './loader.svelte';
@@ -12,7 +12,7 @@ export type MapNodeOptions<T, Model extends NodeModel> = {
   key?: string;
 };
 
-export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodeOptions<T, Model>> {
+export class MapNode<T, Model extends NodeModel = NodeModel> extends SubscribableModel<MapNodeOptions<T, Model>> {
   private readonly _source = $derived(this.options.source);
 
   private readonly _loader = mapModel({
@@ -31,7 +31,7 @@ export class MapNode<T, Model extends NodeModel = NodeModel> extends Subscribabl
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([this.node]));
+  readonly isLoaded = $derived(isLoaded([this._loader, this.node]));
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'node']));
 }
 
@@ -116,7 +116,7 @@ export type MapNodesOptions<T, Model extends NodeModel> = {
   key?: string;
 };
 
-export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribable<MapNodesOptions<T, Model>> {
+export class MapNodes<T, Model extends NodeModel = NodeModel> extends SubscribableModel<MapNodesOptions<T, Model>> {
   private readonly _source = $derived(this.options.source);
 
   private readonly _loader = mapModel({
@@ -135,7 +135,7 @@ export class MapNodes<T, Model extends NodeModel = NodeModel> extends Subscribab
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._loader];
-  readonly isLoaded = $derived(isLoaded([this.loader, asIsLoadedModel(this.nodes)]));
+  readonly isLoaded = $derived(isLoaded([this._loader, this.loader, asIsLoadedModel(this.nodes)]));
   readonly serialized = $derived(serialized(this, ['key', 'loader', 'nodes']));
 }
 

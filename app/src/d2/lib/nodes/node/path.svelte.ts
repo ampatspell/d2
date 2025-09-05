@@ -1,4 +1,4 @@
-import { Model } from '$d2/lib/base/model/model.svelte';
+import { Model } from '$d2/lib/base/model/base.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
 
 export type NodePathModelOptions = {

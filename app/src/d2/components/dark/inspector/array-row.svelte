@@ -81,7 +81,7 @@
     display: flex;
     flex-direction: row;
     gap: 5px;
-    border: 1px solid var(--dark-border-color-1);
+    border: 1px solid var(--dark-border-color-2);
     border-radius: 3px;
     > .content {
       --inspector-row-padding: 0;

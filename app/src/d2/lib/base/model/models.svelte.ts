@@ -1,6 +1,6 @@
 import { untrack } from 'svelte';
+import { asDependencies, LazySubscribableModel } from './subscribable.svelte';
 import { isTruthy, sortedBy, type SortDescriptors } from '../utils/array';
-import { Subscribable } from './model.svelte';
 
 const ITERATIONS = 10;
 
@@ -15,21 +15,13 @@ type CacheValue<Target> = {
   key: unknown;
 };
 
-const maybeSubscribeContent = (object: unknown) => {
-  if (object instanceof Subscribable) {
-    return object.subscriber.subscribe();
-  } else {
-    return () => {};
-  }
-};
-
-const maybeSubscribeContentArray = (objects: unknown[]) => {
-  const cancels = objects.map((object) => maybeSubscribeContent(object));
-  return () => cancels.forEach((c) => c());
-};
-
-export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, Target>> extends Subscribable<O> {
+export abstract class BaseMap<
+  Source,
+  Target,
+  O extends BaseMapOptions<Source, Target>,
+> extends LazySubscribableModel<O> {
   private readonly _target = $derived(this.options.target);
+  // eslint-disable-next-line svelte/prefer-svelte-reactivity
   private readonly _cache: Map<Source, CacheValue<Target>> = new Map();
   private _iteration = 0;
 
@@ -88,14 +80,25 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
     return result;
   }
 
-  protected abstract readonly waitForContent: (Target | undefined)[];
+  protected abstract _update(): void;
+  protected abstract readonly _waitForContent: (Target | undefined)[];
+
+  subscribe() {
+    $effect(() => {
+      this._update();
+    });
+  }
+
+  get isLoaded() {
+    return this._touch(() => true);
+  }
 
   async waitFor(fn: (model: Target) => boolean): Promise<Target> {
     return new Promise<Target>((resolve) => {
-      // TODO: timeout
+      // TODO: timeout - Promise.race
       const cancel = $effect.root(() => {
         $effect(() => {
-          const model = this.waitForContent.find((model) => {
+          const model = this._waitForContent.find((model) => {
             if (model !== undefined) {
               return fn(model);
             }
@@ -108,8 +111,6 @@ export abstract class BaseMap<Source, Target, O extends BaseMapOptions<Source, T
       });
     });
   }
-
-  readonly dependencies = [];
 }
 
 export type MapModelsOptions<Source, Target> = {
@@ -121,8 +122,11 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
   private readonly _source = $derived(this.options.source);
   private _content = $state<Target[]>([]);
 
-  readonly content = $derived(this._content);
-  protected readonly waitForContent = $derived(this.content);
+  get content() {
+    return this._touch(() => this._content);
+  }
+
+  protected readonly _waitForContent = $derived(this.content);
 
   readonly sorted = $derived.by(() => {
     const descriptors = this.options.sort;
@@ -133,27 +137,22 @@ export class MapModels<Source, Target> extends BaseMap<Source, Target, MapModels
     return content;
   });
 
-  private update() {
+  protected _update() {
     const content = this._withCache((findOrCreate) => {
       return this._source.map((source) => findOrCreate(source)).filter(isTruthy);
     });
-    this._content = untrack(() => content);
+    untrack(() => {
+      this._content = content;
+    });
     return content;
   }
 
-  subscribe() {
-    return $effect.root(() => {
-      $effect(() => {
-        const content = this.update();
-        return maybeSubscribeContentArray(content);
-      });
-    });
-  }
-
   async load(cb: (target: Target) => Promise<void>) {
-    const models = this.update();
+    const models = this._update();
     await Promise.all(models.map((model) => cb(model)));
   }
+
+  readonly dependencies = $derived(asDependencies(this._content));
 }
 
 export type MapModelOptions<Source, Target> = {
@@ -164,10 +163,13 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
   private readonly _source = $derived(this.options.source);
   private _content = $state<Target>();
 
-  readonly content = $derived(this._content);
-  protected readonly waitForContent = $derived([this.content]);
+  get content() {
+    return this._touch(() => this._content);
+  }
 
-  private update() {
+  protected readonly _waitForContent = $derived([this.content]);
+
+  protected _update() {
     let content: Target | undefined;
     const source = this._source;
     if (source) {
@@ -181,25 +183,20 @@ export class MapModel<Source, Target> extends BaseMap<Source, Target, MapModelOp
     return content;
   }
 
-  subscribe() {
-    return $effect.root(() => {
-      $effect(() => {
-        const content = this.update();
-        return maybeSubscribeContent(content);
-      });
-    });
-  }
-
   async load(cb: (target: Target) => Promise<void>) {
-    const target = this.update();
+    const target = this._update();
     if (target) {
       await cb(target);
     }
   }
+
+  readonly dependencies = $derived(asDependencies(this._content));
 }
 
-export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) =>
-  new MapModels<Source, Target>(...args);
+export const mapModels = <Source, Target>(...args: ConstructorParameters<typeof MapModels<Source, Target>>) => {
+  return new MapModels<Source, Target>(...args);
+};
 
-export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) =>
-  new MapModel<Source, Target>(...args);
+export const mapModel = <Source, Target>(...args: ConstructorParameters<typeof MapModel<Source, Target>>) => {
+  return new MapModel<Source, Target>(...args);
+};

@@ -5,8 +5,9 @@
   let { index }: { index: IndexNodeModel } = $props();
 
   let background = $derived(index.details.background);
-  let url = $derived(background?.thumbnails['2048x2048'].url);
   let introduction = $derived(index.details.introduction);
+
+  let url = $derived(background?.thumbnails['2048x2048'].url);
 </script>
 
 <svelte:head>
@@ -14,9 +15,7 @@
 </svelte:head>
 
 <div class="page">
-  {#if url}
-    <div class="image" style:--url="url({url})"></div>
-  {/if}
+  <div class="image" style:--url="url({url})"></div>
   <div class="title">{index.title}</div>
   <div class="markdown">
     <Markdown node={introduction} />

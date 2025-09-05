@@ -1,4 +1,5 @@
 import { description, guidFor } from '../utils/object';
+import { options, type OptionsInput } from '../utils/options';
 
 export type HasDescriptionAndSerialized = {
   description?: string;
@@ -15,5 +16,14 @@ export class BaseModel implements HasDescriptionAndSerialized {
 
   toString() {
     return this.description;
+  }
+}
+
+export class Model<O> extends BaseModel {
+  protected readonly options: O;
+
+  constructor(opts: OptionsInput<O>) {
+    super();
+    this.options = options(opts);
   }
 }

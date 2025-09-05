@@ -1,12 +1,8 @@
 import * as fs from '@firebase/firestore';
-import { Subscribable } from '$d2/lib/base/model/model.svelte';
 import { asIsLoadedModel, isLoaded } from '$d2/lib/base/fire/is-loaded.svelte';
 import { serialized } from '$d2/lib/base/utils/object';
-import { mapModel, mapModels } from '$d2/lib/base/model/models.svelte';
 import { getter, options, type OptionsInput } from '$d2/lib/base/utils/options';
 import { nodesCollection, nodesSortDescriptors } from './nodes.svelte';
-import { queryAll, queryFirst } from '../base/fire/query.svelte';
-import { preloadModel } from '../base/fire/preload.svelte';
 import {
   createNodeModel,
   nodeDocumentKey,
@@ -15,6 +11,10 @@ import {
   type NodeModelFactory,
 } from './node/node.svelte';
 import type { NodeBackendModelDelegate } from './node/backend.svelte';
+import { SubscribableModel } from '../base/model/subscribable.svelte';
+import { queryAll, queryFirst } from '../base/fire/query.svelte';
+import { mapModel, mapModels } from '../base/model/models.svelte';
+import { preload } from '../base/model/preload.svelte';
 
 export type NodeLoaderModelOptions<Model extends NodeModel> = {
   ref: fs.Query;
@@ -24,7 +24,9 @@ export type NodeLoaderModelOptions<Model extends NodeModel> = {
   partial?: boolean;
 };
 
-export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<NodeLoaderModelOptions<Model>> {
+export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends SubscribableModel<
+  NodeLoaderModelOptions<Model>
+> {
   private readonly partial = $derived(this.options.partial ?? false);
 
   private readonly _query = queryFirst<NodeData>({
@@ -69,14 +71,14 @@ export class NodeLoaderModel<Model extends NodeModel = NodeModel> extends Subscr
     await this._node?.load();
   }
 
-  preload() {
-    return preloadModel(this);
+  async preload() {
+    return preload(this);
   }
 
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._query, this.__node];
-  readonly isLoaded = $derived(isLoaded([this._query, this._node]));
+  readonly isLoaded = $derived(isLoaded([this._query, this.__node, this._node]));
   readonly serialized = $derived(serialized(this, ['key', 'node']));
 }
 
@@ -155,7 +157,7 @@ export type NodesLoaderModelOptions<Model extends NodeModel> = {
   partial?: boolean;
 };
 
-export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subscribable<
+export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends SubscribableModel<
   NodesLoaderModelOptions<Model>
 > {
   private readonly partial = $derived(this.options.partial ?? false);
@@ -192,14 +194,14 @@ export class NodesLoaderModel<Model extends NodeModel = NodeModel> extends Subsc
   }
 
   async preload() {
-    return preloadModel(this);
+    return preload(this);
   }
 
   readonly key = $derived(this.options.key);
 
   readonly dependencies = [this._query, this.__nodes];
   readonly serialized = $derived(serialized(this, ['key', 'nodes']));
-  readonly isLoaded = $derived(isLoaded([this._query, asIsLoadedModel(this._nodes)]));
+  readonly isLoaded = $derived(isLoaded([this._query, this.__nodes, asIsLoadedModel(this._nodes)]));
 }
 
 export const nodesForQuery = <Model extends NodeModel = NodeModel>(

@@ -1,19 +1,19 @@
 import * as fs from '@firebase/firestore';
-import { queryAll } from '../base/fire/query.svelte';
-import { Subscribable } from '../base/model/model.svelte';
 import { firebase } from '../base/fire/firebase.svelte';
-import { mapModels } from '../base/model/models.svelte';
-import { getter } from '../base/utils/options';
 import type { UserData, UserRole } from '$d2-shared/documents';
-import { Document } from '../base/fire/document.svelte';
 import { isLoaded } from '../base/fire/is-loaded.svelte';
 import { getSession, setRole } from '../session/session.svelte';
+import { SubscribableModel as SubscribableModel } from '../base/model/subscribable.svelte';
+import { Document } from '../base/fire/document.svelte';
+import { queryAll } from '../base/fire/query.svelte';
+import { getter } from '../base/utils/options';
+import { mapModels } from '../base/model/models.svelte';
 
 export const usersCollection = fs.collection(firebase.firestore, 'users');
 
 export type UsersModelOptions = undefined;
 
-export class UsersModel extends Subscribable<UsersModelOptions> {
+export class UsersModel extends SubscribableModel<UsersModelOptions> {
   private _query = queryAll<UserData>({
     ref: fs.query(usersCollection, fs.where('isAnonymous', '==', false)),
   });
@@ -27,12 +27,7 @@ export class UsersModel extends Subscribable<UsersModelOptions> {
 
   readonly all = $derived(this._users.content);
 
-  async load() {
-    await this._query.load();
-    await this._users.load((model) => model.load());
-  }
-
-  readonly isLoaded = $derived(isLoaded([this._query]));
+  readonly isLoaded = $derived(isLoaded([this._query, this._users]));
   readonly dependencies = [this._query, this._users];
 }
 
@@ -40,7 +35,7 @@ export type UsersUserModelOptions = {
   doc: Document<UserData>;
 };
 
-export class UsersUserModel extends Subscribable<UsersUserModelOptions> {
+export class UsersUserModel extends SubscribableModel<UsersUserModelOptions> {
   readonly doc = $derived(this.options.doc);
   readonly id = $derived(this.doc.id!);
   readonly data = $derived(this.doc.data!);
@@ -53,10 +48,6 @@ export class UsersUserModel extends Subscribable<UsersUserModelOptions> {
 
   async setRole(role: UserRole) {
     await setRole(this.id, role);
-  }
-
-  async load() {
-    await this.doc.load();
   }
 
   readonly isLoaded = $derived(isLoaded([this.doc]));
